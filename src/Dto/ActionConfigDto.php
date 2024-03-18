@@ -98,6 +98,11 @@ final class ActionConfigDto
         }
     }
 
+    public function enableActions(array $actionNames): void
+    {
+        $this->disabledActions = array_values(array_diff($this->disabledActions, $actionNames));
+    }
+
     public function getActions(): ActionCollection|array
     {
         return null === $this->pageName ? $this->actions : ActionCollection::new($this->actions[$this->pageName]);
