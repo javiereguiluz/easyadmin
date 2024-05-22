@@ -134,6 +134,13 @@ final class Actions
 
     public function enable(string ...$enabledActionNames): self
     {
+        // if 'delete' or 'batch delete' is enabled, both are enabled automatically.
+        // This is the most common case, but user can re-disable the action if needed manually
+        if (\in_array(Action::DELETE, $enabledActionNames, true) || \in_array(Action::BATCH_DELETE, $enabledActionNames, true)) {
+            $enabledActionNames[] = Action::DELETE;
+            $enabledActionNames[] = Action::BATCH_DELETE;
+        }
+
         $this->dto->enableActions($enabledActionNames);
 
         return $this;
