@@ -159,13 +159,19 @@ final class ActionFactory
 
         if ($actionDto->isBatchAction()) {
             $actionDto->addHtmlAttributes([
-                'data-bs-toggle' => 'modal',
                 'data-bs-target' => '#modal-batch-action',
                 'data-action-csrf-token' => $this->csrfTokenManager?->getToken('ea-batch-action-'.$actionDto->getName()),
                 'data-action-batch' => 'true',
                 'data-entity-fqcn' => $adminContext->getCrud()->getEntityFqcn(),
+                'data-display-batch-modal-confirmation' => $actionDto->getBatchConfirmationModal() ? 'true' : 'false',
                 'data-action-url' => $actionDto->getLinkUrl(),
             ]);
+
+            if ($actionDto->getBatchConfirmationModal()) {
+                $actionDto->addHtmlAttributes([
+                    'data-bs-toggle' => 'modal',
+                ]);
+            }
         }
 
         return $actionDto;

@@ -88,6 +88,13 @@ final class Action
         return $this;
     }
 
+    public function displayBatchConfirmationModal(bool $value = true): self
+    {
+        $this->dto->setBatchConfirmationModal($value);
+
+        return $this;
+    }
+
     /**
      * @param TranslatableInterface|string|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
      */
