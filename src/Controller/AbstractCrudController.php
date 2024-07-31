@@ -234,7 +234,15 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             }
 
             $fieldName = $context->getRequest()->query->get('fieldName');
-            $newValue = 'true' === mb_strtolower($context->getRequest()->query->get('newValue'));
+
+            $valueData = $context->getRequest()->query->get('newValue');
+            if ('true' === mb_strtolower($valueData)) {
+                $newValue = true;
+            } elseif ('false' === mb_strtolower($valueData)) {
+                $newValue = false;
+            } else {
+                $newValue = $valueData;
+            }
 
             try {
                 $event = $this->ajaxEdit($context->getEntity(), $fieldName, $newValue);
@@ -558,7 +566,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         return $this->container->get(AdminContextProvider::class)->getContext();
     }
 
-    protected function ajaxEdit(EntityDto $entityDto, ?string $propertyName, bool $newValue): AfterCrudActionEvent
+    protected function ajaxEdit(EntityDto $entityDto, ?string $propertyName, $newValue): AfterCrudActionEvent
     {
         $field = $entityDto->getFields()->getByProperty($propertyName);
         if (null === $field || true === $field->getFormTypeOption('disabled')) {

@@ -2,12 +2,16 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Field\Configurator;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Intl\IntlFormatter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
@@ -15,10 +19,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Intl\IntlFormatter;
 final class NumberConfigurator implements FieldConfiguratorInterface
 {
     private IntlFormatter $intlFormatter;
+    private AdminUrlGeneratorInterface $adminUrlGenerator;
+    private ?CsrfTokenManagerInterface $csrfTokenManager;
 
-    public function __construct(IntlFormatter $intlFormatter)
-    {
+    public function __construct(
+        IntlFormatter $intlFormatter,
+        AdminUrlGeneratorInterface $adminUrlGenerator,
+        ?CsrfTokenManagerInterface $csrfTokenManager = null
+    ) {
         $this->intlFormatter = $intlFormatter;
+        $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->csrfTokenManager = $csrfTokenManager;
     }
 
     public function supports(FieldDto $field, EntityDto $entityDto): bool
@@ -70,6 +81,18 @@ final class NumberConfigurator implements FieldConfiguratorInterface
         }
 
         $field->setFormattedValue($this->intlFormatter->formatNumber($value, $formatterAttributes));
+
+        $crudDto = $context->getCrud();
+
+        if (null !== $crudDto && Action::NEW !== $crudDto->getCurrentAction()) {
+            $toggleUrl = $this->adminUrlGenerator
+                ->setAction(Action::EDIT)
+                ->setEntityId($entityDto->getPrimaryKeyValue())
+                ->set('fieldName', $field->getProperty())
+                ->set('csrfToken', $this->csrfTokenManager?->getToken(BooleanField::CSRF_TOKEN_NAME))
+                ->generateUrl();
+            $field->setCustomOption(NumberField::OPTION_TOGGLE_URL, $toggleUrl);
+        }
     }
 
     private function getRoundingModeAsString(int $mode): string

@@ -372,6 +372,8 @@ return static function (ContainerConfigurator $container) {
 
         ->set(NumberConfigurator::class)
             ->arg(0, service(IntlFormatter::class))
+            ->arg(1, service(AdminUrlGenerator::class))
+            ->arg(2, new Reference('security.csrf.token_manager', ContainerInterface::NULL_ON_INVALID_REFERENCE))
 
         ->set(PercentConfigurator::class)
             ->arg(0, service(IntlFormatter::class))
@@ -388,6 +390,8 @@ return static function (ContainerConfigurator $container) {
         ->set(TelephoneConfigurator::class)
 
         ->set(TextConfigurator::class)
+            ->arg(0, service(AdminUrlGenerator::class))
+            ->arg(1, new Reference('security.csrf.token_manager', ContainerInterface::NULL_ON_INVALID_REFERENCE))
 
         ->set(TimezoneConfigurator::class)
 
