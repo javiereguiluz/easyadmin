@@ -11,12 +11,12 @@
     {% if paginator.hasPreviousPage or paginator.hasNextPage %}
         <nav class="pager list-pagination-paginator {{ not paginator.hasPreviousPage ? 'first-page' }} {{ not paginator.hasNextPage ? 'last-page' }}">
             <ul class="pagination">
-                <li class="page-item {{ not paginator.hasPreviousPage ? 'disabled' }}">
+                <li class="page-item page-item-previous {{ not paginator.hasPreviousPage ? 'disabled' }}">
                     <a class="page-link" href="{{ not paginator.hasPreviousPage ? '#' : paginator.generateUrlForPage(paginator.previousPage) }}">
-                        <i class="fa fa-angle-left mx-1"></i> <span class="btn-label">{{ 'paginator.previous'|trans }}</span>
+                        <i class="fa fa-angle-left mx-1" aria-label="{{ 'paginator.previous'|trans }}"></i> <span class="btn-label">{{ 'paginator.previous'|trans }}</span>
                     </a>
                 </li>
-    
+
                 {% if render_detailed_pagination is defined ? render_detailed_pagination : true %}
                     {% for page in paginator.pageRange %}
                         <li class="page-item {{ page == paginator.currentPage ? 'active' }} {{ page is null ? 'disabled' }}">
@@ -32,10 +32,10 @@
                         <a class="page-link" href="{{ paginator.generateUrlForPage(paginator.currentPage) }}">{{ paginator.currentPage }}</a>
                     </li>
                 {% endif %}
-    
-                <li class="page-item {{ not paginator.hasNextPage ? 'disabled' }}">
+
+                <li class="page-item page-item-next {{ not paginator.hasNextPage ? 'disabled' }}">
                     <a class="page-link" href="{{ not paginator.hasNextPage ? '#' : paginator.generateUrlForPage(paginator.nextPage) }}">
-                        <span class="btn-label">{{ 'paginator.next'|trans }}</span> <i class="fa fa-angle-right mx-1"></i>
+                        <span class="btn-label">{{ 'paginator.next'|trans }}</span> <i class="fa fa-angle-right mx-1" aria-label="{{ 'paginator.next'|trans }}"></i>
                     </a>
                 </li>
             </ul>

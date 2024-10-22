@@ -2,8 +2,8 @@
   "entrypoints": {
     "app": {
       "css": [
-        "/app.879098eb.css",
-        "/app.879098eb.rtl.css"
+        "/app.8906cebf.css",
+        "/app.8906cebf.rtl.css"
       ],
       "js": [
         "/app.aa57e76f.js"
@@ -35,7 +35,7 @@
         "/field-code-editor.78ccdb00.rtl.css"
       ],
       "js": [
-        "/field-code-editor.d5ecf759.js"
+        "/field-code-editor.bacb5983.js"
       ]
     },
     "field-collection": {

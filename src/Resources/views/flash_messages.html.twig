@@ -1,8 +1,5 @@
-{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
-{# This template checks for 'ea' variable existence because it can
-   be used in a EasyAdmin Dashboard controller, where 'ea' is defined
-   or from any other Symfony controller, where 'ea' is not defined #}
-{% trans_default_domain ea is defined ? ea.i18n.translationDomain : (translation_domain is defined ? translation_domain ?? 'messages') %}
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider #}
+{% trans_default_domain ea.hasContext ? ea.i18n.translationDomain : (translation_domain is defined ? translation_domain ?? 'messages') %}
 
 {% set flash_messages = app.flashes %}
 

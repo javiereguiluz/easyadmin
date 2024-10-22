@@ -23,6 +23,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * A context object that stores all the state and config of the current admin request.
  *
+ * IMPORTANT: any new methods added here MUST be duplicated in the AdminContextProvider class.
+ *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 final class AdminContext

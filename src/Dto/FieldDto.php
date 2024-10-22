@@ -55,6 +55,7 @@ final class FieldDto
     private $uniqueId;
     private KeyValueStore $displayedOn;
     private $displayCallable;
+    private array $htmlAttributes = [];
 
     public function __construct()
     {
@@ -486,5 +487,24 @@ final class FieldDto
     public function setDisplayCallable(callable $displayCallable): void
     {
         $this->displayCallable = $displayCallable;
+    }
+
+    public function getHtmlAttributes(): array
+    {
+        return $this->htmlAttributes;
+    }
+
+    public function setHtmlAttributes(array $htmlAttributes): self
+    {
+        $this->htmlAttributes = $htmlAttributes;
+
+        return $this;
+    }
+
+    public function setHtmlAttribute(string $attribute, mixed $value): self
+    {
+        $this->htmlAttributes[$attribute] = $value;
+
+        return $this;
     }
 }

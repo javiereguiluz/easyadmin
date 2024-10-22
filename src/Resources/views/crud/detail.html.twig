@@ -63,7 +63,7 @@
 {% endblock %}
 
 {% macro render_field_contents(entity, field) %}
-    <div class="field-group {{ field.cssClass }}">
+    <div class="field-group {{ field.cssClass }}" {% for name, value in field.htmlAttributes %}{{ name }}="{{ value|e('html_attr') }}" {% endfor %}>
         {% if field.label is same as (false) %}
             {# a FALSE label value means that the field doesn't even display the <label> element;
                use an empty string to not display a label but keep the <label> element to not mess with the layout #}

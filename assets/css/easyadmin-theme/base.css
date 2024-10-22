@@ -800,6 +800,35 @@ a.user-menu-wrapper .user-details:hover {
     vertical-align: middle;
 }
 
+@media (max-width: 768px) {
+    .pager .page-item:not(.page-item-previous, .page-item-next, .page-item.active) {
+        display: none;
+    }
+    .pager .page-item.active {
+        margin: 0 1em;
+    }
+    .pager .page-item-previous,
+    .pager .page-item-next {
+        flex: 1;
+    }
+    .pager .page-item-previous .page-link,
+    .pager .page-item-next .page-link {
+        border: var(--border-width) var(--border-style) var(--border-secondary-color);
+        border-radius: var(--border-radius);
+    }
+    .pager .page-item-previous:not(.disabled):hover .page-link,
+    .pager .page-item-next:not(.disabled):hover .page-link {
+        border-color: var(--link-color);
+    }
+    .pager .page-item-previous .page-link {
+        padding-left: calc(var(--bs-pagination-padding-x) / 2);
+    }
+    .pager .page-item-next .page-link {
+        text-align: right;
+        padding-right: calc(var(--bs-pagination-padding-x) / 2);
+    }
+}
+
 /* Modal for delete action */
 .modal-content {
     border-color: var(--modal-border-color);

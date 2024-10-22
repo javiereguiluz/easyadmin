@@ -284,6 +284,11 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
             $this->unset(EA::DASHBOARD_CONTROLLER_FQCN);
         }
 
+        // if the current action is 'index' and an entity ID is defined, remove the entity ID to prevent exceptions automatically
+        if (Action::INDEX === $this->get(EA::CRUD_ACTION) && null !== $this->get(EA::ENTITY_ID)) {
+            $this->unset(EA::ENTITY_ID);
+        }
+
         // this happens when generating URLs from outside EasyAdmin (AdminContext is null) and
         // no Dashboard FQCN has been defined explicitly
         if (null === $this->dashboardRoute) {

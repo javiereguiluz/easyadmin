@@ -89,7 +89,7 @@ dashboard with the ``make:admin:dashboard`` command, the route is defined using
         use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
         use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
         use Symfony\Component\HttpFoundation\Response;
-        use Symfony\Component\Routing\Annotation\Route;
+        use Symfony\Component\Routing\Attribute\Route;
 
         class DashboardController extends AbstractDashboardController
         {
@@ -155,7 +155,7 @@ application, you can define an explicit route name to simplify your code:
         use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
         use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
         use Symfony\Component\HttpFoundation\Response;
-        use Symfony\Component\Routing\Annotation\Route;
+        use Symfony\Component\Routing\Attribute\Route;
 
         class DashboardController extends AbstractDashboardController
         {
@@ -893,14 +893,12 @@ applications can rely on its default values:
 
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
     use Symfony\Component\HttpFoundation\Response;
-    use Symfony\Component\Routing\Annotation\Route;
+    use Symfony\Component\Routing\Attribute\Route;
     use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
     class SecurityController extends AbstractController
     {
-        /**
-         * @Route("/login", name="login")
-         */
+        #[Route("/login", name="login")]
         public function login(AuthenticationUtils $authenticationUtils): Response
         {
             $error = $authenticationUtils->getLastAuthenticationError();

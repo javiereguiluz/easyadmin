@@ -487,13 +487,11 @@ Symfony controller called ``BusinessStatsController``::
     namespace App\Controller\Admin;
 
     use App\Stats\BusinessStatsCalculator;
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-    use Symfony\Component\Routing\Annotation\Route;
+    use Symfony\Component\Routing\Attribute\Route;
+    use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-    /**
-     * @Security("is_granted('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     class BusinessStatsController extends AbstractController
     {
         public function __construct(BusinessStatsCalculator $businessStatsCalculator)
@@ -501,9 +499,7 @@ Symfony controller called ``BusinessStatsController``::
             $this->businessStatsCalculator = $businessStatsCalculator;
         }
 
-        /**
-         * @Route("/admin/business-stats", name="admin_business_stats")
-         */
+        #[Route("/admin/business-stats", name="admin_business_stats")]
         public function index()
         {
             return $this->render('admin/business_stats/index.html.twig', [
@@ -511,9 +507,7 @@ Symfony controller called ``BusinessStatsController``::
             ]);
         }
 
-        /**
-         * @Route("/admin/business-stats/{id}", name="admin_business_stats_customer")
-         */
+        #[Route("/admin/business-stats/{id}", name="admin_business_stats_customer")]
         public function customer(Customer $customer)
         {
             return $this->render('admin/business_stats/customer.html.twig', [
@@ -630,7 +624,6 @@ by EasyAdmin::
 
     use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-    use Symfony\Component\Routing\Annotation\Route;
 
     class SomeController extends AbstractController
     {

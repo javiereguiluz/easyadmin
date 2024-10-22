@@ -26,8 +26,8 @@ First, your test class need to extend the ``AbstractCrudTestCase``::
     # tests/Admin/Controller/CategoryCrudControllerTest.php
     namespace App\Tests\Admin\Controller;
 
+    use App\Controller\Admin\AppDashboardController;
     use App\Controller\Admin\CategoryCrudController;
-    use App\Controller\Admin\AppDashboardController
     use EasyCorp\Bundle\EasyAdminBundle\Test\AbstractCrudTestCase;
 
     final class CategoryCrudControllerTest extends AbstractCrudTestCase
