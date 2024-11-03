@@ -1,0 +1,243 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-10T19:53:36Z
+
+Update: we generated all routes for all controllers + actions on all dashboards. If you have just one dashboard, that's fine.
+
+But, if you have many, it's common that you only let certain controllers in some of those dashboards (think of a "guest dashboard" or "external collaborator" dashboard that only includes a few links in the menu to manage a subset of all your crud controllers).
+
+Although this is not a security issue because you can restrict actions in many ways .... I think it's better to not generate the routes for the controllers that cannot be accessed on some dashboards. So, we just added a feature to configure that. See the previous commit and the docs included in it.
+
+---------------------------------------------------------------------------
+
+by Seb33300 at 2024-10-13T03:38:06Z
+
+I have few questions:
+- in the same way we can define the title of a Crud, is there any chance we could define the slug/path too?
+- ~we can have multiple crud for the same entity, did you handle that case? (previous question may be a way to handle it)~
+Just checked the code and the path is based on the crud class name, not on the entity so it's fine!
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-20T11:30:51Z
+
+Hello @javiereguiluz,
+
+You should take a look at the work of Marcin Jozwikowski:
+
+https://github.com/marcin-jozwikowski/easy-admin-pretty-urls
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-20T17:21:12Z
+
+@Geolim4 I didn't know that plugin. Thanks for sharing. As expected, both solutions share many similarities. The two features of that plugin that I miss here are:
+
+**(1) Allow to customize the path of controller actions**
+
+```php
+#[PrettyRoutesController(path: 'special')]
+class AnyFancyController {
+
+  #[PrettyRoutesAction(path: 'list')]
+  public function index() {
+    // ....
+  }
+}
+```
+
+**(2) Generate pretty URLs for custom actions in CRUD controllers**
+
+```php
+#[PrettyRoutesController(customActions: ['foo', 'bar'])]
+class AnyFancyController {}
+```
+
+-----
+
+I still need to think more about **(1)** (I'm not convinced yet) but I like **(2)** a lot. I totally missed that and I think it'd be nice to have it.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-20T17:31:47Z
+
+1) Allow you no to hardcode the entity name in the route but a custom path using customs pattern.
+
+In my case I have a view of "Animal" in my project for a local shelter.
+
+Animal can have 3 statuses: entered, out (deceased or adopted) and lost.
+
+I have 3 different path for the same entity:
+
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-entres/
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-perdus/
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-sortis/
+
+That's what `#[PrettyRoutesController(path: 'special')]` is about.
+
+`#[PrettyRoutesAction(path: 'list')]` on other side allow you to have custom words for entity action:
+
+Ex:
+/voir for "detail"
+/modifier for "edit"
+
+Which, in my case lead to paths like:
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-entres/modifier/0192592e-f00d-7f9b-a417-85c2f5b5f3f5
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-perdus/modifier/0192592e-f00d-7f9b-a417-85c2f5b5f3f5
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-sortis/modifier/0192592e-f00d-7f9b-a417-85c2f5b5f3f5
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-entres/voir/0192592e-f00d-7f9b-a417-85c2f5b5f3f5
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-perdus/voir/0192592e-f00d-7f9b-a417-85c2f5b5f3f5
+- https://127.0.0.1:8000/admin-xxxxxx/animaux-sortis/voir/0192592e-f00d-7f9b-a417-85c2f5b5f3f5
+
+(I use UUID as primary ID)
+
+etc.
+
+It allows full customisation of URL without necessarily hard-coding entity name or crud actions in the URL.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-20T17:37:14Z
+
+And another important thing I contributed to this plugin is the ability to specify the default dashboard for each URL-rewriten controllers.
+
+In my case again, I have two major area:
+- Manager area /admin-xxxxx
+- Volunter area /volunteer-area
+
+Both are completely independent controllers that use different dashboard and without this feature I had mixed sidebar menus between admin and volunteer area:
+![image](https://github.com/user-attachments/assets/b7793e51-9701-4931-8345-8440121e8fa0)
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-20T17:40:01Z
+
+If you're interested, it's something I implemented here:
+https://github.com/marcin-jozwikowski/easy-admin-pretty-urls/pull/38/files
+
+Currently you implementation **is nice and very welcome**, but still miss key features implemented by [marcin-jozwikowski/easy-admin-pretty-urls](https://github.com/marcin-jozwikowski/easy-admin-pretty-urls) :)
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-21T17:47:49Z
+
+@Geolim4 I don't understand your comment about the menu issue with multiple dashboards. I have apps with two dashboards and each one has its own menu completely independent from each other. That's a built-in feature in EasyAdmin since day one.
+
+Precisely, thanks to one of these apps with multiple dashboards I realized that all routes were being generated for all dashboards and I committed a feature in this PR to allow you to restrict which routes are generated per each dashboard.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-21T17:50:06Z
+
+>  I have apps with two dashboards and each one has its own menu completely independent from each other. That's a built-in feature in EasyAdmin since day one.
+
+Did you tried to make dashboards with controllers that CRUD the same entity ? 😇
+In my case it was not working: latest found dashboard by EA was used.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-21T17:54:18Z
+
+Let me explain you better again:
+I have a dashboard in my "volunteer" area that show to a foster family its own view of its animal in his house with restricted read access on certain fields only.
+I have a dashboard in my "admin" area with controllers that allows me to manage all my animals and even more actions
+
+Without the trick implemented in Marcin bundle, I had mixed sidebar menu because EA was unable to determine the right sidebar behind the "Animal" entity.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-23T19:02:42Z
+
+**Update**: you can now customize the path and route name per CRUD controller. Read the docs in the previous commit to learn more about it.
+
+I'll also add another attribute to customize action paths and names.
+
+I also plan to do something to customize all routes per dashboard. Not sure if it's possible but I'm going to try.
+
+-----
+
+Apart from that, I double checked again the issue that you mentioned with the dashboards, etc. When using pretty URLs I cannot reproduce this error. I have two dashboards, I put the same `linkToCrud()` value in both ... each one generates a different URL and the right one according to its dashboard.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-23T22:24:46Z
+
+> Apart from that, I double checked again the issue that you mentioned with the dashboards, etc. When using pretty URLs I cannot reproduce this error. I have two dashboards, I put the same linkToCrud() value in both ... each one generates a different URL and the right one according to its dashboard.
+
+Hello, it's not what I said :)
+
+I have two different controllers (but they share a common trait) related to two different dashboards but that handle they same entity.
+
+Without Marcin's bundle, EA is putting me the wrong sidebar menu entries as soon I try to index/edit/new on the entity.
+
+It's 100% reproducible, I can privately share you my private project to reproduce it :)
+
+---------------------------------------------------------------------------
+
+by Seb33300 at 2024-10-24T03:19:26Z
+
+@Geolim4 or if you can create a minimal reproducer project, that could be great
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-24T07:38:03Z
+
+I will try but my I have to get ride of my own code by reinstalling a Vanilla project. That's why I proposed to share privately my project :)
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-24T08:26:40Z
+
+@Geolim4 there's no need to share a reproducer for now. I'll try to debug this myself. Thanks.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-24T08:32:00Z
+
+@javiereguiluz if you need a right sample, I can add you right now to my private project, nothing highly confidential it's a shelter animal manager, but you tell me :)
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-27T15:49:01Z
+
+**Update**: now there are 3 PHP attributes to customize all route names and paths at all levels: dashboard, CRUD controller and action. Read the docs of this PR to learn more about them.
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-28T20:16:01Z
+
+> **Update**: now there are 3 PHP attributes to customize all route names and paths at all levels: dashboard, CRUD controller and action. Read the docs of this PR to learn more about them.
+
+Hello Javier, it means now we can completely split the controllers across dashboard without having the mixed sidebar menus "bug" ? Thank you !
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-28T20:45:19Z
+
+@Geolim4 in my tests with this "pretty URLs" feature I still cannot reproduce the bug. But, if after merging this, you or other developer report the same error again, I'll investigate because it shouldn't be happening anymore.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-10-28T21:24:46Z
+
+This is finally ready for the final review 🎉🎉🎉
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-28T21:33:44Z
+
+Thank you Javier, glad that you got inspired from Marcin's work to finally make this important feature covering the major use cases !
+
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-10-29T10:41:19Z
+
+This PR solves #4144 #6322 #5603 #915 #5010
+
+---------------------------------------------------------------------------
+
+by pfpro at 2024-10-29T11:16:12Z
+
+The next level!
