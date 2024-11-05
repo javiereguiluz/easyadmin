@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Cache\CacheWarmer;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextDirection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Scopes;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
@@ -17,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\DashboardDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterConfigDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\I18nDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\ScopesDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\TemplateRegistry;
@@ -53,6 +55,12 @@ final class AdminContextFactory
         $validPageNames = [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, Crud::PAGE_EDIT, Crud::PAGE_NEW];
         $pageName = \in_array($crudAction, $validPageNames, true) ? $crudAction : null;
 
+        $scopesDto = null;
+        if (null !== $crudController && Crud::PAGE_INDEX === $pageName) {
+            $scopesDto = $crudController->configureScopes(Scopes::new())->getAsDto();
+            $scopesDto->processRequest($request);
+        }
+
         $dashboardDto = $this->getDashboardDto($request, $dashboardController);
         $assetDto = $this->getAssetDto($dashboardController, $crudController, $pageName);
         $actionConfigDto = $this->getActionConfig($dashboardController, $crudController, $pageName);
@@ -60,7 +68,7 @@ final class AdminContextFactory
 
         $crudDto = $this->getCrudDto($this->crudControllers, $dashboardController, $crudController, $actionConfigDto, $filters, $crudAction, $pageName);
         $entityDto = $this->getEntityDto($request, $crudDto);
-        $searchDto = $this->getSearchDto($request, $crudDto);
+        $searchDto = $this->getSearchDto($request, $crudDto, $scopesDto);
         $i18nDto = $this->getI18nDto($request, $dashboardDto, $crudDto, $entityDto);
         $templateRegistry = $this->getTemplateRegistry($dashboardController, $crudDto);
         $user = $this->getUser($this->tokenStorage);
@@ -204,7 +212,7 @@ final class AdminContextFactory
         return new I18nDto($locale, $textDirection, $translationDomain, $translationParameters);
     }
 
-    public function getSearchDto(Request $request, ?CrudDto $crudDto): ?SearchDto
+    public function getSearchDto(Request $request, ?CrudDto $crudDto, ?ScopesDto $scopes): ?SearchDto
     {
         if (null === $crudDto) {
             return null;
@@ -218,7 +226,7 @@ final class AdminContextFactory
         $appliedFilters = $queryParams[EA::FILTERS] ?? [];
         $searchMode = $crudDto->getSearchMode();
 
-        return new SearchDto($request, $searchableProperties, $query, $defaultSort, $customSort, $appliedFilters, $searchMode);
+        return new SearchDto($request, $searchableProperties, $query, $defaultSort, $customSort, $appliedFilters, $searchMode, $scopes);
     }
 
     // Copied from https://github.com/symfony/twig-bridge/blob/master/AppVariable.php

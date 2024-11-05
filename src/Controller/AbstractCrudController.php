@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Scopes;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetsDto;
@@ -653,5 +654,10 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         }
 
         return $fieldAssetsDto;
+    }
+
+    public function configureScopes(Scopes $scopes): Scopes
+    {
+        return $scopes;
     }
 }

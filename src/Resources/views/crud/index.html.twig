@@ -245,3 +245,19 @@
         {{ include('@EasyAdmin/crud/includes/_batch_action_modal.html.twig', {}, with_context = false) }}
     {% endif %}
 {% endblock main %}
+
+{% block scopes %}
+    {% if ea.search.hasScopes() %}
+        {% set scopes = ea.search.scopes.scopes %}
+        <section id="scopes" class="content-scopes" class="list_scopes btn-toolbar" role="toolbar">
+        {% for scopeName,scope in scopes %}    
+            <div class="list_scope_group btn-group">
+            {% for button in scope.buttons %}        
+                <a class="btn btn-sm btn-{{ button.active ? 'primary' : 'default' }}" 
+                   href="{{ ea_url().set('page', 1).set('scope[' ~ scopeName ~ ']', button.name).includeReferrer() }}">{{ button.label|trans }}</a>
+            {% endfor %}            
+            </div>
+        {% endfor %}            
+        </section>
+    {% endif %}
+{% endblock scopes %}
