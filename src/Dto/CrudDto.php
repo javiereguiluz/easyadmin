@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Dto;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\BreadcrumbItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\SearchMode;
@@ -43,6 +44,10 @@ final class CrudDto
         Crud::PAGE_INDEX => null,
         Crud::PAGE_NEW => null,
     ];
+    /**
+     * @var \Closure(string|BreadcrumbItem|null): (string|BreadcrumbItem|null)
+     */
+    private ?\Closure $breadcrumbHierarchyCallback = null;
     private ?string $datePattern = 'medium';
     private ?string $timePattern = 'medium';
     private array $dateTimePattern = ['medium', 'medium'];
@@ -72,6 +77,22 @@ final class CrudDto
         $this->newFormOptions = KeyValueStore::new();
         $this->editFormOptions = KeyValueStore::new();
         $this->overriddenTemplates = [];
+    }
+
+    /**
+     * @param \Closure(string|BreadcrumbItem|null): (string|BreadcrumbItem|null) $callback
+     */
+    public function setBreadcrumbHierarchyCallback(?\Closure $callback): void
+    {
+        $this->breadcrumbHierarchyCallback = $callback;
+    }
+
+    /**
+     * @return \Closure(string|BreadcrumbItem|null): (string|BreadcrumbItem|null)|null
+     */
+    public function getBreadcrumbHierarchyCallback(): ?\Closure
+    {
+        return $this->breadcrumbHierarchyCallback;
     }
 
     public function getControllerFqcn(): ?string
@@ -164,7 +185,7 @@ final class CrudDto
 
     public function getCustomPageTitle(?string $pageName = null, $entityInstance = null, array $translationParameters = [], ?string $domain = null): ?TranslatableInterface
     {
-        $title = $this->customPageTitles[$pageName ?? $this->pageName];
+        $title = $this->customPageTitles[$pageName ?? $this->pageName] ?? null;
         if (\is_callable($title)) {
             $title = null !== $entityInstance ? $title($entityInstance) : $title();
         }

@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Context;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\BreadcrumbItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
@@ -200,5 +201,63 @@ final class AdminContext
     public function getTemplatePath(string $templateName): string
     {
         return $this->templateRegistry->get($templateName);
+    }
+
+    public function getBreadcrumbRootLabel(): ?string
+    {
+        return $this->dashboardDto->getBreadcrumbRootLabel();
+    }
+
+    public function getBreadcrumbDivider(): ?string
+    {
+        return $this->dashboardDto->getBreadcrumbDivider();
+    }
+
+    private function getControllerClassMethod(): ?array
+    {
+        if (null === ($classMethod = $this->request->attributes->get('_controller'))) {
+            return null;
+        }
+
+        return \is_array($classMethod) ? $classMethod : explode('::', $classMethod);
+    }
+
+    public function isDashboardIndexRoute(): bool
+    {
+        if (null === ($classMethod = $this->getControllerClassMethod())) {
+            return false;
+        }
+
+        return $this->dashboardControllerInstance::class === $classMethod[0] && 'index' === $classMethod[1];
+    }
+
+    /**
+     * @return BreadcrumbItem[]
+     */
+    public function getBreadcrumb(): array
+    {
+        $result = [];
+        if (null !== ($classMethod = $this->getControllerClassMethod())) {
+            $attributes = array_merge(
+                (new \ReflectionClass($classMethod[0]))->getAttributes(BreadcrumbItem::class),
+                (new \ReflectionMethod($classMethod[0], $classMethod[1]))->getAttributes(BreadcrumbItem::class)
+            );
+            if (\count($attributes) > 0) {
+                return array_map(fn ($attribute) => $attribute->newInstance(), $attributes);
+            }
+        }
+        if (null === $this->crudDto) {
+            return $result;
+        }
+        $callback = $this->dashboardDto->getBreadcrumbHierarchyCallback();
+        if (null !== ($overrideCallback = $this->crudDto->getBreadcrumbHierarchyCallback())) {
+            $callback = $overrideCallback;
+        }
+        $action = $this->crudDto->getCurrentAction();
+        while (null !== ($action = $callback($action))) {
+            $result[] = $action instanceof BreadcrumbItem ? $action : new BreadcrumbItem($action);
+        }
+
+        return array_reverse($result);
     }
 }

@@ -128,6 +128,38 @@ final class Dashboard
         return $this;
     }
 
+    public function enableBreadcrumb(string $breadcrumbRootLabel = 'Home', ?string $breadcrumbDivider = null): self
+    {
+        $this->dto->setBreadcrumbRootLabel($breadcrumbRootLabel);
+        $this->dto->setBreadcrumbDivider($breadcrumbDivider);
+
+        return $this;
+    }
+
+    public function setBreadcrumbRootLabel(string $breadcrumbRootLabel): self
+    {
+        $this->dto->setBreadcrumbRootLabel($breadcrumbRootLabel);
+
+        return $this;
+    }
+
+    public function setBreadcrumbDivider(?string $breadcrumbDivider): self
+    {
+        $this->dto->setBreadcrumbDivider($breadcrumbDivider);
+
+        return $this;
+    }
+
+    /**
+     * @param \Closure(string|BreadcrumbItem|null): (string|BreadcrumbItem|null) $callback
+     */
+    public function setBreadcrumbHierarchyCallback(?\Closure $callback): self
+    {
+        $this->dto->setBreadcrumbHierarchyCallback($callback);
+
+        return $this;
+    }
+
     public function getAsDto(): DashboardDto
     {
         return $this->dto;

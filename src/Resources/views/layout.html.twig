@@ -338,6 +338,45 @@
                     <div class="content-wrapper">
                         {% block content %}
                             <article class="content">
+                                {% block breadcrumb %}
+                                    {% if not ea.breadcrumbRootLabel is null and not ea.dashboardIndexRoute %}
+                                        <nav aria-label="breadcrumb" id="breadcrumb" {% if not ea.breadcrumbDivider is null %}style="--bs-breadcrumb-divider: {{ ea.breadcrumbDivider }};"{% endif %}>
+                                            <ol class="breadcrumb m-0">
+                                                <li class="breadcrumb-item"><a href="{{ path(ea.dashboardrouteName) }}">{{ ea.breadcrumbRootLabel|trans|raw }}</a></li>
+                                                {% for breadcrumb_item in ea.breadcrumb %}
+                                                    {% set breadcrumb_label = '???' %}
+                                                    {% set breadcrumb_url = '#' %}
+                                                    {% set breadcrumb_entity = entity|default(false) and entity.instance|default(false) and entity.instance.id  ? entity.instance : null %}
+                                                    {% if breadcrumb_item.label is null and not ea.crud is null %}
+                                                        {% set breadcrumb_label = ea.crud.customPageTitle(breadcrumb_item.action, breadcrumb_entity, ea.i18n.translationParameters) %}
+                                                        {% set breadcrumb_label = breadcrumb_label is null
+                                                            ? ea.crud.defaultPageTitle(breadcrumb_item.action, breadcrumb_entity, ea.i18n.translationParameters)|trans|raw
+                                                            : breadcrumb_label|trans|raw %} 
+                                                    {% else %}  
+                                                        {% set breadcrumb_label = breadcrumb_item.generateLabel(breadcrumb_entity)|trans|raw %}
+                                                    {% endif %}
+                                                    {% if not breadcrumb_item.route is null %}
+                                                        {% set breadcrumb_url = ea_url().setRoute(breadcrumb_item.route) %}
+                                                    {% elseif not breadcrumb_item.action is null %}
+                                                        {% set breadcrumb_url = ea_url()
+                                                            .unsetAllExcept('crudControllerFqcn', 'dashboardControllerFqcn', 'entityId')
+                                                            .setAction(breadcrumb_item.action) %}
+                                                        {% if not breadcrumb_item.crudControllerFqcn is null %}
+                                                            {% do breadcrumb_url.setController(breadcrumb_item.generateCrudControllerFqcn(breadcrumb_entity)) %}
+                                                        {% endif %}                                                
+                                                        {% if not breadcrumb_item.entityId is null %}
+                                                            {% do breadcrumb_url.setEntityId(breadcrumb_item.generateEntityId(breadcrumb_entity)) %}
+                                                        {% endif %}                                                
+                                                    {% endif %}   
+                                                    {% if breadcrumb_item.credentials is null or is_granted(breadcrumb_item.credentials) %}                                              
+                                                <li class="breadcrumb-item"><a href="{{ breadcrumb_url }}">{{ breadcrumb_label|striptags }}</a></li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <li class="breadcrumb-item active" aria-current="page">{{ block('content_title')|striptags }}</li>
+                                            </ol>
+                                        </nav>
+                                    {% endif %}
+                                {% endblock breadcrumb %}
                                 {% block content_header_wrapper %}
                                     {% set has_help_message = (ea.crud.helpMessage ?? '') is not empty %}
                                     <section class="content-header">

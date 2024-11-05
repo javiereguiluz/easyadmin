@@ -46,6 +46,16 @@ class Crud
     }
 
     /**
+     * @param \Closure(string|BreadcrumbItem|null): (string|BreadcrumbItem|null) $callback
+     */
+    public function setBreadcrumbHierarchyCallback(?\Closure $callback): self
+    {
+        $this->dto->setBreadcrumbHierarchyCallback($callback);
+
+        return $this;
+    }
+
+    /**
      * @param TranslatableInterface|string|callable $label The callable signature is: fn ($entityInstance, $pageName): string
      *
      * @psalm-param mixed $label
