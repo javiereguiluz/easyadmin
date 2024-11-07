@@ -59,6 +59,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\CommonConfigurator as Co
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\ComparisonConfigurator as ComparisonFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\DateTimeConfigurator as DateTimeFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\EntityConfigurator as EntityFilterConfigurator;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\NestedConfigurator as NestedFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\NullConfigurator as NullFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\NumericConfigurator as NumericFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\TextConfigurator as TextFilterConfigurator;
@@ -299,6 +300,12 @@ return static function (ContainerConfigurator $container) {
         ->set(NumericFilterConfigurator::class)
 
         ->set(TextFilterConfigurator::class)
+
+        ->set(NestedFilterConfigurator::class)
+            ->arg(0, new Reference('doctrine'))
+            ->arg(1, \function_exists('tagged')
+                ? tagged(EasyAdminExtension::TAG_FILTER_CONFIGURATOR)
+                : tagged_iterator(EasyAdminExtension::TAG_FILTER_CONFIGURATOR))
 
         ->set(ActionFactory::class)
             ->arg(0, new Reference(AdminContextProvider::class))

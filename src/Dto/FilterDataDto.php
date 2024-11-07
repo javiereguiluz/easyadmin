@@ -31,6 +31,11 @@ final class FilterDataDto
         return $filterData;
     }
 
+    public function getIndex(): int
+    {
+        return $this->index;
+    }
+
     public function getEntityAlias(): string
     {
         return $this->entityAlias;

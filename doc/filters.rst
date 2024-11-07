@@ -35,6 +35,8 @@ explicitly::
     use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
     use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+    use EasyCorp\Bundle\EasyAdminBundle\Filter\NestedFilter;
+    use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 
     class ProductCrudController extends AbstractCrudController
     {
@@ -48,6 +50,11 @@ explicitly::
                 // most of the times there is no need to define the
                 // filter type because EasyAdmin can guess it automatically
                 ->add(BooleanFilter::new('published'))
+
+                // Use filter on nested property
+                ->add(NestedFilter::wrap(
+                    TextFilter::new('options.name')
+                ))
             ;
         }
     }
@@ -79,6 +86,9 @@ These are the built-in filters provided by EasyAdmin:
 * ``TextFilter``: applied by default to string/text fields. It's rendered as a
   ``<select>`` list with the condition (contains/not contains/etc.) and an ``<input>`` or
   ``<textarea>`` to define the comparison value.
+* ``NestedFilter``: A wrapper allowing to use any filters on nested properties.
+This filter is able to apply left joins until the last property in the given path
+and let the wrapped filter applies its conditions to query.
 
 Custom Filters
 --------------
