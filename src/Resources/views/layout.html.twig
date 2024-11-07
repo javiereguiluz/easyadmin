@@ -52,6 +52,12 @@
     {% endblock %}
 </head>
 
+{% macro render_html_attributes(attributes) %}
+    {% for attribute_name, attribute_value in attributes %}
+        {{ attribute_name }}="{{ attribute_value|e('html_attr') }}"
+    {% endfor %}
+{% endmacro %}
+
 {% block body %}
     <body {% block body_attr %}{% endblock %}
         id="{% block body_id %}{% endblock %}"
@@ -177,7 +183,7 @@
             {% endif %}
         {% endset %}
 
-        <div class="wrapper">
+        <div class="wrapper" {{ _self.render_html_attributes(ea.crud.htmlAttributes) }}>
             {% block wrapper %}
                 <div class="responsive-header">
                     {% block responsive_header %}

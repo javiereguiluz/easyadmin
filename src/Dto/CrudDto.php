@@ -65,6 +65,7 @@ final class CrudDto
     private ?string $contentWidth = null;
     private ?string $sidebarWidth = null;
     private bool $hideNullValues = false;
+    private array $htmlAttributes = [];
 
     public function __construct()
     {
@@ -506,5 +507,20 @@ final class CrudDto
     public function hideNullValues(bool $hide): void
     {
         $this->hideNullValues = $hide;
+    }
+
+    public function getHtmlAttributes(): array
+    {
+        return $this->htmlAttributes;
+    }
+
+    public function setHtmlAttributes(array $htmlAttributes): void
+    {
+        $this->htmlAttributes = $htmlAttributes;
+    }
+
+    public function setHtmlAttribute(string $attribute, mixed $value): void
+    {
+        $this->htmlAttributes[$attribute] = $value;
     }
 }

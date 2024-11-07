@@ -429,4 +429,23 @@ class Crud
     {
         return [self::PAGE_DETAIL, self::PAGE_EDIT, self::PAGE_INDEX, self::PAGE_NEW];
     }
+
+    public function getHtmlAttributes(): array
+    {
+        return $this->dto->getHtmlAttributes();
+    }
+
+    public function setHtmlAttributes(array $htmlAttributes): self
+    {
+        $this->dto->setHtmlAttributes($htmlAttributes);
+
+        return $this;
+    }
+
+    public function setHtmlAttribute(string $attribute, mixed $value): self
+    {
+        $this->dto->setHtmlAttribute($attribute, $value);
+
+        return $this;
+    }
 }
