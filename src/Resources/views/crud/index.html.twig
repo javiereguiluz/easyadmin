@@ -2,7 +2,6 @@
 {# @var entities \EasyCorp\Bundle\EasyAdminBundle\Collection\EntityCollection #}
 {# @var paginator \EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator #}
 {% extends ea.templatePath('layout') %}
-{% trans_default_domain ea.i18n.translationDomain %}
 
 {% block body_id entities|length > 0 ? 'ea-index-' ~ entities|first.name : '' %}
 {% block body_class 'ea-index' ~ (entities|length > 0 ? ' ea-index-' ~ entities|first.name : '') %}

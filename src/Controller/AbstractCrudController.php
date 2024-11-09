@@ -3,7 +3,9 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Controller;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -129,6 +131,39 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         $fields = FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
         $filters = $this->container->get(FilterFactory::class)->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
+
+        /** @var array|null $embedContext */
+        $embedContext = $context->getRequest()->query->all('embedContext');
+        if (\array_key_exists('mappedBy', $embedContext)) {
+            $filterProperty = $embedContext['mappedBy'];
+            $filterValue = $embedContext['embeddedIn'] ?? null;
+            if (null !== $filterValue) {
+                // Use the parameter conversion capabilities of Doctrine
+                $metadata = $queryBuilder->getEntityManager()->getClassMetadata($context->getEntity()->getFqcn());
+                $relatedEntityFqcn = $metadata->getAssociationTargetClass($filterProperty);
+                $relatedEntityMetadata = $queryBuilder->getEntityManager()->getClassMetadata($relatedEntityFqcn);
+                $type = $relatedEntityMetadata->getTypeOfField($metadata->getSingleIdentifierFieldName());
+                if (Type::hasType($type)) {
+                    $doctrineType = Type::getType($type);
+                    $platform = $queryBuilder->getEntityManager()->getConnection()->getDatabasePlatform();
+                    $filterValue = $doctrineType->convertToDatabaseValue($filterValue, $platform);
+                }
+                $rootAlias = current($queryBuilder->getRootAliases());
+                $associationMapping = $metadata->getAssociationMapping($filterProperty);
+                if (in_array($associationMapping['type'], [ClassMetadata::ONE_TO_MANY, ClassMetadata::MANY_TO_MANY], true)) {
+                    $queryBuilder->andWhere(':filterValue MEMBER OF '.sprintf('%s.%s', $rootAlias, $filterProperty))
+                                 ->setParameter('filterValue', $filterValue);
+                } else {
+                    $queryBuilder->andWhere(sprintf('%s.%s', $rootAlias, $filterProperty) . ' = :filterValue')
+                                 ->setParameter('filterValue', $filterValue);
+                }
+            }
+            $field = $fields->getByProperty($filterProperty);
+            if ($field instanceof FieldDto) {
+                $fields->unset($field);
+            }
+        }
+
         $paginator = $this->container->get(PaginatorFactory::class)->create($queryBuilder);
 
         // this can happen after deleting some items and trying to return
@@ -147,7 +182,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
 
         $responseParameters = $this->configureResponseParameters(KeyValueStore::new([
             'pageName' => Crud::PAGE_INDEX,
-            'templateName' => 'crud/index',
+            'templateName' => array_key_exists('mappedBy', $embedContext) ? 'crud/embedded' : 'crud/index',
             'entities' => $entities,
             'paginator' => $paginator,
             'global_actions' => $actions->getGlobalActions(),

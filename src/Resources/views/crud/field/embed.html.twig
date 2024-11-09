@@ -1,0 +1,107 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% set current_url = ea_url() %}
+{% if form is defined %}
+    {% set field = form.vars.ea_vars.field %}
+    {% set entity = form.vars.ea_vars.entity %}
+{% endif %}
+{% set target_entity = field.doctrineMetadata.get('targetEntity') %}
+{% set crudControllers = ea.crudControllers %}
+{% set target_entity_crud_fqcn = crudControllers.findCrudFqcnByEntityFqcn(target_entity) %}
+
+{% set url = ea_url().unsetAll().setController(target_entity_crud_fqcn).setAction('index').set('embedContext', {
+    mappedBy: field.doctrineMetadata.get('mappedBy'),
+    embeddedIn: entity.primaryKeyValue
+}) %}
+
+{% set id_suffix = '-'~field.property %}
+
+<div id="embed{{ id_suffix }}" class="position-relative">
+    <div class="d-flex justify-content-center d-none spinner">
+        <div class="spinner-border m-5" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+    <div class="embed-content"></div>
+</div>
+
+<script>
+    window.addEventListener('load', () => {
+        const referrer = window.location.href;
+        const initialUrl = '{{ url|raw }}'
+
+        const embed = document.querySelector('#embed{{ id_suffix }}');
+        const embedContent = embed.querySelector('.embed-content');
+        const spinner = embed.querySelector('.spinner');
+
+        const load = (url) => {
+            spinner.classList.remove('d-none');
+            fetch(url)
+                .then(it => it.text())
+                .then(it => embedContent.innerHTML = it)
+                .then(() => {
+                    // override referrer of actions, so we get back to the "main" view afterwards, not the embed
+                    embedContent.querySelectorAll('.actions a').forEach(action => {
+                        const target = new URL(action.href)
+                        target.searchParams.set('referrer', referrer);
+                        action.href = target.toString();
+                    });
+
+                    // override referrer of actions, so we get back to the "main" view afterwards, not the embed
+                    embedContent.querySelectorAll('.global-actions a').forEach(action => {
+                        const target = new URL(action.href)
+                        const current = new URL(referrer);
+                        target.searchParams.set('relatedEntityId', current.searchParams.get('entityId'));
+                        target.searchParams.set('referrer', referrer);
+                        action.href = target.toString();
+                    })
+
+                    embedContent.querySelectorAll('.action-delete').forEach((actionElement) => {
+                        actionElement.addEventListener('click', (event) => {
+                            event.preventDefault();
+
+                            document.querySelector('#modal-delete-button').addEventListener('click', () => {
+                                const deleteFormAction = new URL(actionElement.getAttribute('formaction'));
+                                const deleteForm = document.querySelector('#delete-form');
+                                deleteFormAction.searchParams.set('referrer', referrer);
+                                deleteForm.setAttribute('action', deleteFormAction.toString());
+                                deleteForm.submit();
+                            });
+                        });
+                    });
+
+                    // intercept sort and pagination
+                    embedContent.querySelectorAll('thead a, .pagination a').forEach(link => {
+                        link.addEventListener('click', evt => {
+                            evt.preventDefault();
+                            load(link.href)
+                        })
+                    })
+
+                    // intercept search
+                    // embedContent.querySelector('.form-action-search form').addEventListener('submit', evt => {
+                    //     evt.preventDefault();
+                    //     const data = new FormData(evt.target);
+                    //     const params = new URLSearchParams(data).toString()
+                    //     const target = new URL(url);
+                    //     target.search = params.toString();
+                    //     load(target.toString())
+                    // })
+
+                    // highlight results
+                    // const searchQuery = new URL(url).searchParams.get('query');
+                    // if(searchQuery) {
+                    //     $(embedContent).find('table tbody td:not(.actions)').highlight($.merge([searchQuery], searchQuery.split(' ')));
+                    // }
+
+                    // can be used to re-initialize dynamic content
+                    document.dispatchEvent(new Event('ea.embed.content-loaded'))
+                })
+                .finally(() => spinner.classList.add('d-none'))
+            ;
+        }
+
+        load(initialUrl);
+    })
+</script>

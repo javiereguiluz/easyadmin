@@ -1,0 +1,10 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% set has_footer = entities|length != 0 %}
+{% set has_batch_actions = false %}
+{% set some_results_are_hidden = false %}
+{% set sort_field_name = app.request.get('sort')|keys|first %}
+{% set sort_order = app.request.get('sort')|first %}
+
+{{ block("content", "@EasyAdmin/crud/index.html.twig") }}
