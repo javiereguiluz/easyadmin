@@ -12,6 +12,7 @@ final class Permission
     public const EA_VIEW_MENU_ITEM = 'EA_VIEW_MENU_ITEM';
     public const EA_VIEW_FIELD = 'EA_VIEW_FIELD';
     public const EA_EXIT_IMPERSONATION = 'EA_EXIT_IMPERSONATION';
+    public const EA_CAN_SWITCH_USER = 'EA_CAN_SWITCH_USER';
 
     public static function exists(?string $permissionName): bool
     {

@@ -32,6 +32,7 @@ class App {
         this.#createModalWindowsForDeleteActions();
         this.#createPopovers();
         this.#createTooltips();
+        this.#createImpersonateModal();
 
         document.addEventListener('ea.collection.item-added', () => this.#createAutoCompleteFields());
     }
@@ -447,6 +448,14 @@ class App {
 
                 toggleVisibilityClasses(secondValue, comparisonWidget.value !== 'between');
             });
+        });
+    }
+
+    #createImpersonateModal(){
+        const impersonateButton = document.querySelector('#modal-impersonate-link');
+        const impersonateModal = document.querySelector(impersonateButton.getAttribute('data-bs-target'));
+        document.querySelector('#impersonate-modal-apply-button').addEventListener('click', () => {
+            impersonateModal.querySelector('form').submit();
         });
     }
 }

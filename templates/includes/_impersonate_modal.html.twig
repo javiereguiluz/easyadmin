@@ -1,0 +1,29 @@
+<div id="modal-impersonate" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <form method="get">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="field-text form-group">
+                                <label for="_switch_user" class="form-control-label required">{{ 'impersonate.username'|trans(domain = 'EasyAdminBundle') }}</label>
+                                <div class="form-widget">
+                                    <input type="text" name="_switch_user" id="impersonate_user_name" required="required" class="form-control" value="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" class="btn btn-sm btn-secondary" id="impersonate-modal-clear-button" formtarget="_self">
+                    <i class="fa fa-close"></i> {{ 'action.close'|trans(domain = 'EasyAdminBundle') }}
+                </button>
+
+                <button type="button" data-bs-dismiss="modal" class="btn btn-sm btn-primary" id="impersonate-modal-apply-button" formtarget="_self">
+                    <i class="fa fa-check"></i> {{ 'user.impersonate_user'|trans(domain = 'EasyAdminBundle') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
