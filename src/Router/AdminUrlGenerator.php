@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInte
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\DashboardControllerRegistryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -216,7 +217,7 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
         return $this->generateUrl();
     }
 
-    public function generateUrl(): string
+    public function generateUrl(?string $type = null): string
     {
         if (false === $this->isInitialized) {
             $this->initialize();
@@ -277,7 +278,7 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
             return $this->urlGenerator->generate($this->dashboardRoute, $routeParameters, $urlType);
         }
 
-        if ($usePrettyUrls) {
+        if ($usePrettyUrls && MenuItemDto::TYPE_DASHBOARD !== $type) {
             $dashboardControllerFqcn = $this->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $context->getRequest()->attributes->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $this->dashboardControllerRegistry->getFirstDashboardFqcn();
             $crudControllerFqcn = $this->get(EA::CRUD_CONTROLLER_FQCN) ?? $context->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN);
             $actionName = $this->get(EA::CRUD_ACTION) ?? $context->getRequest()->attributes->get(EA::CRUD_ACTION);

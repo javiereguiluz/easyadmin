@@ -147,7 +147,7 @@ final class MenuFactory implements MenuFactoryInterface
         }
 
         if (MenuItemDto::TYPE_DASHBOARD === $menuItemType) {
-            return $this->adminUrlGenerator->unsetAll()->generateUrl();
+            return $this->adminUrlGenerator->unsetAll()->generateUrl(MenuItemDto::TYPE_DASHBOARD);
         }
 
         if (MenuItemDto::TYPE_ROUTE === $menuItemType) {

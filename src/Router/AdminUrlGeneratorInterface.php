@@ -42,5 +42,5 @@ interface AdminUrlGeneratorInterface
 
     public function getSignature(): string;
 
-    public function generateUrl(): string;
+    public function generateUrl(?string $type = null): string;
 }

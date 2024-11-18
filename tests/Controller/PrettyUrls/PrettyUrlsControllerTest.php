@@ -129,7 +129,7 @@ class PrettyUrlsControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/admin/pretty/urls/blog_post');
 
         $this->assertSame('/admin/pretty/urls', $crawler->filter('#header-logo a.logo')->attr('href'), 'The main Dashboard logo link points to the dashboard entry URL');
-        $this->assertSame('http://localhost/admin/pretty/urls/blog_post', $crawler->filter('li.menu-item a:contains("Dashboard")')->attr('href'), 'The Dashboard link inside the menu points to the first entity of the menu');
+        $this->assertSame('http://localhost/admin/pretty/urls', $crawler->filter('li.menu-item a:contains("Dashboard")')->attr('href'), 'The Dashboard link inside the menu points to the dashboard');
         $this->assertSame('http://localhost/admin/pretty/urls/blog_post', $crawler->filter('li.menu-item a:contains("Blog Posts")')->attr('href'));
         $this->assertSame('http://localhost/admin/pretty/urls/category', $crawler->filter('li.menu-item a:contains("Categories")')->attr('href'));
     }
@@ -142,7 +142,7 @@ class PrettyUrlsControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/second/dashboard/user-editor/custom/path-for-index');
 
         $this->assertSame('/second/dashboard', $crawler->filter('#header-logo a.logo')->attr('href'), 'The main Dashboard logo link points to the dashboard entry URL');
-        $this->assertSame('http://localhost/second/dashboard/user-editor/custom/path-for-index', $crawler->filter('li.menu-item a:contains("Dashboard")')->attr('href'), 'The Dashboard link inside the menu points to the first entity of the menu');
+        $this->assertSame('http://localhost/second/dashboard', $crawler->filter('li.menu-item a:contains("Dashboard")')->attr('href'), 'The Dashboard link inside the menu points to the dashboard');
         $this->assertSame('http://localhost/second/dashboard/user-editor/custom/path-for-index', $crawler->filter('li.menu-item a:contains("Users")')->attr('href'));
     }
 
