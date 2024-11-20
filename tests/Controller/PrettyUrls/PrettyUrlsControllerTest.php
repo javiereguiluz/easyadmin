@@ -160,6 +160,19 @@ class PrettyUrlsControllerTest extends WebTestCase
         $this->assertMatchesRegularExpression('#http://localhost/admin/pretty/urls/blog_post/1/edit\?csrfToken=.*&fieldName=content#', $crawler->filter('td.field-boolean input[type="checkbox"]')->attr('data-toggle-url'));
     }
 
+    /**
+     * @dataProvider categoryActionsDataProvider
+     */
+    public function testDefaultActionsWithPrettyUrls(string $uri)
+    {
+        $client = static::createClient();
+        $client->followRedirects();
+
+        $client->request('GET', $uri);
+
+        $this->assertResponseIsSuccessful();
+    }
+
     public function testCustomActionsUsePrettyUrls()
     {
         $client = static::createClient();
@@ -197,5 +210,12 @@ class PrettyUrlsControllerTest extends WebTestCase
         $this->assertSame('http://localhost/second/dashboard/user-editor/custom/path-for-index?page=1&sort%5Bid%5D=DESC', $crawler->filter('th.searchable a')->eq(0)->attr('href'));
         $this->assertSame('http://localhost/second/dashboard/user-editor/custom/path-for-index?page=1&sort%5Bname%5D=DESC', $crawler->filter('th.searchable a')->eq(1)->attr('href'));
         $this->assertSame('http://localhost/second/dashboard/user-editor/custom/path-for-index?page=1&sort%5Bemail%5D=DESC', $crawler->filter('th.searchable a')->eq(2)->attr('href'));
+    }
+
+    public static function categoryActionsDataProvider(): iterable
+    {
+        yield 'Create' => ['/admin/pretty/urls/category/new'];
+        yield 'Read' => ['/admin/pretty/urls/category/1'];
+        yield 'Update' => ['/admin/pretty/urls/category/1/edit'];
     }
 }
