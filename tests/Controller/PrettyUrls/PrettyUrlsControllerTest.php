@@ -146,6 +146,17 @@ class PrettyUrlsControllerTest extends WebTestCase
         $this->assertSame('http://localhost/second/dashboard/user-editor/custom/path-for-index', $crawler->filter('li.menu-item a:contains("Users")')->attr('href'));
     }
 
+    public function testCustomMainMenuHasActiveClass()
+    {
+        $client = static::createClient();
+        $client->followRedirects();
+
+        $crawler = $client->request('GET', '/admin/pretty/urls/category');
+
+        $this->assertStringContainsString('active', $crawler->filter('li.menu-item a:contains("Categories")')->closest('li.menu-item')->attr('class'), 'The “Categories” link must have the active class');
+        $this->assertStringNotContainsString('active', $crawler->filter('li.menu-item a:contains("Blog Posts")')->closest('li.menu-item')->attr('class'), 'The “Blog Posts” link must not have the active class');
+    }
+
     public function testDefaultActionsUsePrettyUrls()
     {
         $client = static::createClient();
