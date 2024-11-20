@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use function Symfony\Component\String\u;
 use Twig\Markup;
@@ -52,6 +53,14 @@ final class CommonPostConfigurator implements FieldConfiguratorInterface
         }
 
         $formatted = $callable($field->getValue(), $entityDto->getInstance());
+
+        // we don't want to unintentionally allow people to add XSS vulnerabilities
+        // in the code just because some people need to have HTML/JS
+        // so that if you want know what you're doing you have to explicitly
+        // disable this.
+        if ($field->getCustomOption(FieldTrait::OPTION_STRIP_TAGS) ?? true) {
+            return $formatted;
+        }
 
         // if the callable returns a string, wrap it in a Twig Markup to render the
         // HTML and CSS/JS elements that it might contain

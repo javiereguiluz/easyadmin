@@ -16,6 +16,8 @@ use Symfony\Contracts\Translation\TranslatableInterface;
  */
 trait FieldTrait
 {
+    public const OPTION_STRIP_TAGS = 'stripTags';
+
     private FieldDto $dto;
 
     private function __construct()
@@ -336,6 +338,13 @@ trait FieldTrait
     public function setCustomOptions(array $options): self
     {
         $this->dto->setCustomOptions($options);
+
+        return $this;
+    }
+    
+    public function stripTags(bool $stripTags = true): self
+    {
+        $this->setCustomOption(self::OPTION_STRIP_TAGS, $stripTags);
 
         return $this;
     }

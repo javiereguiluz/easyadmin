@@ -17,8 +17,6 @@ final class TextareaField implements FieldInterface
     public const OPTION_MAX_LENGTH = TextField::OPTION_MAX_LENGTH;
     public const OPTION_NUM_OF_ROWS = 'numOfRows';
     public const OPTION_RENDER_AS_HTML = TextField::OPTION_RENDER_AS_HTML;
-    public const OPTION_STRIP_TAGS = TextField::OPTION_STRIP_TAGS;
-
     /**
      * @param TranslatableInterface|string|false|null $label
      */
@@ -67,13 +65,6 @@ final class TextareaField implements FieldInterface
     public function renderAsHtml(bool $asHtml = true): self
     {
         $this->setCustomOption(self::OPTION_RENDER_AS_HTML, $asHtml);
-
-        return $this;
-    }
-
-    public function stripTags(bool $stripTags = true): self
-    {
-        $this->setCustomOption(self::OPTION_STRIP_TAGS, $stripTags);
 
         return $this;
     }
