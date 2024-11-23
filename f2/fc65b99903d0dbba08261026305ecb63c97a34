@@ -1,0 +1,23 @@
+---------------------------------------------------------------------------
+
+by yceruto at 2024-11-14T00:11:06Z
+
+>Thanks @yceruto for publishing a fantastic article about how to use Twig Components in bundles
+
+You're very welcome! I'm glad you enjoyed the article 😊 you were my inspiration after all
+
+---------------------------------------------------------------------------
+
+by alexislefebvre at 2024-11-20T17:16:59Z
+
+This PR adds 2300+ SVG files, will it slow down the installation of this bundle? I'm thinking about all these files which will be decompressed and created on every CI job that use EasyAdmin.
+
+I don't have an alternative solution to offer.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-20T21:15:25Z
+
+@alexislefebvre yes, I thought about that.
+
+Initially, this PR also added Tabler icons, which added +6,000 additional icons. I removed that because it was too much. But, in the case of FontAwesome, I think it's a reasonable tradeoff. This adds a ~2,000 small files, but also removes +2,000 CSS classes injected in all admin pages. We can also validate icon names, trigger deprecations when legacy icon names are used, etc. So, I think it's worth it 🙌
