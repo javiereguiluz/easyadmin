@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-20T21:04:32Z
+
+@WedgeSama thanks for this proposal.
+
+I'm not an expert in Symfony Forms ... so I appreciate any help to improve features related to forms 🙇
+
+Just asking: soon, we're going to rework the entire EasyAdmin interface to use Twig Components everywhere. So, is this something that we have to keep in mind before doing changes like this in the form theme template? Maybe not, but just asking before merging this. Thanks!
+
+---------------------------------------------------------------------------
+
+by WedgeSama at 2024-11-20T21:53:09Z
+
+You're welcome.
+
+I pretty much a fan of Symfony Forms component ^^ So I wanted to simplify it use in EA like I explained here https://github.com/EasyCorp/EasyAdminBundle/pull/6555#issuecomment-2488958206
+
+In the future, if you plan to completely remove the use of SF forms in favor of Twig component, changes like this wont be a problem (I think).
+
+IMO, even with Twig component, keeping the capability to do something like that can be good. (With block in component maybe?)
