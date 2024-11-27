@@ -5,6 +5,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Contro
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\Bill;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\BlogPost;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\Category;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,5 +30,8 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linktoDashboard('Dashboard', 'fa6-solid:house');
         yield MenuItem::linkToCrud('Categories', 'fas fa-tags', Category::class);
         yield MenuItem::linkToCrud('Blog Posts', 'fas fa-tags', BlogPost::class);
+        yield MenuItem::subMenu('Submenu', 'fas fa-tags')->setSubItems([
+            MenuItem::linkToCrud('Bills', 'fas fa-tags', Bill::class),
+        ]);
     }
 }

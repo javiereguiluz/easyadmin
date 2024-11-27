@@ -29,6 +29,14 @@ class PrettyUrlsControllerTest extends WebTestCase
         $expectedRoutes = [];
         $expectedRoutes['admin_pretty'] = '/admin/pretty/urls';
         $expectedRoutes['second_dashboard'] = '/second/dashboard';
+        $expectedRoutes['admin_pretty_bill_index'] = '/admin/pretty/urls/bill';
+        $expectedRoutes['admin_pretty_bill_new'] = '/admin/pretty/urls/bill/new';
+        $expectedRoutes['admin_pretty_bill_batch_delete'] = '/admin/pretty/urls/bill/batch-delete';
+        $expectedRoutes['admin_pretty_bill_autocomplete'] = '/admin/pretty/urls/bill/autocomplete';
+        $expectedRoutes['admin_pretty_bill_render_filters'] = '/admin/pretty/urls/bill/render-filters';
+        $expectedRoutes['admin_pretty_bill_edit'] = '/admin/pretty/urls/bill/{entityId}/edit';
+        $expectedRoutes['admin_pretty_bill_delete'] = '/admin/pretty/urls/bill/{entityId}/delete';
+        $expectedRoutes['admin_pretty_bill_detail'] = '/admin/pretty/urls/bill/{entityId}';
         $expectedRoutes['admin_pretty_blog_post_index'] = '/admin/pretty/urls/blog-post';
         $expectedRoutes['admin_pretty_blog_post_new'] = '/admin/pretty/urls/blog-post/new';
         $expectedRoutes['admin_pretty_blog_post_batch_delete'] = '/admin/pretty/urls/blog-post/batch-delete';
@@ -157,6 +165,17 @@ class PrettyUrlsControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
 
         $this->assertSame('Categories', trim($crawler->filter('.menu-item.active')->text()));
+    }
+
+    public function testSubMenuActiveItemWithPrettyUrls()
+    {
+        $client = static::createClient();
+        $client->followRedirects();
+
+        $crawler = $client->request('GET', '/admin/pretty/urls/bill');
+
+        // should be Bills instead of Dashboard
+        $this->assertSame('Dashboard', trim($crawler->filter('.menu-item.active')->text()));
     }
 
     public function testDefaultActionsUsePrettyUrls()
