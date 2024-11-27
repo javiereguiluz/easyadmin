@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-26T19:34:48Z
+
+I like this change a lot ... but after merging this, some people might get angry at me because this is a BC break. But, since we just introduced the pretty URLs feature, it might be OK, more or less 🙏
+
+---------------------------------------------------------------------------
+
+by simondaigre at 2024-11-26T19:45:13Z
+
+Seems my PR description disappeared. Yes I was wondering the same, I'm not sure if this feature is marked as experimental. A previous PR removed ending slashes on index paths and no one complain so I'm assuming this is OK.
+
+Also @javiereguiluz is there is reason to not use `symfony/string` methods here ?
+
+---------------------------------------------------------------------------
+
+by simoheinonen at 2024-11-27T14:06:50Z
+
+I would also prefer this! Shouldn't be too hard to make this configurable also
