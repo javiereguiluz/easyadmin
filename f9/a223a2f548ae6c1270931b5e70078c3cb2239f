@@ -1,0 +1,18 @@
+---------------------------------------------------------------------------
+
+by Seb33300 at 2024-11-26T15:47:13Z
+
+I learned something.
+Here is the related doc page: https://symfony.com/doc/current/reference/configuration/kernel.html#kernel-build-dir
+
+---------------------------------------------------------------------------
+
+by alexndlm at 2024-11-26T18:30:20Z
+
+@javiereguiluz Could you check please?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-26T19:03:48Z
+
+I don't use this build_dir myself, but I think your proposal is the best way to do all this. I'll merge this soon. Thanks!
