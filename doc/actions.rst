@@ -311,7 +311,9 @@ The following example shows all kinds of actions in practice::
     use App\Entity\Order;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+    use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+    use Symfony\Component\HttpFoundation\Response;
 
     class OrderCrudController extends AbstractCrudController
     {
@@ -354,11 +356,14 @@ The following example shows all kinds of actions in practice::
             ;
         }
 
-        public function renderInvoice(AdminContext $context)
+        public function renderInvoice(AdminContext $context): Response
         {
             $order = $context->getEntity()->getInstance();
 
-            // add your logic here...
+            // add your logic here, e.g. by using a Twig template...
+
+            // this example shows the id of the entity
+            return new Response((string) $order->getId());
         }
     }
 
