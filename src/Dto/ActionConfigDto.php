@@ -56,12 +56,12 @@ final class ActionConfigDto
 
     public function prependAction(string $pageName, ActionDto $actionDto): void
     {
-        $this->actions[$pageName][$actionDto->getName()] = $actionDto;
+        $this->actions[$pageName] = array_merge([$actionDto->getName() => $actionDto], $this->actions[$pageName]);
     }
 
     public function appendAction(string $pageName, ActionDto $actionDto): void
     {
-        $this->actions[$pageName] = array_merge([$actionDto->getName() => $actionDto], $this->actions[$pageName]);
+        $this->actions[$pageName] = array_merge($this->actions[$pageName], [$actionDto->getName() => $actionDto]);
     }
 
     public function setAction(string $pageName, ActionDto $actionDto): void
