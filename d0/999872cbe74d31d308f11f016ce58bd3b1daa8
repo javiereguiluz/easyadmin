@@ -1,0 +1,5 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-29T18:46:57Z
+
+In the failing 7.2 tests we see the infamous `"Undefined variable $_v0"` error reported also in #6605.
