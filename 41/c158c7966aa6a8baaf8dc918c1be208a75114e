@@ -1,0 +1,28 @@
+---------------------------------------------------------------------------
+
+by Seb33300 at 2024-12-01T09:01:54Z
+
+Instead of creating your own custom component I would like to suggest to use [symfony/ux-icons](https://symfony.com/bundles/ux-icons/current/index.html).
+I can find several icon sets for country flags:
+- https://ux.symfony.com/icons?query=&set=flag
+- https://ux.symfony.com/icons?query=&set=cif
+- https://ux.symfony.com/icons?query=&set=flagpack
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-01T10:53:54Z
+
+@Seb33300 yes, but we can't use because of:
+
+* We don't want to make ux-icons a mandatory dependency (it's already optional when using custom icon sets)
+* We only want to include the flags of the valid countries officially recognized by the related ISO standard. This can become a highly heated political debate, so I prefer to not allow that debate. We only include the flags of the countries that ISO recognizes. If you don't like this, please complain to ISO, not us.
+* We include little DX details like adding a `<title>` with the name of the country in the language of the current user (this is a little DX detail that it's needed to have a polished UI)
+* Also for DX, when a flag does not exist ... instead of throwing an error, we display an all-red flag with an error message when you put the mouse over that "flag".
+
+For these and other reasons, we had to create our own little flag component.
+
+---------------------------------------------------------------------------
+
+by pfpro at 2024-12-01T11:44:47Z
+
+Nice explanation - i like bullet point 2
