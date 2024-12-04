@@ -1,0 +1,107 @@
+---------------------------------------------------------------------------
+
+by bytes-commerce at 2024-11-20T14:04:56Z
+
+I'd assume you have fixed this for the same reason that I have created the PR below - multiple fields with same names/ids cause issues.
+
+See my PR that adds Uniqid by default to tabs to prevent said issues. https://github.com/EasyCorp/EasyAdminBundle/pull/6517
+
+---------------------------------------------------------------------------
+
+by WedgeSama at 2024-11-20T15:54:29Z
+
+> I'd assume you have fixed this for the same reason that I have created the PR below - multiple fields with same names/ids cause issues.
+>
+> See my PR that adds Uniqid by default to tabs to prevent said issues. #6517
+
+Nop, the case I wanted to address is to allow to remove any ids generation and replace it by a known value. With in mind, overriding template capability.
+
+I started to do some PRs to use more native SF form capabilities ( #6536 )
+
+IMHO, we should not rely on any id generation to create SF Form, it prevent native form functionalities like form template overriding to be used.
+
+I did not encountered your case yet. (Am I lucky? ;) ) And after a quick look at your PR, I think there are different.
+
+---------------------------------------------------------------------------
+
+by bytes-commerce at 2024-11-20T15:56:39Z
+
+Well, lets reverse it; I'd assume that this feature has the potential to fix my experienced issue as well when delivered in a broader scale (for every field). :+1:
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-23T12:00:01Z
+
+@WedgeSama thanks for this contribution. I like it but I have a couple of suggestions.
+
+This feature looks the same as Symfony Form's `block_prefix` option: https://symfony.com/doc/current/form/form_themes.html#custom-fragment-naming-for-individual-fields
+
+So, I propose the following changes:
+
+* Rename `propertyNameSuffix` as `blockPrefix` or `formBlockPrefix`
+* Don't change the `FieldDto::getProperty()` method but add a `FieldDto::getBlockName()` or `FieldDto::getFormBlockName()` that does the same
+
+If you agree, I can make this changes for you while merging. Cheers!
+
+---------------------------------------------------------------------------
+
+by WedgeSama at 2024-11-23T18:02:34Z
+
+The PR does more then that:
+1. It change the form name to remove Ulid if set
+2. Allow template overriding
+3. More template overriding: keep the `block_prefix` settable too by `FormField::setFormTypeOption('block_prefix', 'foobar')`, having both name and block_prefix to do template overriding can be useful.
+4. It "forward" the suffix (Ulid or the set value) to closing forms (fieldset, row, etc...)
+
+IMO, the important features of the PR are the 2. and the 4.
+
+I thought of somethink to change the PR with your suggestions while keeping the keys features:
+- adding the `blockPrefix`
+- use it for the closing form with a suffix `_close` to keep the consistency between open and close form (but only `block_prefix`, the names will not have the consistency)
+- dont change `getProperty`
+
+This will solve the 2. & 4. but not 1. nor 3. And 3. will be hard (maybe impossible without 1.?) but can live without it.
+
+@javiereguiluz  if your OK with those behaviors, I'll do the changes 😉
+
+PS: Still can address the 1. in another PR but maybe we need to discuse more of how we can do it
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-11-25T19:33:13Z
+
+The main problem here is that I don't know the Symfony Form component well 😐 so I'm missing things.
+
+In any case, there's only one thing in your PR that scares me. This change:
+
+![image](https://github.com/user-attachments/assets/2680fa42-4409-4f94-81ce-f94037f5b131)
+
+The `getProperty()` method is used everywhere and it always must be the real property name in the related Doctrine entity (except for the special "properties" used in the forms and that use the random ULIDs suffixes). It scares me a lot that changing this method will break things 😓
+
+Just asking:
+
+Instead of changing `getProperty()` and adding `getRealPropertyName()` to keep the code of the original `getProperty()` method ...
+
+... could we keep `getProperty()` intact and add a `getPropertyNameForForms()` or `getPropertyNameWithSuffix()` or something like that with the new behavior?
+
+Thanks
+
+---------------------------------------------------------------------------
+
+by WedgeSama at 2024-11-26T10:40:04Z
+
+True, I did not see that the `getProperty()` was used everywhere, I understand
+
+I created `getPropertyNameWithSuffix()` like you suggested, and call it only if a FormField is used, when build the form.
+
+With this, I can keep all features listed above + preserve `getProperty()` as it is.
+
+I think we got something now @javiereguiluz :wink:
+
+PS : Plus I added more tests ^^
+
+---------------------------------------------------------------------------
+
+by WedgeSama at 2024-12-04T10:17:23Z
+
+@javiereguiluz let me know if you need anything about the PR :wink:
