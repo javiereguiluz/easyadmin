@@ -8,11 +8,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Factory\MenuFactoryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MainMenuDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\UserMenuDto;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -25,19 +25,13 @@ use Symfony\Contracts\Translation\TranslatableInterface;
  */
 final class MenuFactory implements MenuFactoryInterface
 {
-    private AdminContextProvider $adminContextProvider;
-    private AuthorizationCheckerInterface $authChecker;
-    private LogoutUrlGenerator $logoutUrlGenerator;
-    private AdminUrlGeneratorInterface $adminUrlGenerator;
-    private MenuItemMatcherInterface $menuItemMatcher;
-
-    public function __construct(AdminContextProvider $adminContextProvider, AuthorizationCheckerInterface $authChecker, LogoutUrlGenerator $logoutUrlGenerator, AdminUrlGeneratorInterface $adminUrlGenerator, MenuItemMatcherInterface $menuItemMatcher)
-    {
-        $this->adminContextProvider = $adminContextProvider;
-        $this->authChecker = $authChecker;
-        $this->logoutUrlGenerator = $logoutUrlGenerator;
-        $this->adminUrlGenerator = $adminUrlGenerator;
-        $this->menuItemMatcher = $menuItemMatcher;
+    public function __construct(
+        private readonly AdminContextProviderInterface $adminContextProvider,
+        private readonly AuthorizationCheckerInterface $authChecker,
+        private readonly LogoutUrlGenerator $logoutUrlGenerator,
+        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly MenuItemMatcherInterface $menuItemMatcher,
+    ) {
     }
 
     /**

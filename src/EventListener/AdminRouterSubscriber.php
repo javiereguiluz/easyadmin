@@ -7,6 +7,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\AdminContextFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\ControllerFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
@@ -35,25 +37,65 @@ class AdminRouterSubscriber implements EventSubscriberInterface
     private ControllerResolverInterface $controllerResolver;
     private UrlGeneratorInterface $urlGenerator;
     private RequestMatcherInterface $requestMatcher;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(AdminContextFactory $adminContextFactory, ControllerFactory $controllerFactory, ControllerResolverInterface $controllerResolver, UrlGeneratorInterface $urlGenerator, RequestMatcherInterface $requestMatcher)
+    public function __construct(AdminContextFactory $adminContextFactory, ControllerFactory $controllerFactory, ControllerResolverInterface $controllerResolver, UrlGeneratorInterface $urlGenerator, RequestMatcherInterface $requestMatcher, CacheItemPoolInterface $cache)
     {
         $this->adminContextFactory = $adminContextFactory;
         $this->controllerFactory = $controllerFactory;
         $this->controllerResolver = $controllerResolver;
         $this->urlGenerator = $urlGenerator;
         $this->requestMatcher = $requestMatcher;
+        $this->cache = $cache;
     }
 
     public static function getSubscribedEvents(): array
     {
         return [
             RequestEvent::class => [
+                ['onKernelRequestPrettyUrls', 1],
                 ['onKernelRequest', 0],
             ],
             // the priority must be higher than 0 to run it before ParamConverterListener
             ControllerEvent::class => ['onKernelController', 128],
         ];
+    }
+
+    public function onKernelRequestPrettyUrls(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
+        $routeName = $request->attributes->get('_route');
+        if (null === $routeName) {
+            return;
+        }
+
+        $adminRoutes = $this->cache->getItem(AdminRouteGenerator::CACHE_KEY_ROUTE_TO_FQCN)->get();
+        if (null === $adminRoutes || !\array_key_exists($routeName, $adminRoutes)) {
+            return;
+        }
+
+        $request->attributes->set(EA::ROUTE_CREATED_BY_EASYADMIN, true);
+
+        $dashboardControllerFqcn = $adminRoutes[$routeName][EA::DASHBOARD_CONTROLLER_FQCN];
+        if (null === $dashboardControllerInstance = $this->getDashboardControllerInstance($dashboardControllerFqcn, $request)) {
+            return;
+        }
+
+        // creating the context is expensive, so it's created once and stored in the request
+        // if the current request already has an AdminContext object, do nothing
+        if (null === $adminContext = $request->attributes->get(EA::CONTEXT_REQUEST_ATTRIBUTE)) {
+            $crudControllerFqcn = $adminRoutes[$routeName][EA::CRUD_CONTROLLER_FQCN];
+            $actionName = $adminRoutes[$routeName][EA::CRUD_ACTION];
+
+            $request->attributes->set(EA::DASHBOARD_CONTROLLER_FQCN, $dashboardControllerFqcn);
+            $request->attributes->set(EA::CRUD_CONTROLLER_FQCN, $crudControllerFqcn);
+            $request->attributes->set(EA::CRUD_ACTION, $actionName);
+
+            $crudControllerInstance = $this->controllerFactory->getCrudControllerInstance($crudControllerFqcn, $actionName, $request);
+            $adminContext = $this->adminContextFactory->create($request, $dashboardControllerInstance, $crudControllerInstance, $actionName);
+        }
+
+        $request->attributes->set(EA::CONTEXT_REQUEST_ATTRIBUTE, $adminContext);
     }
 
     /**
@@ -96,8 +138,8 @@ class AdminRouterSubscriber implements EventSubscriberInterface
 
         // if the request is related to a CRUD controller, change the controller to be executed
         if (null !== $crudControllerInstance = $this->getCrudControllerInstance($request)) {
-            $symfonyControllerFqcnCallable = [$crudControllerInstance, $request->query->get(EA::CRUD_ACTION)];
-            $symfonyControllerStringCallable = [$crudControllerInstance::class, $request->query->get(EA::CRUD_ACTION)];
+            $symfonyControllerFqcnCallable = [$crudControllerInstance, $request->attributes->get(EA::CRUD_ACTION) ?? $request->query->get(EA::CRUD_ACTION)];
+            $symfonyControllerStringCallable = [$crudControllerInstance::class, $request->attributes->get(EA::CRUD_ACTION) ?? $request->query->get(EA::CRUD_ACTION)];
 
             // this makes Symfony believe that another controller is being executed
             // (e.g. this is needed for the autowiring of controller action arguments)
@@ -165,9 +207,9 @@ class AdminRouterSubscriber implements EventSubscriberInterface
 
     private function getCrudControllerInstance(Request $request): ?CrudControllerInterface
     {
-        $crudControllerFqcn = $request->query->get(EA::CRUD_CONTROLLER_FQCN);
-
-        $crudAction = $request->query->get(EA::CRUD_ACTION);
+        // when using pretty URLs, the data is in the request attributes instead of the query string
+        $crudControllerFqcn = $request->attributes->get(EA::CRUD_CONTROLLER_FQCN) ?? $request->query->get(EA::CRUD_CONTROLLER_FQCN);
+        $crudAction = $request->attributes->get(EA::CRUD_ACTION) ?? $request->query->get(EA::CRUD_ACTION);
 
         return $this->controllerFactory->getCrudControllerInstance($crudControllerFqcn, $crudAction, $request);
     }

@@ -45,4 +45,12 @@ final class CrudControllerRegistry
     {
         return $this->crudFqcnToCrudIdMap[$controllerFqcn] ?? null;
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getAll(): array
+    {
+        return array_values($this->entityFqcnToCrudFqcnMap);
+    }
 }

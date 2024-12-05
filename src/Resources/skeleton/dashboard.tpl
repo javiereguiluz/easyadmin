@@ -6,7 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+<?php
+$attribute_class_fqcn = class_exists(\Symfony\Component\Routing\Attribute\Route::class)
+    ? \Symfony\Component\Routing\Attribute\Route::class
+    : \Symfony\Component\Routing\Annotation\Route::class;
+?>
+use <?= $attribute_class_fqcn; ?>;
 
 class <?= $class_name; ?> extends AbstractDashboardController
 {

@@ -4,6 +4,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Provider;
 
 use Doctrine\DBAL\Types\Types;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 
 /**
@@ -11,11 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
  */
 final class FieldProvider
 {
-    private AdminContextProvider $adminContextProvider;
-
-    public function __construct(AdminContextProvider $adminContextProvider)
-    {
-        $this->adminContextProvider = $adminContextProvider;
+    public function __construct(
+        private readonly AdminContextProviderInterface $adminContextProvider,
+    ) {
     }
 
     public function getDefaultFields(string $pageName): array

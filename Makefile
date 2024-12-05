@@ -7,7 +7,9 @@ help: ## Show help
 ## —— Tests ———————————————————————————————————
 tests: ## Run tests
 	rm -rf $(shell php -r "echo sys_get_temp_dir();")/com.github.easycorp.easyadmin/tests/var/test/cache/*
-	php vendor/bin/simple-phpunit -v
+	SYMFONY_DEPRECATIONS_HELPER='ignoreFile=./tests/baseline-ignore.txt' php vendor/bin/simple-phpunit -v
+	rm -rf $(shell php -r "echo sys_get_temp_dir();")/com.github.easycorp.easyadmin/tests/var/pretty_urls/test/cache/*
+	USE_PRETTY_URLS=1 php vendor/bin/simple-phpunit tests/Controller/PrettyUrls/PrettyUrlsController.php
 tests-coverage: ## Generate test coverage
 	rm -rf $(shell php -r "echo sys_get_temp_dir();")/com.github.easycorp.easyadmin/tests/var/test/cache/*
 	XDEBUG_MODE=coverage php vendor/bin/simple-phpunit --coverage-html $(shell php -r "echo sys_get_temp_dir();")/com.github.easycorp.easyadmin/tests/var/test/coverage/

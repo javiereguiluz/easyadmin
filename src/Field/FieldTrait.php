@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextAlign;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Form\FormConfigBuilder;
 use Symfony\Contracts\Translation\TranslatableInterface;
 
 /**
@@ -38,6 +39,21 @@ trait FieldTrait
     public function setProperty(string $propertyName): self
     {
         $this->dto->setProperty($propertyName);
+
+        return $this;
+    }
+
+    public function setPropertySuffix(string $propertyNameSuffix): self
+    {
+        if ('' === trim($propertyNameSuffix, " \t\n\r\0\v")) {
+            throw new \InvalidArgumentException('The suffix cannot be empty.');
+        }
+
+        if (!FormConfigBuilder::isValidName($propertyNameSuffix)) {
+            throw new \InvalidArgumentException(sprintf('The suffix "%s" is not valid. You must follow form name conventions.', $propertyNameSuffix));
+        }
+
+        $this->dto->setPropertyNameSuffix($propertyNameSuffix);
 
         return $this;
     }
@@ -137,8 +153,9 @@ trait FieldTrait
 
     /**
      * Sets the value of a custom HTML attribute that will be added when rendering the field.
-     * E.g. setAttribute('data-foo', 'bar') will render a 'data-foo="bar"' attribute in HTML.
-     * It's a shortcut for the equivalent setFormTypeOption('attr.data-foo', 'bar).
+     * E.g. setHtmlAttribute('data-foo', 'bar') will render a 'data-foo="bar"' attribute in HTML.
+     * On 'index' and 'detail' pages, the attribute is added to the field container (<td> and div.field-group respectively).
+     * On 'new' and 'edit' pages, the attribute is added to the form field; it's a shortcut for the equivalent setFormTypeOption('attr.data-foo', 'bar).
      */
     public function setHtmlAttribute(string $attributeName, $attributeValue): self
     {
@@ -150,6 +167,7 @@ trait FieldTrait
             throw new \InvalidArgumentException(sprintf('The value of the "%s" attribute must be a scalar value (string, integer, float, boolean); "%s" given.', $attributeName, \gettype($attributeValue)));
         }
 
+        $this->dto->setHtmlAttribute($attributeName, $attributeValue);
         $this->dto->setFormTypeOption('attr.'.$attributeName, $attributeValue);
 
         return $this;

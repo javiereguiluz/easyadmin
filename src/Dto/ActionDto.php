@@ -12,7 +12,8 @@ final class ActionDto
 {
     private ?string $type = null;
     private ?string $name = null;
-    private TranslatableInterface|string|null $label = null;
+    /** @var TranslatableInterface|string|(callable(object): string)|null */
+    private mixed $label = null;
     private ?string $icon = null;
     private string $cssClass = '';
     private string $addedCssClass = '';
@@ -63,12 +64,20 @@ final class ActionDto
         $this->name = $name;
     }
 
-    public function getLabel(): TranslatableInterface|string|false|null
+    public function isDynamicLabel(): bool
+    {
+        return \is_callable($this->label);
+    }
+
+    public function getLabel(): TranslatableInterface|string|callable|false|null
     {
         return $this->label;
     }
 
-    public function setLabel(TranslatableInterface|string|false|null $label): void
+    /**
+     * @param TranslatableInterface|string|(callable(object $entity): string)|false|null $label
+     */
+    public function setLabel(TranslatableInterface|string|callable|false|null $label): void
     {
         $this->label = $label;
     }

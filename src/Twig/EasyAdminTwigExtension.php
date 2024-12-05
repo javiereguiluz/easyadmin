@@ -3,9 +3,9 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Twig;
 
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldLayoutDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FormLayoutFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\AssetMapper\ImportMap\ImportMapRenderer;
@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Icons\Twig\UXIconRuntime;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use Twig\Extension\AbstractExtension;
@@ -26,22 +27,18 @@ use Twig\TwigFunction;
  * to be used by admin templates.
  *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
+ * @author Benjamin Georgeault <git@wedgesama.fr>
  */
 class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterface
 {
-    private ServiceLocator $serviceLocator;
-    private AdminContextProvider $adminContextProvider;
-    private ?CsrfTokenManagerInterface $csrfTokenManager;
-    private ?ImportMapRenderer $importMapRenderer;
-    private TranslatorInterface $translator;
-
-    public function __construct(ServiceLocator $serviceLocator, AdminContextProvider $adminContextProvider, ?CsrfTokenManagerInterface $csrfTokenManager, ?ImportMapRenderer $importMapRenderer, TranslatorInterface $translator)
-    {
-        $this->serviceLocator = $serviceLocator;
-        $this->adminContextProvider = $adminContextProvider;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->importMapRenderer = $importMapRenderer;
-        $this->translator = $translator;
+    public function __construct(
+        private readonly ServiceLocator $serviceLocator,
+        private readonly AdminContextProviderInterface $adminContextProvider,
+        private readonly ?CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly ?ImportMapRenderer $importMapRenderer,
+        private readonly TranslatorInterface $translator,
+        private ?UXIconRuntime $uxIconRuntime,
+    ) {
     }
 
     public function getFunctions(): array
@@ -52,6 +49,9 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
             new TwigFunction('ea_call_function_if_exists', [$this, 'callFunctionIfExists'], ['needs_environment' => true, 'is_safe' => ['html' => true]]),
             new TwigFunction('ea_create_field_layout', [$this, 'createFieldLayout']),
             new TwigFunction('ea_importmap', [$this, 'renderImportmap'], ['is_safe' => ['html']]),
+            new TwigFunction('ea_form_ealabel', null, ['node_class' => 'Symfony\Bridge\Twig\Node\SearchAndRenderBlockNode', 'is_safe' => ['html']]),
+            // TODO: remove this when Twig 3.15 is published and we can use the 'guard' tag
+            new TwigFunction('ea_ux_icon', [$this, 'renderIcon'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -67,10 +67,8 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
 
     public function getGlobals(): array
     {
-        $context = $this->adminContextProvider->getContext();
-
-        // when there's an admin context, make it available in all templates as a short named variable
-        return null === $context ? [] : ['ea' => $context];
+        // this is needed to make the admin context available on any Twig template via the short named variable 'ea'
+        return ['ea' => $this->adminContextProvider];
     }
 
     /**
@@ -136,8 +134,21 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
         throw new RuntimeError(sprintf('Invalid callback for filter: "%s"', $filterName));
     }
 
-    public function representAsString($value): string
+    public function representAsString($value, string|callable|null $toStringMethod = null): string
     {
+        if (null !== $toStringMethod) {
+            if (\is_callable($toStringMethod)) {
+                return $toStringMethod($value, $this->translator);
+            }
+
+            $callable = [$value, $toStringMethod];
+            if (!\is_callable($callable) || !method_exists($value, $toStringMethod)) {
+                throw new \RuntimeException(sprintf('The method "%s()" does not exist or is not callable in the value of type "%s"', $toStringMethod, \is_object($value) ? $value::class : \gettype($value)));
+            }
+
+            return \call_user_func($callable);
+        }
+
         if (null === $value) {
             return '';
         }
@@ -225,5 +236,18 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
         }
 
         return $this->importMapRenderer->render($entryPoint, $attributes);
+    }
+
+    /**
+     * We need to recreate the 'ux_icon()' Twig function from Symfony because calling it
+     * via 'ea_call_function_if_exists('ux_icon', '...')' doesn't work.
+     */
+    public function renderIcon(string $name, array $attributes = []): string
+    {
+        if ('' === $name || null === $this->uxIconRuntime) {
+            return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"  stroke="#f00" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><title>You are not seeing any icon because you are using custom icons (instead of the built-in FontAwesome icons) and don\'t have the Symfony UX Icons package installed in your application. Run "composer require symfony/ux-icons" and reload this page.</title><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>';
+        }
+
+        return $this->uxIconRuntime->renderIcon($name, $attributes);
     }
 }

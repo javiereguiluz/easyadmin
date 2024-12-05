@@ -27,7 +27,7 @@ final class AssetPackage implements PackageInterface
     {
         $this->package = new PathPackage(
             '/bundles/easyadmin',
-            new JsonManifestVersionStrategy(__DIR__.'/../Resources/public/manifest.json'),
+            new JsonManifestVersionStrategy(__DIR__.'/../../public/manifest.json'),
             new RequestStackContext($requestStack)
         );
     }

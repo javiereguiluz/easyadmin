@@ -139,6 +139,7 @@
     --form-control-disabled-bg: var(--gray-200);
     --form-control-disabled-color: var(--gray-600);
     --form-input-border-color: var(--gray-300);
+    --form-input-error-legend-color: var(--red-600);
     --form-input-error-border-color: var(--red-600);
     --form-input-hover-border-color: var(--gray-400);
     --form-input-shadow: 0 1px 2px 0 var(--gray-50);
@@ -471,6 +472,7 @@
     --form-control-disabled-bg: var(--true-gray-900);
     --form-control-disabled-color: var(--true-gray-500);
     --form-input-border-color: var(--true-gray-700);
+    --form-input-error-legend-color: var(--red-500);
     --form-input-error-border-color: var(--red-500);
     --form-input-hover-border-color: var(--true-gray-500);
     --form-input-shadow: none;
@@ -784,7 +786,7 @@
 .alert {
     --bs-alert-padding-x: 1rem;
     --bs-alert-padding-y: 1rem;
-    --bs-alert-margin-bottom: 0;
+    --bs-alert-margin-block-end: 0;
     --bs-alert-border-radius: 0;
     --bs-alert-link-color: inherit;
 }

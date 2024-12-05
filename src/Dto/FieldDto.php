@@ -27,6 +27,7 @@ final class FieldDto
 {
     private ?string $fieldFqcn = null;
     private ?string $propertyName = null;
+    private ?string $propertyNameSuffix = null;
     private mixed $value = null;
     private mixed $formattedValue = null;
     private $formatValueCallable;
@@ -54,6 +55,7 @@ final class FieldDto
     /** @internal */
     private $uniqueId;
     private KeyValueStore $displayedOn;
+    private array $htmlAttributes = [];
 
     public function __construct()
     {
@@ -157,6 +159,26 @@ final class FieldDto
     public function setProperty(string $propertyName): void
     {
         $this->propertyName = $propertyName;
+    }
+
+    public function getPropertyNameSuffix(): ?string
+    {
+        return $this->propertyNameSuffix;
+    }
+
+    public function setPropertyNameSuffix(?string $propertyNameSuffix): void
+    {
+        $this->propertyNameSuffix = $propertyNameSuffix;
+    }
+
+    public function getPropertyNameWithSuffix(): string
+    {
+        return sprintf(
+            '%s%s%s',
+            $this->propertyName,
+            null !== $this->propertyNameSuffix ? '_' : '',
+            $this->propertyNameSuffix ?? '',
+        );
     }
 
     /**
@@ -475,5 +497,24 @@ final class FieldDto
     public function isDisplayedOn(string $pageName): bool
     {
         return $this->displayedOn->has($pageName);
+    }
+
+    public function getHtmlAttributes(): array
+    {
+        return $this->htmlAttributes;
+    }
+
+    public function setHtmlAttributes(array $htmlAttributes): self
+    {
+        $this->htmlAttributes = $htmlAttributes;
+
+        return $this;
+    }
+
+    public function setHtmlAttribute(string $attribute, mixed $value): self
+    {
+        $this->htmlAttributes[$attribute] = $value;
+
+        return $this;
     }
 }

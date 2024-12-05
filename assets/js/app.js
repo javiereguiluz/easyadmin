@@ -65,8 +65,8 @@ class App {
                 return;
             }
 
-            // needed because the menu accordion is based on the max-height property.
-            // visible elements must be initialized with a explicit max-height; otherwise
+            // needed because the menu accordion is based on the max-block-size property.
+            // visible elements must be initialized with a explicit max-block-size; otherwise
             // when you click on them the first time, the animation is not smooth
             if (menuItem.classList.contains('expanded')) {
                 menuItemSubmenu.style.maxHeight = menuItemSubmenu.scrollHeight + 'px';
@@ -181,7 +181,13 @@ class App {
         };
 
         const searchQueryTerms = tokenizeString(searchElement.value);
-        const searchQueryTermsHighlightRegexp = new RegExp(searchQueryTerms.join('|'), 'i');
+        const searchQueryTermsHighlightRegexp = new RegExp(
+            searchQueryTerms
+                // escapes all characters that are special inside a RegExp
+                .map(term => term.replace(/[|\\{}()[\]^$+*?.-]/g, '\\$&'))
+                .join('|'),
+            'i'
+        );
 
         const elementsToHighlight = document.querySelectorAll('table tbody td.searchable');
         const highlighter = new Mark(elementsToHighlight);

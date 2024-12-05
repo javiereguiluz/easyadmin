@@ -2,7 +2,7 @@
 /* ------------------------------------------------------------------------- */
 
 .badge + .badge {
-  margin-left: 8px;
+  margin-inline-start: 8px;
 }
 
 .badge.badge-pill {

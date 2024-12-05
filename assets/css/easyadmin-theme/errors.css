@@ -1,8 +1,8 @@
 /* Error pages (shown when exceptions are triggered in production)
 /* ------------------------------------------------------------------------- */
 body.error .error-message {
-  max-width: 500px;
-  min-height: 400px;
+  max-inline-size: 500px;
+  min-block-size: 400px;
   padding: 45px;
 }
 body.error .error-message h1 {
@@ -11,5 +11,5 @@ body.error .error-message h1 {
   font-weight: 600;
 }
 body.error .error-message h1 i {
-  margin-right: 4px;
+  margin-inline-end: 4px;
 }

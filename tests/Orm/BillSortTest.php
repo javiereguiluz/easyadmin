@@ -58,7 +58,7 @@ class BillSortTest extends AbstractCrudTestCase
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextSame('th.header-for-field-association > a', 'Customers');
-        $this->assertSelectorExists('th.header-for-field-association i.'.$expectedSortIcon);
+        $this->assertSelectorExists('th.header-for-field-association span.icon svg');
 
         $index = 1;
 
@@ -75,7 +75,7 @@ class BillSortTest extends AbstractCrudTestCase
         yield [
             [],
             null,
-            'fa-sort',
+            'internal:sort-arrows',
         ];
 
         yield [
@@ -95,7 +95,7 @@ class BillSortTest extends AbstractCrudTestCase
                     return $aCustomers <=> $bCustomers;
                 });
             },
-            'fa-arrow-up',
+            'internal:sort-arrow-up',
         ];
 
         yield [
@@ -115,7 +115,7 @@ class BillSortTest extends AbstractCrudTestCase
                     return $bCustomers <=> $aCustomers;
                 });
             },
-            'fa-arrow-down',
+            'internal:sort-arrow-down',
         ];
     }
 }

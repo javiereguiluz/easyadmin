@@ -27,8 +27,8 @@ input[disabled] {
 
 .form-check .form-check-input {
     border-color: var(--form-type-check-input-border-color);
-    height: 15px;
-    width: 15px;
+    block-size: 15px;
+    inline-size: 15px;
 }
 .form-check:not(.form-switch) .form-check-input:not(:checked) {
     background-color: unset;
@@ -42,7 +42,7 @@ label.form-check-label {
     display: none;
 }
 .form-widget .form-check + .form-check {
-    margin-top: 5px;
+    margin-block-start: 5px;
 }
 
 .form-group label.required:after,
@@ -53,11 +53,11 @@ label.form-check-label {
     display: inline-block;
     filter: opacity(75%);
     position: relative;
-    right: -2px;
-    top: -8px;
+    inset-inline-end: -2px;
+    inset-block-start: -8px;
     z-index: var(--zindex-700);
-    height: 4px;
-    width: 4px;
+    block-size: 4px;
+    inline-size: 4px;
 }
 
 /* Form widgets (inputs, selects, etc.) */
@@ -68,7 +68,7 @@ label.form-check-label {
     color: var(--form-help-color);
     display: block;
     font-size: var(--font-size-sm);
-    margin-top: 5px;
+    margin-block-start: 5px;
     transition: color 0.5s ease;
 }
 .form-widget:focus-within .form-help {
@@ -84,7 +84,7 @@ label.form-check-label {
     box-shadow: var(--form-input-shadow);
     color: var(--form-input-text-color);
     font-size: .875rem;
-    height: 30px;
+    block-size: 30px;
     padding: 3px 7px 4px;
     white-space: nowrap;
     word-break: keep-all;
@@ -122,7 +122,7 @@ body.ea-dark-scheme .form-widget .form-select {
 }
 
 .form-widget .form-select[multiple] {
-    height: auto;
+    block-size: auto;
     background-image: none;
     padding: 0;
 }
@@ -148,7 +148,7 @@ body.ea-dark-scheme .form-widget .form-select {
 
 .form-widget .form-control + .input-group-append {
     color: var(--gray-600);
-    height: 30px;
+    block-size: 30px;
 }
 .form-widget .form-control + .input-group-append i {
     color: var(--gray-600);
@@ -158,11 +158,11 @@ body.ea-dark-scheme .form-widget .form-select {
     text-align: right;
 }
 .form-widget input.form-control.is-invalid[data-ea-align=right] {
-    padding-right: 30px;
+    padding-inline-end: 30px;
 }
 
 .form-widget textarea.form-control {
-    height: auto;
+    block-size: auto;
     line-height: 1.6;
     white-space: pre-wrap;
 }
@@ -172,7 +172,7 @@ body.ea-dark-scheme .form-widget .form-select {
     padding: 3px 28px 4px 7px;
 }
 .ts-dropdown.form-select {
-    height: auto;
+    block-size: auto;
 }
 
 /* Checkbox widgets */
@@ -182,25 +182,25 @@ body.ea-dark-scheme .form-widget .form-select {
 }
 label.form-check-label {
     margin: 0;
-    padding: 0 0 0 5px;
+    padding-inline-start: 5px;
 }
 .form-check .form-check-input {
     float: none;
-    margin-left: 0;
-    margin-top: 2px;
+    margin-inline-start: 0;
+    margin-block-start: 2px;
 }
 .form-check-inline + .form-check-inline {
-    margin-left: 15px;
+    margin-inline-start: 15px;
 }
 
 /* in Bootstrap custom file widgets, the label is used to simulate the file input */
 .field-file .custom-file, .field-file .custom-file-input {
-    height: 30px;
+    block-size: 30px;
 }
 .field-file .custom-file label.custom-file-label {
-    height: 30px;
+    block-size: 30px;
     margin: 0;
-    max-width: 350px;
+    max-inline-size: 350px;
     overflow: hidden;
     padding: 3px 7px 5px;
     text-align: left;
@@ -211,7 +211,7 @@ label.form-check-label {
     display: inline-block;
     font-family: "Font Awesome 6 Free";
     font-size: 17px;
-    height: 28px;
+    block-size: 28px;
     line-height: 28px;
     padding: 0 8px;
     vertical-align: middle;
@@ -226,25 +226,25 @@ label.form-check-label {
 
 .datetime-widget select,
 .datetime-widget .input-group > .form-select {
-    min-width: max-content;
+    min-inline-size: max-content;
     -webkit-appearance: none; /* needed for Safari */
 }
 .datetime-widget + .datetime-widget {
-    margin-left: 10px;
+    margin-inline-start: 10px;
 }
 
 .datetime-widget select + select {
-    margin-left: 4px;
+    margin-inline-start: 4px;
 }
 
 .datetime-widget-time select {
     margin: 0 0 0 2px;
 }
 .datetime-widget-time select:first-child {
-    margin-left: 0;
+    margin-inline-start: 0;
 }
 .datetime-widget-time select:last-child {
-    margin-right: 0;
+    margin-inline-end: 0;
 }
 
 /* Utilities to create common form fields (long, short, etc.) */
@@ -253,7 +253,7 @@ label.form-check-label {
 }
 
 .long .form-control, .large .form-control {
-    max-width: unset !important;
+    max-inline-size: unset !important;
 }
 
 .large .input.form-control {
@@ -261,8 +261,8 @@ label.form-check-label {
 }
 
 .large textarea.form-control {
-    height: 500px;
-    max-width: unset !important;
+    block-size: 500px;
+    max-inline-size: unset !important;
 }
 
 .code input.form-control, .code textarea.form-control {
@@ -271,13 +271,13 @@ label.form-check-label {
 
 .field-group .long .form-control, .field-group .large .form-control {
     flex: 0 0 100% !important;
-    max-width: unset !important;
+    max-inline-size: unset !important;
 }
 
 .field-group .large textarea.form-control {
     flex: 0 0 100% !important;
-    height: 500px;
-    max-width: unset !important;
+    block-size: 500px;
+    max-inline-size: unset !important;
 }
 
 /* Form tabs */
@@ -286,7 +286,7 @@ label.form-check-label {
     border: 0;
     box-shadow: 0 2px 0 var(--form-tabs-border-color);
     margin: 0px 0px 20px;
-    padding-left: 0px;
+    padding-inline-start: 0px;
 }
 
 .form-tabs-tablist .nav-tabs a, .form-tabs-tablist .nav-tabs a:hover {
@@ -298,12 +298,12 @@ label.form-check-label {
     padding: 4px 14px 8px;
 }
 .form-tabs-tablist .nav-tabs .nav-item:first-child a, .form-tabs-tablist .nav-tabs .nav-item:first-child a:hover {
-     padding-left: 0;
+     padding-inline-start: 0;
  }
 
 .form-tabs-tablist .nav-tabs .tab-nav-item-icon {
     color: var(--text-muted);
-    margin-right: 5px;
+    margin-inline-end: 5px;
 }
 
 .form-tabs-tablist .nav-tabs .nav-link:focus-visible {
@@ -320,44 +320,44 @@ label.form-check-label {
 }
 .form-tabs-tablist .nav-tabs .nav-link.active:before {
     content: '';
-    width: 100%;
-    height: 2px;
+    inline-size: 100%;
+    block-size: 2px;
     background: var(--body-bg);
     position: absolute;
-    bottom: -2px;
-    left: 0;
+    inset-block-end: -2px;
+    inset-inline-start: 0;
 }
 .form-tabs-tablist .nav-tabs .nav-link.active:after {
     content: '';
-    width: calc(100% - 2 * var(--form-tabs-gutter-x));
-    height: 2px;
+    inline-size: calc(100% - 2 * var(--form-tabs-gutter-x));
+    block-size: 2px;
     background: var(--link-color);
     position: absolute;
-    bottom: -2px;
-    left: var(--form-tabs-gutter-x);
+    inset-block-end: -2px;
+    inset-inline-start: var(--form-tabs-gutter-x);
 }
 .form-tabs-tablist .nav-tabs .nav-item:first-child .nav-link.active:after {
-    width: calc(100% - var(--form-tabs-gutter-x));
-    left: 0;
+    inline-size: calc(100% - var(--form-tabs-gutter-x));
+    inset-inline-start: 0;
 }
 
 .form-tabs-tablist .nav-tabs .nav-item .badge {
     line-height: 1;
-    margin-left: 4px;
+    margin-inline-start: 4px;
     padding: 3px 6px;
 }
 
 .form-tabs-content .tab-help {
     color: var(--form-tabs-help-color);
-    margin-top: -10px;
-    margin-bottom: 15px;
+    margin-block-start: -10px;
+    margin-block-end: 15px;
 }
 
 /* Form columns */
 .form-column .form-column-title {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
+    margin-block-end: 15px;
 }
 .form-column .form-column-title .form-column-title-content {
     align-items: center;
@@ -370,7 +370,7 @@ label.form-check-label {
 
 .form-column .form-column-title .form-column-icon {
     color: var(--form-column-icon-color);
-    margin-right: 10px;
+    margin-inline-end: 10px;
 }
 
 .form-column .form-column-title .form-column-help {
@@ -379,7 +379,7 @@ label.form-check-label {
     margin: 0;
 }
 .form-column .field-form_fieldset {
-    margin-bottom: var(--bs-gutter-x);
+    margin-block-end: var(--bs-gutter-x);
 }
 
 .form-column .form-fieldset {
@@ -392,7 +392,7 @@ label.form-check-label {
     padding: calc(var(--bs-gutter-x) - 5px) var(--bs-gutter-x) calc(var(--bs-gutter-x) / 2);
 }
 .form-column .form-fieldset-header :has(.form-fieldset-title-content.collapsed) {
-    padding-top: calc(var(--bs-gutter-x) / 2);
+    padding-block-start: calc(var(--bs-gutter-x) / 2);
 }
 
 .form-column .form-fieldset-header .form-fieldset-title .form-fieldset-title-content {
@@ -401,7 +401,7 @@ label.form-check-label {
 }
 
 .form-column .form-fieldset-header .form-fieldset-title .form-fieldset-help {
-    margin-top: 2px;
+    margin-block-start: 2px;
 }
 
 .form-column .form-fieldset-body {
@@ -413,7 +413,7 @@ label.form-check-label {
 
 /* Form fieldsets */
 .field-form_fieldset {
-    margin-bottom: calc(1.5 * var(--bs-gutter-x)); /* not a typo; don't use --bs-gutter-y here */
+    margin-block-end: calc(1.5 * var(--bs-gutter-x)); /* not a typo; don't use --bs-gutter-y here */
 }
 
 .form-section-empty {
@@ -454,20 +454,20 @@ label.form-check-label {
 .form-fieldset-header .form-fieldset-title .form-fieldset-title-content .collapsible::after {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    inset-block-start: 0;
+    inset-inline-start: 0;
 }
 
 .form-fieldset-header .form-fieldset-title .form-fieldset-icon {
     color: var(--form-fieldset-icon-color);
-    margin-right: 10px;
+    margin-inline-end: 10px;
 }
 
 .form-fieldset-header .form-fieldset-title .form-fieldset-help {
     color: var(--form-fieldset-help-color);
-    margin-top: 6px;
+    margin-block-start: 6px;
 }
 
 /* Form actions ("Save changes", "Delete", etc.) */
@@ -477,7 +477,7 @@ label.form-check-label {
     padding: 0;
 }
 .form-actions .btn {
-    margin-left: 10px;
+    margin-inline-start: 10px;
 }
 
 /* Form errors */
@@ -491,11 +491,17 @@ label.form-check-label {
 .has-error .form-widget input.form-control,
 .has-error .form-widget textarea.form-control,
 .has-error .form-widget .form-select,
+.has-error .form-widget input.form-check-input,
 .has-error .ea-fileupload .input-group,
 .has-error .btn.input-file-container,
 .has-error .CodeMirror,
-.has-error .ea-text-editor-wrapper {
+.has-error.ea-text-editor-wrapper, .has-error.form-group .ea-text-editor-wrapper {
+    border-color: var(--form-input-error-border-color);
     box-shadow: var(--form-input-error-shadow);
+}
+.form-group.has-error label,
+.form-group.has-error legend {
+    color: var(--form-input-error-legend-color);
 }
 
 .has-error .ea-fileupload .input-group {
@@ -515,7 +521,7 @@ form .invalid-feedback {
     color: var(--color-danger);
     font-size: 1em;
     font-weight: 500;
-    padding-top: 6px;
+    padding-block-start: 6px;
 }
 .form-check-input.is-invalid ~ .form-check-label,
 .was-validated .form-check-input:not([type="checkbox"]):invalid ~ .form-check-label {
@@ -524,11 +530,11 @@ form .invalid-feedback {
 
 form .invalid-feedback .badge-danger {
     font-size: 0.6875rem;
-    margin-right: 2px;
+    margin-inline-end: 2px;
     padding: 3px 4px;
 }
 form .invalid-feedback > .d-block + .d-block {
-    margin-top: 5px;
+    margin-block-start: 5px;
 }
 
 /* Form group inputs */
@@ -537,27 +543,27 @@ form .invalid-feedback > .d-block + .d-block {
     border: 1px solid var(--form-input-group-text-border-color);
     box-shadow: var(--form-input-box-shadow);
     color: var(--form-input-text-color);
-    height: 30px;
+    block-size: 30px;
     padding: 3px 10px 5px;
 }
 .input-group button,
 .input-group button:hover,
 .input-group button:active,
 .input-group button:focus {
-    height: 28px;
-    margin-top: 1px;
+    block-size: 28px;
+    margin-block-start: 1px;
 }
 
 .input-group-append {
-    margin-left: 0;
+    margin-inline-start: 0;
 }
 .input-group-prepend {
-    margin-right: 0;
+    margin-inline-end: 0;
 }
 
 /* fileupload widgets */
 .ea-fileupload .custom-file {
-    height: 30px;
+    block-size: 30px;
 }
 .ea-fileupload .input-group {
     flex-wrap: nowrap;
@@ -569,7 +575,7 @@ form .invalid-feedback > .d-block + .d-block {
     border-radius: 0;
     color: var(--text-color);
     font-size: 17px;
-    height: 28px;
+    block-size: 28px;
     line-height: 28px;
     margin: 0;
     padding: 0 8px;
@@ -577,22 +583,22 @@ form .invalid-feedback > .d-block + .d-block {
 }
 .ea-fileupload .input-group .btn:first-child,
 .ea-fileupload .input-group .btn:hover:first-child {
-    margin-left: 5px;
+    margin-inline-start: 5px;
 }
 .ea-fileupload .input-group .btn:last-child,
 .ea-fileupload .input-group .btn:hover:last-child {
-    border-top-right-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
+    border-start-end-radius: var(--border-radius);
+    border-end-end-radius: var(--border-radius);
 }
 
 .ea-fileupload .custom-file-input {
     cursor: pointer;
-    height: calc(1.5em + .75rem + 2px);
+    block-size: calc(1.5em + .75rem + 2px);
     margin: 0;
     overflow: hidden;
     opacity: 0;
     position: relative;
-    width: 100%;
+    inline-size: 100%;
     z-index: 2;
 }
 
@@ -602,17 +608,17 @@ form .invalid-feedback > .d-block + .d-block {
     border: 1px solid var(--form-input-border-color);
     box-shadow: var(--form-input-shadow);
     color: var(--form-input-text-color);
-    height: 30px;
-    left: 0;
+    block-size: 30px;
+    inset-inline-start: 0;
     margin: 0 !important;
     overflow: hidden;
     padding: 3px 40px 3px 7px !important;
     position: absolute;
     text-align: left !important;
     text-overflow: ellipsis;
-    top: 0;
+    inset-block-start: 0;
     white-space: nowrap;
-    width: 100% !important;
+    inline-size: 100% !important;
 }
 .ea-fileupload .custom-file-label::after {
     display: none;
@@ -623,20 +629,21 @@ form .invalid-feedback > .d-block + .d-block {
     border: 1px solid var(--form-input-border-color);
     box-shadow: none;
     color: var(--text-muted);
-    height: 30px;
+    block-size: 30px;
     padding: 7px 0 7px 7px;
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     z-index: 3;
 }
 
 .ea-fileupload .fileupload-list {
-    height: auto;
-    margin-top: 7px;
+    block-size: auto;
+    margin-block-start: 7px;
     padding: 0;
+    border-color: var(--form-input-border-color);
 }
 .ea-fileupload .fileupload-list .fileupload-table {
-    width: 100%;
+    inline-size: 100%;
 }
 .ea-fileupload .fileupload-list .fileupload-table td {
     padding: 3px 7px;
@@ -646,21 +653,21 @@ form .invalid-feedback > .d-block + .d-block {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 300px;
+    max-inline-size: 300px;
 }
 .ea-fileupload .fileupload-list .fileupload-table tr:nth-child(odd) td {
-    background-color: #f5f7ff;
+    background-color: var(--form-control-bg);
 }
 .ea-fileupload .fileupload-list .fileupload-table td.file-size {
-    color: #4e566d;
+    color: var(--text-muted);
 }
 
 /* Image/file vich uploads */
 .ea-vich-image img {
     box-shadow: 0 0 0 4px var(--white), 0px 0px 4px 3px var(--gray-600);
     margin: 6px 4px 12px;
-    max-height: 300px;
-    max-width: 100%;
+    max-block-size: 300px;
+    max-inline-size: 100%;
 }
 
 .ea-vich-file-name {
@@ -678,7 +685,7 @@ form .invalid-feedback > .d-block + .d-block {
 .ea-vich-image-actions > div,
 .ea-vich-file-actions > div {
     float: left;
-    margin-right: 4px;
+    margin-inline-end: 4px;
 }
 
 .ea-vich-image-actions:after,
@@ -690,7 +697,7 @@ form .invalid-feedback > .d-block + .d-block {
 
 .ea-vich-image-actions .field-checkbox,
 .ea-vich-file-actions .field-checkbox {
-    padding-top: 4px;
+    padding-block-start: 4px;
 }
 
 .ea-vich-image-actions .form-widget {
@@ -709,13 +716,13 @@ form .invalid-feedback > .d-block + .d-block {
     display: block;
     font-size: 999px;
     filter: opacity(0);
-    min-height: 100%;
-    min-width: 100%;
+    min-block-size: 100%;
+    min-inline-size: 100%;
     opacity: 0;
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     text-align: right;
-    top: 0;
+    inset-block-start: 0;
 }
 
 /* Fix "Browse" button for regular file inputs */

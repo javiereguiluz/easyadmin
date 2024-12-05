@@ -1,8 +1,7 @@
 var Encore = require('@symfony/webpack-encore');
-const WebpackRTLPlugin = require('@automattic/webpack-rtl-plugin');
 
 Encore
-    .setOutputPath('./src/Resources/public/')
+    .setOutputPath('./public/')
     .setPublicPath('')
     .setManifestKeyPrefix('')
 
@@ -10,27 +9,6 @@ Encore
     .enableSourceMaps(false)
     .enableVersioning(true)
     .disableSingleRuntimeChunk()
-
-    // copy FontAwesome fonts
-    .copyFiles({
-        from: './node_modules/@fortawesome/fontawesome-free/webfonts/',
-        // relative to the output dir
-        to: 'fonts/[name].[hash].[ext]'
-    })
-
-    // copy flag images for country type
-    .copyFiles({
-        from: './node_modules/country-flag-icons/3x2/',
-        to: 'images/flags/[path][name].[ext]',
-        pattern: /\.svg$/
-    })
-    // this is needed for special 'flags' such as UNKNOWN.svg (which is used for missing flags)
-    .copyFiles({
-        from: './assets/images/flags/',
-        to: 'images/flags/[path][name].[ext]',
-    })
-
-    .addPlugin(new WebpackRTLPlugin())
 
     .configureCssMinimizerPlugin((options) => {
         options.minimizerOptions = {

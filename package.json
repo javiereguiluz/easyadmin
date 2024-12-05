@@ -1,20 +1,22 @@
 {
   "devDependencies": {
-    "@automattic/webpack-rtl-plugin": "^5.1.0",
-    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.16.0",
+    "@fortawesome/fontawesome-free": "^6.7.1",
     "@popperjs/core": "^2.11.5",
-    "@symfony/webpack-encore": "^2.0",
+    "@symfony/webpack-encore": "^5.0.1",
     "basiclightbox": "^5.0.4",
     "bootstrap": "^5.1.0",
     "codemirror": "^5.65.2",
-    "country-flag-icons": "^1.4.25",
     "dirty-form": "^0.4.0",
     "file-loader": "^6.0.0",
     "mark.js": "^8.11.1",
     "postcss": "^8.4.31",
     "slugify": "^1.4.0",
     "tom-select": "^2.0.1",
-    "trix": "^2.1.4"
+    "trix": "^2.1.4",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.1.4"
   },
   "license": "UNLICENSED",
   "private": true,

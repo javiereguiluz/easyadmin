@@ -51,7 +51,11 @@ final class ControllerFactory
         }
 
         $newRequest = $request->duplicate(null, null, ['_controller' => [$controllerFqcn, $controllerAction]]);
-        $controllerCallable = $this->controllerResolver->getController($newRequest);
+        try {
+            $controllerCallable = $this->controllerResolver->getController($newRequest);
+        } catch (\InvalidArgumentException $e) {
+            $controllerCallable = false;
+        }
 
         if (false === $controllerCallable) {
             throw new NotFoundHttpException(sprintf('Unable to find the controller "%s::%s".', $controllerFqcn, $controllerAction));

@@ -35,7 +35,7 @@ class CreateControllerRegistriesPass implements CompilerPassInterface
             ->register(DashboardControllerRegistry::class, DashboardControllerRegistry::class)
             ->setPublic(false)
             ->setArguments([
-                $container->getParameter('kernel.cache_dir'),
+                $container->getParameter('kernel.build_dir'),
                 $controllerFqcnToContextIdMap,
                 array_flip($controllerFqcnToContextIdMap),
             ]);

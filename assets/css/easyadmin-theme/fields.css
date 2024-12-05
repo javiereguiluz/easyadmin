@@ -3,11 +3,11 @@
 
 /* Array field */
 .field-array ul {
-  margin-bottom: 0;
-  padding-left: 1.2em;
+  margin-block-end: 0;
+  padding-inline-start: 1.2em;
 }
 .field-array li + li {
-  margin-top: 4px;
+  margin-block-start: 4px;
 }
 
 /* Avatar field */
@@ -19,7 +19,7 @@
 
 /* Boolean field */
 .field-boolean .badge {
-  min-width: 33px;
+  min-inline-size: 33px;
   text-transform: uppercase;
 }
 /* Boolean values don't use "true = green, false = red" on purpose because being FALSE
@@ -42,14 +42,14 @@
   flex: 1;
 }
 .field-code_editor dt {
-   max-height: 480px;
+   max-block-size: 480px;
    overflow-y: auto;
  }
 
 /* Collection field */
 .form-widget-compound .collection-empty {
-  margin-bottom: 10px;
-  padding-top: 5px;
+  margin-block-end: 10px;
+  padding-block-start: 5px;
 }
 .form-group.field-collection label:empty {
   display: none;
@@ -62,7 +62,7 @@
 .form-group.field-array .form-widget .form-group label { display: none; }
 
 .form-group.field-array .field-collection-item + .field-collection-item {
-  margin-top: 5px;
+  margin-block-start: 5px;
 }
 .form-group.field-array .field-collection-item {
   display: flex;
@@ -75,7 +75,7 @@
 .form-group.field-collection .accordion  .form-group { padding: 0; }
 
 .form-group.field-collection .accordion-header {
-  padding-right: 28px;
+  padding-inline-end: 28px;
   position: relative;
 }
 .form-group.field-collection .accordion-header:hover {
@@ -95,13 +95,13 @@
 
 .form-group.field-collection .field-collection-item-first .accordion-item,
 .form-group.field-collection .field-collection-item-first .accordion-header {
-  border-top-left-radius: var(--border-radius);
-  border-top-right-radius: var(--border-radius);
+  border-start-start-radius: var(--border-radius);
+  border-start-end-radius: var(--border-radius);
 }
 .form-group.field-collection .field-collection-item-last .accordion-item,
 .form-group.field-collection .field-collection-item-last .accordion-header {
-  border-bottom-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
+  border-end-start-radius: var(--border-radius);
+  border-end-end-radius: var(--border-radius);
 }
 
 .form-group.field-collection .field-collection-item.field-collection-item-last .accordion-item {
@@ -118,7 +118,7 @@
   font-weight: 500;
   margin: 3px 10px 0 0;
   padding: 0;
-  width: 20%;
+  inline-size: 20%;
 }
 .form-group.field-collection .accordion-item .accordion-body .form-widget {
   flex: 1;
@@ -150,12 +150,12 @@
 }
 
 .form-group.field-collection .field-collection-add-button {
-  margin-top: 5px;
+  margin-block-start: 5px;
 }
 .form-group.field-collection .field-collection-delete-button {
   position: absolute;
-  top: 1px;
-  right: 5px;
+  inset-block-start: 1px;
+  inset-inline-end: 5px;
 }
 
 /* Color field */
@@ -163,30 +163,32 @@
   border-radius: var(--border-radius);
   box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--gray-300);
   display: inline-block;
-  height: 19px;
-  width: 45px;
+  block-size: 19px;
+  inline-size: 45px;
 }
 
 /* Country field */
 .field-country .country-flag {
   border-radius: 2px;
-  box-shadow: 0 0 0 1px var(--field-country-flag-border-color);
+  outline: 1px solid rgba(0, 0, 0, 0.2);
+  outline-offset: -1px;
   margin: 0 6px 1px 0;
-  max-height: 17px;
+  max-block-size: 17px;
   vertical-align: text-top;
 }
+.ea-dark-scheme .field-country .country-flag { outline-color: var(--border-secondary-color); outline-offset: 0; }
 .datagrid .field-country > span + span,
 .datalist .field-country dd > span + span {
-  margin-left: 10px;
+  margin-inline-start: 10px;
 }
 
 .field-country .ts-control .country-name-flag,
-.field-country .ts-dropdown-content .country-name-flag .country-flag { margin-bottom: 0; }
+.field-country .ts-dropdown-content .country-name-flag .country-flag { margin-block-end: 0; }
 .field-country .ts-wrapper.multi .ts-control > div {
-  margin-bottom: 5px;
+  margin-block-end: 5px;
 }
 .field-country .ts-wrapper.multi .ts-control .country-name-flag {
-  margin-right: 25px;
+  margin-inline-end: 25px;
 }
 .field-country .ts-wrapper.multi.plugin-remove_button .item .remove {
   border-color: var(--form-type-autocomplete-multi-item-border-color);
@@ -205,8 +207,8 @@
 .field-datetime input[type="datetime-local"].form-control,
 .field-date input[type="date"].form-control,
 .field-time input[type="time"].form-control {
-  width: auto;
-  max-width: 100%;
+  inline-size: auto;
+  max-inline-size: 100%;
 }
 
 /* Language field */
@@ -221,6 +223,6 @@
 
 /* Text editor field */
 .field-text_editor dt {
-  max-height: 480px;
+  max-block-size: 480px;
   overflow-y: auto;
 }

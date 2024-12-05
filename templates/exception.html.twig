@@ -1,0 +1,13 @@
+{% extends layout_template_path %}
+
+{% block body_class 'error' %}
+{% block page_title %}{{ 'page_title.exception'|trans({'%count%': 1}, 'EasyAdminBundle') }}{% endblock %}
+
+{% block content_header_wrapper '' %}
+{% block content_footer_wrapper '' %}
+{% block main %}
+    <div class="error-message">
+        <h1><twig:ea:Icon name="internal:circle-exclamation" /> {{ block('page_title') }}</h1>
+        {{ exception.publicMessage|trans(exception.translationParameters, 'EasyAdminBundle') }}
+    </div>
+{% endblock %}

@@ -5,7 +5,7 @@
     padding: 0 0 20px;
 }
 #main-menu .menu {
-    padding-left: 0;
+    padding-inline-start: 0;
 }
 #main-menu .menu li { list-style: none; }
 
@@ -14,24 +14,24 @@
     font-size: 12px;
     font-weight: 500;
     line-height: 15px;
-    margin-top: 15px;
+    margin-block-start: 15px;
     padding: 7px 5px 7px var(--sidebar-menu-items-padding-left);
     text-transform: uppercase;
 }
-#main-menu .menu .menu-header:first-child { margin-top: 0; }
+#main-menu .menu .menu-header:first-child { margin-block-start: 0; }
 
 #main-menu .menu .menu-header .menu-icon { color: inherit; margin: 0 8px 0 0; }
 #main-menu .menu .menu-header .menu-header-contents { display: block; }
 #main-menu .menu .menu-header .menu-item-badge {
     float: right;
-    margin-left: 16px;
-    top: 0;
+    margin-inline-start: 16px;
+    inset-block-start: 0;
 }
 
 #main-menu .menu .menu-item {
     border-radius: var(--border-radius);
-    padding-left: var(--sidebar-menu-items-padding-left);
-    padding-right: 5px;
+    padding-inline-start: var(--sidebar-menu-items-padding-left);
+    padding-inline-end: 5px;
     position: relative;
 }
 #main-menu .menu .menu-item.active {
@@ -45,7 +45,7 @@
 }
 
 #main-menu .menu .menu-item.active:not(.expanded) a,
-#main-menu .menu .menu-item.active:not(.expanded) .menu-icon {
+#main-menu .menu .menu-item.active:not(.expanded) .menu-icon svg {
     color: var(--sidebar-menu-active-item-color);
 }
 
@@ -55,15 +55,13 @@
 
 #main-menu .menu .menu-item.has-submenu:not(.expanded) .submenu {
     /* don't use 'display: none' to hide submenus; it breaks the menu accordion */
-    max-height: 0px;
+    max-block-size: 0px;
 }
 
 #main-menu .menu .menu-item .submenu-toggle .submenu-toggle-icon {
     color: var(--sidebar-menu-icon-color);
-    position: relative;
-    top: 5px;
     transition: transform 0.25s ease;
-    width: auto; /* this is needed to make it look better */
+    inline-size: auto; /* this is needed to make it look better */
 }
 
 #main-menu .menu .menu-item-contents {
@@ -75,19 +73,24 @@
 
 #main-menu .menu .menu-icon {
     color: var(--sidebar-menu-icon-color);
-    font-size: var(--font-size-lg);
-    margin-right: 10px;
-    transform: translateY(3px);
-    height: 16px;
-    width: 20px;
+    margin-inline-end: 10px;
+    text-align: center;
+    block-size: 16px;
+    inline-size: 1.25em;
+}
+#main-menu .menu .menu-icon svg {
+    color: var(--sidebar-menu-icon-color);
+    max-block-size: 16px;
+    max-inline-size: 20px;
+    vertical-align: sub;
 }
 
 #main-menu .menu .menu-item-badge {
     float: right;
-    min-width: 25px;
+    min-inline-size: 25px;
     margin: 0 0 0 8px;
     position: relative;
-    top: 2px;
+    inset-block-start: 2px;
 }
 #main-menu .menu .menu-item-badge.badge-secondary {
     background: var(--sidebar-menu-badge-bg);
@@ -96,7 +99,7 @@
 
 #main-menu .menu .submenu-toggle-icon {
     float: right;
-    margin-left: 8px;
+    margin-inline-start: 8px;
 }
 
 #main-menu .menu .submenu {
@@ -104,7 +107,7 @@
        if some padding is needed, create another HTML element inside this one */
     padding: 0;
     overflow: hidden;
-    transition: max-height 150ms linear;
+    transition: max-block-size 150ms linear;
 }
 #main-menu .menu .submenu a {
     color: var(--sidebar-menu-submenu-color);
@@ -112,36 +115,36 @@
 }
 
 #main-menu .menu .submenu .menu-header {
-    padding-left: 26px;
+    padding-inline-start: 26px;
 }
 
 #main-menu .menu .submenu .menu-item {
     margin: 5px 0 5px 0;
-    padding-right: 0;
+    padding-inline-end: 0;
 }
 #main-menu .menu .submenu .menu-item.active {
-    padding-left: 6px;
-    margin-left: 0;
+    padding-inline-start: 6px;
+    margin-inline-start: 0;
 }
-#main-menu .menu .submenu .menu-icon { font-size: var(--font-size-base); margin-right: 5px; }
-#main-menu .menu .submenu .menu-item-badge { margin-right: 4px; }
+#main-menu .menu .submenu .menu-icon { font-size: var(--font-size-base); margin-inline-end: 5px; }
+#main-menu .menu .submenu .menu-item-badge { margin-inline-end: 4px; }
 
 body.ea-sidebar-width-compact .sidebar {
     padding: 0;
     overflow: visible;
 }
 body.ea-sidebar-width-compact .sidebar .main-header .navbar {
-    padding-left: var(--sidebar-padding-left);
+    padding-inline-start: var(--sidebar-padding-left);
 }
 
 body.ea-sidebar-width-compact .sidebar #main-menu .menu .menu-item {
-    padding-left: var(--sidebar-padding-left);
+    padding-inline-start: var(--sidebar-padding-left);
 }
 
 @media(min-width: 992px) {
     body.ea-sidebar-width-compact #main-menu .menu .menu-item {
         border-radius: 0 var(--border-radius) var(--border-radius) 0;
-        padding-right: 0;
+        padding-inline-end: 0;
     }
     body.ea-sidebar-width-compact #main-menu .menu .menu-item .menu-item-label,
     body.ea-sidebar-width-compact #main-menu .menu .menu-item .menu-item-badge,
@@ -154,15 +157,15 @@ body.ea-sidebar-width-compact .sidebar #main-menu .menu .menu-item {
         align-items: center;
         border-radius: 0 var(--border-radius) var(--border-radius) 0;
         display: flex;
-        min-width: max-content;
+        min-inline-size: max-content;
         padding: 7px 5px 7px 0;
     }
 
     body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover {
         background: var(--body-bg);
         box-shadow: var(--sidebar-menu-compact-hover-box-shadow);
-        min-width: max-content;
-        padding-left: var(--sidebar-padding-left);
+        min-inline-size: max-content;
+        padding-inline-start: var(--sidebar-padding-left);
         z-index: var(--zindex-modal-backdrop);
     }
     body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover i { color: var(--sidebar-menu-icon-color) !important; }
@@ -179,10 +182,10 @@ body.ea-sidebar-width-compact .sidebar #main-menu .menu .menu-item {
         background: var(--body-bg);
         border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
         position: absolute;
-        top: 0;
-        margin-left: 34px;
+        inset-block-start: 0;
+        margin-inline-start: 34px;
         padding: 2px 10px 0 0;
-        width: max-content;
+        inline-size: max-content;
     }
     body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover .submenu a {
         padding: 3px 5px 3px 13px;
@@ -192,28 +195,28 @@ body.ea-sidebar-width-compact .sidebar #main-menu .menu .menu-item {
     body.ea-sidebar-width-compact #main-menu .menu .menu-item.has-submenu:hover .submenu-toggle-icon {
         display: inline-block;
         font-size: 18px;
-        left: -7px;
+        inset-inline-start: -7px;
         transform: rotate(0);
-        top: 0;
+        inset-block-start: 0;
         z-index: 9999;
     }
-    body.ea-sidebar-width-compact #main-menu .menu .menu-item.has-submenu:hover .submenu .menu-icon { margin-right: 8px; }
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item.has-submenu:hover .submenu .menu-icon { margin-inline-end: 8px; }
 
-    body.ea-sidebar-width-compact #main-menu .menu .menu-item .menu-icon { font-size: 18px; height: 21px; max-width: 21px; }
-    body.ea-sidebar-width-compact #main-menu .menu .menu-item .submenu .menu-icon { font-size: 16px; position: relative; left: -4px; width: 21px; }
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item .menu-icon { font-size: 18px; block-size: 21px; max-inline-size: 21px; }
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item .submenu .menu-icon { font-size: 16px; position: relative; inset-inline-start: -4px; inline-size: 21px; }
 
     body.ea-sidebar-width-compact #main-menu .menu .menu-item .submenu {
         box-shadow: var(--sidebar-menu-compact-hover-box-shadow);
-        max-height: initial !important;
-        padding-top: 5px;
-        padding-bottom: 5px;
+        max-block-size: initial !important;
+        padding-block-start: 5px;
+        padding-block-end: 5px;
     }
     body.ea-sidebar-width-compact #main-menu .menu .menu-item .submenu .menu-item:hover { box-shadow: none; }
 
     body.ea-sidebar-width-compact #main-menu .menu .menu-header {
-        height: 0;
+        block-size: 0;
         overflow: hidden;
         padding: 0;
-        width: 0;
+        inline-size: 0;
     }
 }

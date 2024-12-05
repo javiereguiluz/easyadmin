@@ -5,13 +5,8 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Registry;
 use EasyCorp\Bundle\EasyAdminBundle\Cache\CacheWarmer;
 use function Symfony\Component\String\u;
 
-/**
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
- */
-final class DashboardControllerRegistry
+final class DashboardControllerRegistry implements DashboardControllerRegistryInterface
 {
-    private array $controllerFqcnToContextIdMap = [];
-    private array $contextIdToControllerFqcnMap;
     private array $controllerFqcnToRouteMap = [];
     private array $routeToControllerFqcnMap;
 
@@ -19,12 +14,12 @@ final class DashboardControllerRegistry
      * @param string[] $controllerFqcnToContextIdMap
      * @param string[] $contextIdToControllerFqcnMap
      */
-    public function __construct(string $cacheDir, array $controllerFqcnToContextIdMap, array $contextIdToControllerFqcnMap)
-    {
-        $this->controllerFqcnToContextIdMap = $controllerFqcnToContextIdMap;
-        $this->contextIdToControllerFqcnMap = $contextIdToControllerFqcnMap;
-
-        $dashboardRoutesCachePath = $cacheDir.'/'.CacheWarmer::DASHBOARD_ROUTES_CACHE;
+    public function __construct(
+        string $buildDir,
+        private readonly array $controllerFqcnToContextIdMap,
+        private readonly array $contextIdToControllerFqcnMap,
+    ) {
+        $dashboardRoutesCachePath = $buildDir.'/'.CacheWarmer::DASHBOARD_ROUTES_CACHE;
         $dashboardControllerRoutes = !file_exists($dashboardRoutesCachePath) ? [] : require $dashboardRoutesCachePath;
         foreach ($dashboardControllerRoutes as $routeName => $controller) {
             $this->controllerFqcnToRouteMap[u($controller)->before('::')->toString()] = $routeName;
@@ -61,5 +56,24 @@ final class DashboardControllerRegistry
     public function getFirstDashboardRoute(): ?string
     {
         return \count($this->controllerFqcnToRouteMap) < 1 ? null : $this->controllerFqcnToRouteMap[array_key_first($this->controllerFqcnToRouteMap)];
+    }
+
+    public function getFirstDashboardFqcn(): ?string
+    {
+        return \count($this->controllerFqcnToRouteMap) < 1 ? null : array_key_first($this->controllerFqcnToRouteMap);
+    }
+
+    public function getAll(): array
+    {
+        $dashboards = [];
+        foreach ($this->controllerFqcnToContextIdMap as $controllerFqcn => $contextId) {
+            $dashboards[] = [
+                'controller' => $controllerFqcn,
+                'route' => $this->controllerFqcnToRouteMap[$controllerFqcn] ?? null,
+                'context' => $contextId,
+            ];
+        }
+
+        return $dashboards;
     }
 }

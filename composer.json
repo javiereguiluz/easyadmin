@@ -12,10 +12,10 @@
         }
     ],
     "require": {
-        "php": ">=8.0.2",
+        "php": ">=8.1",
         "ext-json": "*",
         "doctrine/doctrine-bundle": "^2.5",
-        "doctrine/orm": "^2.10|^3.0",
+        "doctrine/orm": "^2.12|^3.0",
         "symfony/asset": "^5.4|^6.0|^7.0",
         "symfony/cache": "^5.4|^6.0|^7.0",
         "symfony/config": "^5.4|^6.0|^7.0",
@@ -35,7 +35,9 @@
         "symfony/translation": "^5.4|^6.0|^7.0",
         "symfony/twig-bundle": "^5.4|^6.0|^7.0",
         "symfony/uid": "^5.4|^6.0|^7.0",
-        "symfony/validator": "^5.4|^6.0|^7.0"
+        "symfony/ux-twig-component": "^2.21",
+        "symfony/validator": "^5.4|^6.0|^7.0",
+        "twig/twig": "^3.15"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4|3.5.x-dev",
@@ -50,7 +52,8 @@
         "symfony/debug-bundle": "^5.4|^6.0|^7.0",
         "symfony/dom-crawler": "^5.4|^6.0|^7.0",
         "symfony/expression-language": "^5.4|^6.0|^7.0",
-        "symfony/phpunit-bridge": "^5.4|^6.0|^7.0"
+        "symfony/phpunit-bridge": "^6.1|^7.0",
+        "symfony/process": "^5.4|^6.0|^7.0"
     },
     "config": {
         "sort-packages": true,
@@ -67,6 +70,7 @@
     "autoload-dev": {
         "psr-4": {
             "EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\TestApplication\\": "tests/TestApplication/src/",
+            "EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\PrettyUrlsTestApplication\\": "tests/PrettyUrlsTestApplication/src/",
             "EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\": "tests/"
         }
     },

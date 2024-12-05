@@ -20,6 +20,7 @@ class Crud
     public const PAGE_EDIT = 'edit';
     public const PAGE_INDEX = 'index';
     public const PAGE_NEW = 'new';
+    public const ACTION_NAMES = ['index', 'detail', 'edit', 'new', 'delete', 'batchDelete', 'autocomplete'];
     public const LAYOUT_CONTENT_DEFAULT = 'normal';
     public const LAYOUT_CONTENT_FULL = 'full';
     public const LAYOUT_SIDEBAR_DEFAULT = 'normal';

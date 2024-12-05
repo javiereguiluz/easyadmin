@@ -2,8 +2,8 @@
 
 .CodeMirror {
   font: 13px/1.5 SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Ubuntu Mono", "Courier New", monospace;
-  height: auto;
-  min-height: 45px;
+  block-size: auto;
+  min-block-size: 45px;
 }
 
 .CodeMirror-wrap {
@@ -28,7 +28,7 @@
 }
 
 .CodeMirror-lines {
-  padding-bottom: 5px;
+  padding-block-end: 5px;
 }
 .CodeMirror-cursor {
   border: 1px solid var(--code-editor-comment-color);

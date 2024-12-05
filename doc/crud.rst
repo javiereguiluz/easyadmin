@@ -36,9 +36,140 @@ These pages are generated with four actions with the same name in the
 ``AbstractCrudController`` controller. This controller defines other secondary
 actions (e.g. ``delete`` and ``autocomplete``) which don't match any page.
 
-The default behavior of these actions in the ``AbstractCrudController`` is
-appropriate for most backends, but you can customize it in several ways:
-:doc:`EasyAdmin events </events>`, :ref:`custom EasyAdmin templates <template-customization>`, etc.
+.. _crud_routes:
+
+CRUD Routes
+~~~~~~~~~~~
+
+When using :ref:`pretty admin URLs <pretty-admin-urls>`, each of the CRUD actions
+define an admin route following this name and path by default:
+
+==================  ======================
+CRUD route name     CRUD route path
+==================  ======================
+``*_index``         ``/``
+``*_new``           ``/new``
+``*_batch_delete``   ``/batch-delete``
+``*_autocomplete``  ``/autocomplete``
+``*_edit``          ``/{entityId}/edit``
+``*_delete``        ``/{entityId}/delete``
+``*_detail``        ``/{entityId}``
+==================  ======================
+
+For example, for a CRUD controller called ``ProductCrudController`` that belongs
+to a backend with a route named ``admin`` and with the path ``/admin``, it will
+generate the following routes:
+
+==============================  ===============================
+Admin route name                Admin route path
+==============================  ===============================
+``admin_product_index``         ``/admin/product``
+``admin_product_new``           ``/admin/product/new``
+``admin_product_batch_delete``   ``/admin/product/batch-delete``
+``admin_product_autocomplete``  ``/admin/product/autocomplete``
+``admin_product_edit``          ``/admin/product/324/edit``
+``admin_product_delete``        ``/admin/product/324/delete``
+``admin_product_detail``        ``/admin/product/324``
+==============================  ===============================
+
+.. tip::
+
+    By default, EasyAdmin generates routes for all CRUD controllers on all
+    dashboards. You can :ref:`restrict which controllers are accessible <security-controllers>`
+    on each dahboard to not generate all these routes.
+
+You can customize the route names and/or paths of the actions of all the CRUD controllers
+served by some dashboard using the ``#[AdminDashboard]`` attribute::
+
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+    // ...
+
+    #[AdminDashboard(routes: [
+        'index' => ['routePath' => '/all'],
+        'new' => ['routePath' => '/create', 'routeName' => 'create'],
+        'edit' => ['routePath' => '/editing-{entityId}', 'routeName' => 'editing'],
+        'delete' => ['routePath' => '/remove/{entityId}'],
+        'detail' => ['routeName' => 'view'],
+    ])]
+    class SomeDashboardController extends AbstractDashboardController
+    {
+        // ...
+    }
+
+With this configuration, the routes for the ``ProductCrudController`` actions will be:
+
+==============================  =====================================
+Admin route name                Admin route path
+==============================  =====================================
+``admin_product_index``         ``/admin/product/all``
+``admin_product_create``        ``/admin/product/create``
+``admin_product_batch_delete``   ``/admin/product/current/batch-delete``
+``admin_product_autocomplete``  ``/admin/product/current/autocomplete``
+``admin_product_editing``       ``/admin/product/current/editing-324``
+``admin_product_delete``        ``/admin/product/remove/324``
+``admin_product_view``          ``/admin/product/324``
+==============================  =====================================
+
+You can also customize the path and/or route name of CRUD controllers using the
+``#[AdminCrud]`` attribute with the following options:
+
+* ``routePath``: the value that represents the controller in the entire route path
+  (e.g. a ``/foo`` path will result in ``/admin`` + ``/foo`` + ``/<action>``);
+* ``routeName``: the value that represents the controller in the full route name
+  (e.g. a ``foo_bar`` route name will result in ``admin_`` + ``foo_bar`` + ``_<action>``).
+
+Using the same example as above, you can configure the route names and paths of
+the controller as follows::
+
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
+    // ...
+
+    #[AdminCrud(routePath: '/stock/current', routeName: 'stock')]
+    class ProductCrudController extends AbstractCrudController
+    {
+        // ...
+    }
+
+The route names/paths will no longer be ``admin_product_*`` and ``/admin/product/*``
+but the following:
+
+==============================  =====================================
+Admin route name                Admin route path
+==============================  =====================================
+``admin_stock_index``           ``/admin/stock/current``
+``admin_stock_new``             ``/admin/stock/current/new``
+``admin_stock_batch_delete``     ``/admin/stock/current/batch-delete``
+``admin_stock_autocomplete``    ``/admin/stock/current/autocomplete``
+``admin_stock_edit``            ``/admin/stock/current/324/edit``
+``admin_stock_delete``          ``/admin/stock/current/324/delete``
+``admin_stock_detail``          ``/admin/stock/current/324``
+==============================  =====================================
+
+Finally, you can also customize the route name and/or path of each CRUD controller
+action using the ``#[AdminAction]`` attribute::
+
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminAction;
+    // ...
+
+    class ProductCrudController extends AbstractCrudController
+    {
+        // ...
+
+        #[AdminAction(routePath: '/latest-products', routeName: 'latest')]
+        public function index(AdminContext $context)
+        {
+            // ...
+        }
+    }
+
+The ``index()`` action of this controller will no longer use the ``admin_product_index``
+route name and the ``/admin/product`` path in the URL. Instead, the route name
+will be ``admin_product_latest`` and the path will be ``/admin/product/latest-products``.
+
+.. tip::
+
+    You can combine the ``#[AdminDashboard]``, ``#[AdminCrud]``, and ``#[AdminAction]``
+    attributes to customize some or all route names and paths.
 
 Page Names and Constants
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -274,8 +405,8 @@ Search, Order, and Pagination Options
 .. tip::
 
     The search engine splits all terms by default (searching for ``foo bar``
-    returns items with ``foo`` and ``bar``). You can wrap all or part of your 
-    query with quotes to make an exact search: ``"foo bar"`` only returns 
+    returns items with ``foo`` and ``bar``). You can wrap all or part of your
+    query with quotes to make an exact search: ``"foo bar"`` only returns
     items with that exact content, including the middle white space.
 
 ::
@@ -406,6 +537,12 @@ saving the changes::
         $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'];
 
         if ('saveAndViewDetail' === $submitButtonName) {
+            // when using pretty admin URLs
+            return $this->redirectToRoute('admin_product_detail', [
+                'entityId' => $context->getEntity()->getPrimaryKeyValue(),
+            ]);
+
+            // when using legacy admin URLs
             $url = $this->container->get(AdminUrlGenerator::class)
                 ->setAction(Action::DETAIL)
                 ->setEntityId($context->getEntity()->getPrimaryKeyValue())
@@ -601,13 +738,44 @@ associated to the given template name:
 Generating Admin URLs
 ---------------------
 
-:ref:`As explained <dashboard-route>` in the article about Dashboards, all URLs
-of a given dashboard use the same route and they only differ in the query string
-parameters. Instead of having to deal with that, you can use the ``AdminUrlGenerator``
-service to generate URLs in your PHP code.
+When using :ref:`pretty admin URLs <pretty-admin-urls>`, EasyAdmin generates
+one route per each CRUD action of each :doc:`dashboard </dashboards>`. You can
+list them all with the following command:
 
-When generating a URL, you don't start from scratch. EasyAdmin reuses all the
-query parameters existing in the current request. This is done on purpose because
+.. code-block:: terminal
+
+    $ php bin/console debug:router
+
+If you don't see some or any of your admin routes, clear the cache of your
+Symfony application so the EasyAdmin route loader can generate them again:
+
+.. code-block:: terminal
+
+    $ php bin/console cache:clear
+
+You can use any of these routes to generate the admin URLs thanks to the
+`utilities provided by Symfony to generate URLs`_::
+
+    // redirecting to an admin URL inside a controller
+    return $this->redirectToRoute('admin_product_new');
+
+    // generating an admin URL inside a service
+    $userProfileUrl = $this->router->generate('admin_user_detail', [
+        'entityId' => $user->getId(),
+    ]);
+
+    // generating an admin URL in a Twig template
+    <a href="{{ path('admin_blog_post_edit', {entityId: post.id}) }}">Edit Blog Post</a>
+
+Building Admin URLs
+~~~~~~~~~~~~~~~~~~~
+
+If you don't use :ref:`pretty admin URLs <pretty-admin-urls>` or if you need to
+build routes dynamically, you can use the ``AdminUrlGenerator`` provided by
+EasyAdmin to build the admin URLs.
+
+When generating a URL this way, you don't start from scratch. EasyAdmin reuses all
+the query parameters existing in the current request. This is done on purpose because
 generating new URLs based on the current URL is the most common scenario. Use
 the ``unsetAll()`` method to remove all existing query parameters::
 
@@ -676,7 +844,7 @@ method (it will be called automatically for you):
         .setAction('theActionName') %}
 
 Generating CRUD URLs from outside EasyAdmin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+...........................................
 
 When generating URLs of EasyAdmin pages from outside EasyAdmin (e.g. from a
 regular Symfony controller) the :ref:`admin context variable <admin-context>`
@@ -753,3 +921,4 @@ The same applies to URLs generated in Twig templates:
 .. _`Doctrine filters`: https://www.doctrine-project.org/projects/doctrine-orm/en/current/reference/filters.html
 .. _`XSS attacks`: https://en.wikipedia.org/wiki/Cross-site_scripting
 .. _`HtmlSanitizer component`: https://symfony.com/components/HTML%20Sanitizer
+.. _`utilities provided by Symfony to generate URLs`: https://symfony.com/doc/current/routing.html#generating-urls

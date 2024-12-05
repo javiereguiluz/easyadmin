@@ -42,13 +42,14 @@ final class Action
     }
 
     /**
-     * @param TranslatableInterface|string|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
-     * @param string|null                             $icon  The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
+     * @param TranslatableInterface|string|(callable(object $entity): string)|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
+     * @param string|null                                                                $icon  The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
      */
     public static function new(string $name, $label = null, ?string $icon = null): self
     {
         if (!\is_string($label)
             && !$label instanceof TranslatableInterface
+            && !\is_callable($label)
             && false !== $label
             && null !== $label) {
             trigger_deprecation(
@@ -57,7 +58,7 @@ final class Action
                 'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
                 '$label',
                 __METHOD__,
-                sprintf('"%s", "string", "false" or "null"', TranslatableInterface::class),
+                sprintf('"%s", "string", "callable", "false" or "null"', TranslatableInterface::class),
                 \gettype($label)
             );
         }
@@ -89,12 +90,13 @@ final class Action
     }
 
     /**
-     * @param TranslatableInterface|string|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
+     * @param TranslatableInterface|string|(callable(object $entity): string)|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
      */
     public function setLabel($label): self
     {
         if (!\is_string($label)
             && !$label instanceof TranslatableInterface
+            && !\is_callable($label)
             && false !== $label
             && null !== $label) {
             trigger_deprecation(
@@ -103,7 +105,7 @@ final class Action
                 'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
                 '$label',
                 __METHOD__,
-                '"string", "false" or "null"',
+                sprintf('"%s", "string", "callable", "false" or "null"', TranslatableInterface::class),
                 \gettype($label)
             );
         }
@@ -229,7 +231,7 @@ final class Action
 
     public function getAsDto(): ActionDto
     {
-        if (null === $this->dto->getLabel() && null === $this->dto->getIcon()) {
+        if ((!$this->dto->isDynamicLabel() && null === $this->dto->getLabel()) && null === $this->dto->getIcon()) {
             throw new \InvalidArgumentException(sprintf('The label and icon of an action cannot be null at the same time. Either set the label, the icon or both for the "%s" action.', $this->dto->getName()));
         }
 

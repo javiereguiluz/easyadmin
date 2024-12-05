@@ -7,6 +7,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\EventListener\FormLayoutSubscriber;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormColumnCloseType;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormColumnOpenType;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormFieldsetCloseType;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormFieldsetOpenType;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormTabPaneCloseType;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormTabPaneOpenType;
 use Symfony\Bridge\Doctrine\Form\DoctrineOrmTypeGuesser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -104,6 +110,8 @@ class CrudFormType extends AbstractType
                 $formFieldOptions['ea_form_tab'] = $currentFormTab;
             }
 
+            $name = $this->isTypeFormField($formFieldType) ? $fieldDto->getPropertyNameWithSuffix() : $name;
+
             $formField = $builder->getFormFactory()->createNamedBuilder($name, $formFieldType, null, $formFieldOptions);
             $formField->setAttribute('ea_entity', $entityDto);
             $formField->setAttribute('ea_form_fieldset', $options['ea_form_fieldset'] ?? $currentFormFieldset);
@@ -143,5 +151,25 @@ class CrudFormType extends AbstractType
     public function getBlockPrefix(): string
     {
         return 'ea_crud';
+    }
+
+    private function isTypeFormField(?string $type): bool
+    {
+        if (null === $type) {
+            return false;
+        }
+
+        return \in_array($type, [
+            EaFormFieldsetOpenType::class,
+            EaFormFieldsetCloseType::class,
+
+            EaFormRowType::class,
+
+            EaFormTabPaneOpenType::class,
+            EaFormTabPaneCloseType::class,
+
+            EaFormColumnOpenType::class,
+            EaFormColumnCloseType::class,
+        ], true);
     }
 }

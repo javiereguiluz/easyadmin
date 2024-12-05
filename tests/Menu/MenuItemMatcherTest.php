@@ -351,6 +351,7 @@ class MenuItemMatcherTest extends KernelTestCase
 
         $request = $this->getMockBuilder(Request::class)->getMock();
         $request->query = new InputBag($queryParameters);
+        $request->attributes = new InputBag($queryParameters);
 
         if (null !== $getUri) {
             $request->method('getUri')->willReturn($getUri);

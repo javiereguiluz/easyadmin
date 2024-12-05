@@ -5,8 +5,8 @@ table.datagrid {
   border-collapse: collapse;
   border-spacing: 0;
   color: var(--table-cell-color);
-  margin-bottom: 0;
-  width: 100%;
+  margin-block-end: 0;
+  inline-size: 100%;
 }
 @media (max-width: 767px) {
   table.datagrid:not(.datagrid-empty) tbody,
@@ -14,17 +14,17 @@ table.datagrid {
   table.datagrid:not(.datagrid-empty) td { display: block; }
   table.datagrid:not(.datagrid-empty) tbody,
   table.datagrid:not(.datagrid-empty) tr { border-radius: var(--border-radius); }
-  table.datagrid:not(.datagrid-empty) tbody tr td:first-of-type { border-top-left-radius: var(--border-radius); border-top-right-radius: var(--border-radius); }
-  table.datagrid:not(.datagrid-empty) tbody tr td:last-of-type { border-bottom-left-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
+  table.datagrid:not(.datagrid-empty) tbody tr td:first-of-type { border-start-start-radius: var(--border-radius); border-start-end-radius: var(--border-radius); }
+  table.datagrid:not(.datagrid-empty) tbody tr td:last-of-type { border-end-start-radius: var(--border-radius); border-end-end-radius: var(--border-radius); }
   table.datagrid:not(.datagrid-empty) thead { display: none; }
   table.datagrid:not(.datagrid-empty) tr {
     border: 1px solid var(--responsive-table-row-border-color);
-    margin-bottom: 30px;
+    margin-block-end: 30px;
   }
   table.datagrid:not(.datagrid-empty) tr:not(.empty-row) td {
     box-shadow: inset 0 1px 0 var(--table-cell-border-color);
-    min-height: 36px;
-    padding-left: 35%;
+    min-block-size: 36px;
+    padding-inline-start: 35%;
     position: relative;
   }
   table.datagrid:not(.datagrid-empty) tr:not(.empty-row) td:first-child { box-shadow: none; }
@@ -46,10 +46,10 @@ table.datagrid {
     content: attr(data-label);
     color: var(--responsive-table-label-color);
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 35%;
+    inset-block-start: 0;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inline-size: 35%;
     font-weight: 500;
     padding: 8px;
     overflow: hidden;
@@ -58,12 +58,12 @@ table.datagrid {
     white-space: nowrap;
   }
   table.datagrid:not(.datagrid-empty) td.field-boolean {
-    padding-left: 8px;
+    padding-inline-start: 8px;
   }
   table.datagrid:not(.datagrid-empty) td.field-boolean::before {
     color: var(--table-cell-color);
     font-weight: 400;
-    left: 0;
+    inset-inline-start: 0;
     /* needed to truncate text when the switch label is too long */
     overflow: hidden;
     text-overflow: ellipsis;
@@ -79,7 +79,7 @@ table.datagrid {
   box-shadow: inset 0 -2px 0 var(--table-cell-border-color);
   padding: 0;
 }
-.datagrid thead a, .datagrid thead span {
+.datagrid thead a, .datagrid thead span:not(.icon) {
   color: var(--table-thead-color);
   display: block;
   font-weight: 500;
@@ -106,9 +106,10 @@ table.datagrid {
 .datagrid thead .sorted a, .datagrid thead .sorted span {
   font-weight: 700;
 }
-.datagrid thead i {
+.datagrid thead i,
+.datagrid thead .icon {
   color: var(--table-thead-marker-color);
-  margin-left: 2px;
+  margin-inline-start: 2px;
 }
 .datagrid thead .sorted {
   box-shadow: inset 0 -2px 0 var(--color-primary);
@@ -116,8 +117,10 @@ table.datagrid {
 .datagrid thead .sorted a, .datagrid thead .sorted span {
   color: var(--table-thead-sorted-color);
 }
-.datagrid thead .sorted i {
+.datagrid thead .sorted i,
+.datagrid thead .sorted .icon {
   color: var(--table-thead-sorted-marker-color);
+  display: inline-block;
 }
 .datagrid th, .datagrid td {
   border: none;
@@ -143,11 +146,11 @@ table.datagrid {
   font-weight: 500;
 }
 .datagrid td.actions a:not(.dropdown-item) + a:not(.dropdown-item) {
-  margin-left: 10px;
+  margin-inline-start: 10px;
 }
 .datagrid td.actions a:not(.dropdown-item) .action-icon {
   font-size: var(--font-size-base);
-  margin-right: 2px;
+  margin-inline-end: 2px;
 }
 
 @media (min-width: 992px) {
@@ -156,7 +159,7 @@ table.datagrid {
   }
 }
 .datagrid td.actions-as-dropdown-table-head {
-  width: 10px;
+  inline-size: 10px;
 }
 .datagrid tr:not(.selected-row):hover .dropdown-toggle {
   background: var(--dropdown-toggle-bg);
@@ -197,8 +200,8 @@ table.datagrid {
   background: var(--white);
   border: 1px solid transparent;
   border-radius: var(--border-radius);
-  max-height: 50px;
-  max-width: 100px;
+  max-block-size: 50px;
+  max-inline-size: 100px;
   padding: 2px 4px;
 }
 .datagrid tr:hover .ea-lightbox-thumbnail img {
@@ -225,13 +228,13 @@ table.datagrid {
 .datagrid .field-boolean .form-switch {
   display: inline-flex;
   justify-content: center;
-  margin-bottom: 0;
-  padding-left: 0;
+  margin-block-end: 0;
+  padding-inline-start: 0;
 }
 .datagrid .field-boolean .form-switch input {
-  margin-top: 0;
+  margin-block-start: 0;
   position: relative;
-  top: 3px;
+  inset-block-start: 3px;
 }
 @media (max-width: 992px) {
   .datagrid .field-country {
@@ -239,9 +242,9 @@ table.datagrid {
   }
 }
 .datagrid .form-check {
-  margin-bottom: 0;
-  min-height: 15px;
-  padding-left: 0;
+  margin-block-end: 0;
+  min-block-size: 15px;
+  padding-inline-start: 0;
 }
 
 .datagrid .no-results td {
@@ -256,19 +259,19 @@ table.datagrid {
 .datagrid .empty-row td {
   padding: 0 10px;
 }
-.datagrid .empty-row td:nth-child(1) { width: 20%; }
-.datagrid .empty-row td:nth-child(2) { display: none; @media (min-width: 992px) { width: 5%; } }
-.datagrid .empty-row td:nth-child(3) { width: 10%; }
-.datagrid .empty-row td:nth-child(4) { width: 25%; }
-.datagrid .empty-row td:nth-child(5) { width: 10%; }
-.datagrid .empty-row td:nth-child(6) { width: 30%; }
+.datagrid .empty-row td:nth-child(1) { inline-size: 20%; }
+.datagrid .empty-row td:nth-child(2) { display: none; @media (min-width: 992px) { inline-size: 5%; } }
+.datagrid .empty-row td:nth-child(3) { inline-size: 10%; }
+.datagrid .empty-row td:nth-child(4) { inline-size: 25%; }
+.datagrid .empty-row td:nth-child(5) { inline-size: 10%; }
+.datagrid .empty-row td:nth-child(6) { inline-size: 30%; }
 .datagrid .empty-row td span {
   background: var(--datagrid-noresults-placeholder-bg);
   border-radius: var(--border-radius);
   display: block;
-  height: 10px;
+  block-size: 10px;
   margin: 13px 0;
-  width: 100%;
+  inline-size: 100%;
 }
 
 .datagrid-row-empty td,
@@ -276,8 +279,8 @@ table.datagrid {
   background-color: transparent;
   background-image: linear-gradient(135deg, var(--datagrid-hidden-results-gradient-bg) 25%, transparent 25%, transparent 50%, var(--datagrid-hidden-results-gradient-bg) 50%, var(--datagrid-hidden-results-gradient-bg) 75%, transparent 75%, transparent 100%);
   background-size: 40px 40px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-block-start: 15px;
+  padding-block-end: 15px;
 }
 .datagrid-row-empty-message {
   background: var(--body-bg);
@@ -291,8 +294,8 @@ table.datagrid {
 }
 .datagrid-header-tools .datagrid-search {
   flex: 1;
-  max-width: 480px;
-  margin-right: 15px;
+  max-inline-size: 480px;
+  margin-inline-end: 15px;
 }
 .datagrid-header-tools .datagrid-search .form-group,
 .datagrid-header-tools .datagrid-search .form-group .form-widget {
@@ -308,7 +311,7 @@ table.datagrid {
   background-size: 13px 13px;
   background-position: 10px 8px;
   padding: 0 32px;
-  min-width: 100%;
+  min-inline-size: 100%;
 }
 
 .datagrid-header-tools .datagrid-search .form-widget {
@@ -318,8 +321,8 @@ table.datagrid {
   color: var(--gray-500);
   padding: 4px 7px;
   position: absolute;
-  right: 1px;
-  top: 1px;
+  inset-inline-end: 1px;
+  inset-block-start: 1px;
   text-decoration: none;
 }
 .datagrid-header-tools .datagrid-search a.action-search-reset:hover {
@@ -327,7 +330,7 @@ table.datagrid {
 }
 
 #modal-filters .modal-dialog {
-  max-width: 400px;
+  max-inline-size: 400px;
 }
 #modal-filters .modal-content {
   background: var(--modal-bg);
@@ -336,7 +339,7 @@ table.datagrid {
 }
 #modal-filters .modal-header {
   background: var(--modal-header-bg);
-  border-bottom-color: transparent;
+  border-block-end-color: transparent;
   padding: 10px 15px;
 }
 #modal-filters .modal-title {
@@ -345,11 +348,11 @@ table.datagrid {
 }
 #modal-filters .modal-body {
   background: var(--modal-bg);
-  border-bottom: 0;
+  border-block-end: 0;
   border-radius: var(--border-radius);
   padding: 15px;
 }
-.action-filters-button i {
+.action-filters-button .icon {
   color: var(--text-color-light);
 }
 .action-filters-button.action-filters-applied i {
@@ -363,7 +366,7 @@ table.datagrid {
   color: var(--text-color-light);
 }
 .filter-field {
-  border-top: 1px solid var(--modal-border-color);
+  border-block-start: 1px solid var(--modal-border-color);
 }
 .filter-heading {
   align-items: center;
@@ -374,7 +377,7 @@ table.datagrid {
   color: var(--link-color);
   cursor: pointer;
   flex: 1;
-  margin-left: 7px;
+  margin-inline-start: 7px;
 }
 .filter-content {
   margin: -5px 0 0 15px;
@@ -396,19 +399,19 @@ table.datagrid {
   display: inline-flex;
 }
 .filter-content .form-check.form-check-inline {
-  margin-top: 0;
+  margin-block-start: 0;
 }
 /* needed to hide the visual marker in the labels of required fields */
 .filter-content .form-group label.required:after {
   content: none;
 }
 .filter-content .field-choice .form-check + .form-check {
-  margin-top: 4px;
+  margin-block-start: 4px;
 }
 .filter-content .field-choice .form-check-label {
-  margin-top: 0;
+  margin-block-start: 0;
 }
 
 .table.datagrid > :not(:first-child) {
-  border-top-style: none;
+  border-block-start-style: none;
 }

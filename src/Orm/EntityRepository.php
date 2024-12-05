@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\SearchMode;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityRepositoryInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDataDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -20,7 +21,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FormFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\ComparisonType;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -30,19 +30,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 final class EntityRepository implements EntityRepositoryInterface
 {
-    private AdminContextProvider $adminContextProvider;
-    private ManagerRegistry $doctrine;
-    private EntityFactory $entityFactory;
-    private FormFactory $formFactory;
-    private EventDispatcherInterface $eventDispatcher;
-
-    public function __construct(AdminContextProvider $adminContextProvider, ManagerRegistry $doctrine, EntityFactory $entityFactory, FormFactory $formFactory, EventDispatcherInterface $eventDispatcher)
-    {
-        $this->adminContextProvider = $adminContextProvider;
-        $this->doctrine = $doctrine;
-        $this->entityFactory = $entityFactory;
-        $this->formFactory = $formFactory;
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(
+        private readonly AdminContextProviderInterface $adminContextProvider,
+        private readonly ManagerRegistry $doctrine,
+        private readonly EntityFactory $entityFactory,
+        private readonly FormFactory $formFactory,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     public function createQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -120,7 +114,7 @@ final class EntityRepository implements EntityRepositoryInterface
                     $parameterName = sprintf('query_for_ulids_%d', $queryTermIndex);
                     $queryTermConditions->add(sprintf('%s.%s = :%s', $entityName, $propertyConfig['property_name'], $parameterName));
                     $queryBuilder->setParameter($parameterName, $dqlParameters['uuid_query'], 'ulid');
-                } elseif ($propertyConfig['is_text'] || $propertyConfig['is_integer']) {
+                } elseif ($propertyConfig['is_text']) {
                     $parameterName = sprintf('query_for_text_%d', $queryTermIndex);
                     // concatenating an empty string is needed to avoid issues on PostgreSQL databases (https://github.com/EasyCorp/EasyAdminBundle/issues/6290)
                     $queryTermConditions->add(sprintf('LOWER(CONCAT(%s.%s, \'\')) LIKE :%s', $entityName, $propertyConfig['property_name'], $parameterName));
@@ -132,6 +126,12 @@ final class EntityRepository implements EntityRepositoryInterface
                     $queryBuilder->setParameter($parameterName, $dqlParameters['text_query']);
                 }
             }
+
+            // When no fields are queried, the current condition must not yield any results
+            if (0 === $queryTermConditions->count()) {
+                $queryTermConditions->add('0 = 1');
+            }
+
             if (SearchMode::ALL_TERMS === $searchDto->getSearchMode()) {
                 $queryBuilder->andWhere($queryTermConditions);
             } else {

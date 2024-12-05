@@ -21,6 +21,21 @@ Basic Information
 
     <select> ... </select>
 
+.. tip::
+
+    EasyAdmin includes all the valid country flags as SVG files. You don't have
+    to do anything to make the backend render those flags. However, if you want
+    to render flags in your own custom templates, you can use the Twig Component
+    included in EasyAdmin as follows:
+
+    .. code-block:: twig
+
+        <twig:ea:Flag countryCode="CR" height="18"/>
+
+    .. versionadded:: 4.20.0
+
+        The `<twig:ea:Flag/>` component was introduced in EasyAdmin 4.20.0.
+
 Options
 -------
 

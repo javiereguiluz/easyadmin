@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\ActionCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\PropertyAccess\Exception\UninitializedPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -103,7 +104,11 @@ final class EntityDto
             ->enableExceptionOnInvalidIndex()
             ->getPropertyAccessor();
 
-        $primaryKeyValue = $propertyAccessor->getValue($this->instance, $this->primaryKeyName);
+        try {
+            $primaryKeyValue = $propertyAccessor->getValue($this->instance, $this->primaryKeyName);
+        } catch (UninitializedPropertyException $exception) {
+            $primaryKeyValue = null;
+        }
 
         return $this->primaryKeyValue = $primaryKeyValue;
     }

@@ -40,7 +40,7 @@ class TextEditorField {
 
                 if (editor !== null) {
                     // Here we consider 21px as the average line height
-                    editor.style.setProperty('min-height', `${21 * trixContentElement.dataset.numberOfRows}px`);
+                    editor.style.setProperty('min-block-size', `${21 * trixContentElement.dataset.numberOfRows}px`);
                 }
             }
         });

@@ -35,10 +35,19 @@ final class BooleanConfigurator implements FieldConfiguratorInterface
         $isRenderedAsSwitch = true === $field->getCustomOption(BooleanField::OPTION_RENDER_AS_SWITCH);
 
         if ($isRenderedAsSwitch) {
+            // this happens when processing fields not for a specific entity (e.g. when
+            // rendering the filters from the 'index' page)
+            if (null === $entityDto->getPrimaryKeyValue()) {
+                $field->setCustomOption(BooleanField::OPTION_RENDER_AS_SWITCH, false);
+
+                return;
+            }
+
             $crudDto = $context->getCrud();
 
             if (null !== $crudDto && Action::NEW !== $crudDto->getCurrentAction()) {
                 $toggleUrl = $this->adminUrlGenerator
+                    ->setController($crudDto->getControllerFqcn())
                     ->setAction(Action::EDIT)
                     ->setEntityId($entityDto->getPrimaryKeyValue())
                     ->set('fieldName', $field->getProperty())

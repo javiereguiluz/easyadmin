@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\PaginatorDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
@@ -18,6 +19,7 @@ final class EntityPaginator implements EntityPaginatorInterface
 {
     private AdminUrlGeneratorInterface $adminUrlGenerator;
     private EntityFactory $entityFactory;
+    private RequestStack $requestStack;
     private ?int $currentPage = null;
     private ?int $pageSize = null;
     private ?int $rangeSize = null;
@@ -27,10 +29,11 @@ final class EntityPaginator implements EntityPaginatorInterface
     private ?int $rangeFirstResultNumber = null;
     private ?int $rangeLastResultNumber = null;
 
-    public function __construct(AdminUrlGeneratorInterface $adminUrlGenerator, EntityFactory $entityFactory)
+    public function __construct(AdminUrlGeneratorInterface $adminUrlGenerator, EntityFactory $entityFactory, RequestStack $requestStack)
     {
         $this->adminUrlGenerator = $adminUrlGenerator;
         $this->entityFactory = $entityFactory;
+        $this->requestStack = $requestStack;
     }
 
     public function paginate(PaginatorDto $paginatorDto, QueryBuilder $queryBuilder): EntityPaginatorInterface
@@ -75,7 +78,15 @@ final class EntityPaginator implements EntityPaginatorInterface
 
     public function generateUrlForPage(int $page): string
     {
-        return $this->adminUrlGenerator->set(EA::PAGE, $page)->generateUrl();
+        $pageUrl = $this->adminUrlGenerator->set(EA::PAGE, $page);
+
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        $usesPrettyUrls = null !== $crudControllerFqcn = $currentRequest->attributes->get(EA::CRUD_CONTROLLER_FQCN);
+        if ($usesPrettyUrls) {
+            $pageUrl->setController($crudControllerFqcn)->setAction($currentRequest->attributes->get(EA::CRUD_ACTION));
+        }
+
+        return $pageUrl->generateUrl();
     }
 
     public function getCurrentPage(): int
@@ -210,8 +221,14 @@ final class EntityPaginator implements EntityPaginatorInterface
             ];
         }
 
-        $nextPageUrl = !$this->hasNextPage() ? null : $this->adminUrlGenerator->set(EA::PAGE, $this->getNextPage())->removeReferrer()->generateUrl();
-        $jsonResult['next_page'] = $nextPageUrl;
+        $nextPageUrl = !$this->hasNextPage() ? null : $this->adminUrlGenerator->set(EA::PAGE, $this->getNextPage());
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        $usesPrettyUrls = null !== $crudControllerFqcn = $currentRequest->attributes->get(EA::CRUD_CONTROLLER_FQCN);
+        if ($usesPrettyUrls && null !== $nextPageUrl) {
+            $nextPageUrl->setController($crudControllerFqcn)->setAction($currentRequest->attributes->get(EA::CRUD_ACTION));
+        }
+
+        $jsonResult['next_page'] = $nextPageUrl?->generateUrl();
 
         return json_encode($jsonResult, \JSON_THROW_ON_ERROR);
     }

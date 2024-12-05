@@ -4,6 +4,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Context;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Factory\MenuFactoryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetsDto;
@@ -23,9 +24,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * A context object that stores all the state and config of the current admin request.
  *
+ * IMPORTANT: any new methods added here MUST be duplicated in the AdminContextProvider class.
+ *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-final class AdminContext
+final class AdminContext implements AdminContextInterface
 {
     private Request $request;
     private ?UserInterface $user;
@@ -41,8 +44,9 @@ final class AdminContext
     private TemplateRegistry $templateRegistry;
     private ?MainMenuDto $mainMenuDto = null;
     private ?UserMenuDto $userMenuDto = null;
+    private bool $usePrettyUrls;
 
-    public function __construct(Request $request, ?UserInterface $user, I18nDto $i18nDto, CrudControllerRegistry $crudControllers, DashboardDto $dashboardDto, DashboardControllerInterface $dashboardController, AssetsDto $assetDto, ?CrudDto $crudDto, ?EntityDto $entityDto, ?SearchDto $searchDto, MenuFactoryInterface $menuFactory, TemplateRegistry $templateRegistry)
+    public function __construct(Request $request, ?UserInterface $user, I18nDto $i18nDto, CrudControllerRegistry $crudControllers, DashboardDto $dashboardDto, DashboardControllerInterface $dashboardController, AssetsDto $assetDto, ?CrudDto $crudDto, ?EntityDto $entityDto, ?SearchDto $searchDto, MenuFactoryInterface $menuFactory, TemplateRegistry $templateRegistry, bool $usePrettyUrls = false)
     {
         $this->request = $request;
         $this->user = $user;
@@ -56,6 +60,7 @@ final class AdminContext
         $this->searchDto = $searchDto;
         $this->menuFactory = $menuFactory;
         $this->templateRegistry = $templateRegistry;
+        $this->usePrettyUrls = $usePrettyUrls;
     }
 
     public function getRequest(): Request
@@ -103,6 +108,11 @@ final class AdminContext
     public function getAbsoluteUrls(): bool
     {
         return $this->dashboardDto->getAbsoluteUrls();
+    }
+
+    public function usePrettyUrls(): bool
+    {
+        return $this->usePrettyUrls;
     }
 
     public function getDashboardTitle(): string

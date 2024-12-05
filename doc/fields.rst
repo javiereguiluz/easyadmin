@@ -115,7 +115,7 @@ To do so, add the following method to the entity::
 
     use Doctrine\ORM\Mapping as ORM;
 
-    /** @ORM\Entity */
+    #[ORM\Entity]
     class Customer
     {
         // ...
@@ -282,7 +282,7 @@ Add tabs to your forms with the ``addTab()`` method of the special ``FormField``
 
             // Creates a second tab and customizes some of its properties, such
             // as its icon, CSS class and help message
-            FormField::addTab('Contact information Tab')
+            FormField::addTab('Contact Information Tab')
                 ->setIcon('phone')->addCssClass('optional')
                 ->setHelp('Phone number is preferred'),
 
@@ -303,12 +303,47 @@ The arguments of the ``addTab()`` method are:
   (e.g. ``far fa-folder-open``); if you don't display a text label for the tab,
   make sure to display an icon or users won't be able to click on the tab.
 
+.. note::
+
+    By default, EasyAdmin assumes that icon names correspond to `FontAwesome`_ CSS
+    classes. The necessary CSS styles and web fonts are included by default too,
+    so you don't need to take any additional steps to use FontAwesome icons. Alternatively,
+    you can :ref:`use your own icon sets <icon-customization>` instead of FontAwesome.
+
 Inside tabs you can include not only form fields but all the other form layout
 fields explained in the following sections: columns, fieldsets and rows. This
 is how a form using all those elements looks like:
 
 .. image:: images/easyadmin-form-tabs-columns-fieldsets.png
    :alt: EasyAdmin form that uses tabs, columns, fieldsets and rows
+
+By default, tabs are rendered using a special Symfony form type. The name of
+this type is ``ea_form_tab`` + a random ULID value. This makes it impossible to
+override its template using a form theme. To customize it, use the ``propertySuffix``
+optional argument of the ``addTab()`` method::
+
+    FormField::addTab('Contact Information Tab', propertySuffix: 'contact');
+
+Following this example, you can define the following blocks to override the
+design of this tab:
+
+.. code-block:: twig
+
+{% block _MyEntity_ea_form_tab_contact_row %}
+    {# ... #}
+    {{ block('ea_form_tab_open_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_tab_contact_row %}
+
+{% block _MyEntity_ea_form_tab_close_contact_row %}
+    {# ... #}
+    {{ block('ea_form_tab_close_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_tab_close_contact_row %}
+
+.. versionadded:: 4.20
+
+    The ``propertySuffix`` argument was introduced in EasyAdmin 4.20.0.
 
 Form Columns
 ~~~~~~~~~~~~
@@ -367,6 +402,13 @@ The arguments of the ``addColumn()`` method are:
   instructions or help contents. You can include HTML tags and they will be
   rendered instead of escaped.
 
+.. note::
+
+    By default, EasyAdmin assumes that icon names correspond to `FontAwesome`_ CSS
+    classes. The necessary CSS styles and web fonts are included by default too,
+    so you don't need to take any additional steps to use FontAwesome icons. Alternatively,
+    you can :ref:`use your own icon sets <icon-customization>` instead of FontAwesome.
+
 Thanks to Bootstrap responsive classes, you can have columns of different sizes,
 or even no columns at all, depending on the browser window size. In the following
 example, breakpoints below ``lg`` doesn't display columns. Also, the sum of the
@@ -417,6 +459,34 @@ complex layouts::
     By default, all fields inside columns are as wide as their containing column.
     Use form rows, as explained below, to customize the field width and/or to
     display more than one field on the same row.
+
+By default, columns are rendered using a special Symfony form type. The name of
+this type is ``ea_form_column`` + a random ULID value. This makes it impossible to
+override its template using a form theme. To customize it, use the ``propertySuffix``
+optional argument of the ``addColumn()`` method::
+
+    FormField::addColumn('col-lg-8 col-xl-6', propertySuffix: 'main');
+
+Following this example, you can define the following blocks to override the
+design of this column:
+
+.. code-block:: twig
+
+{% block _MyEntity_ea_form_column_main_row %}
+    {# ... #}
+    {{ block('ea_form_column_open_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_column_main_row %}
+
+{% block _MyEntity_ea_form_column_close_main_row %}
+    {# ... #}
+    {{ block('ea_form_column_close_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_column_close_main_row %}
+
+.. versionadded:: 4.20
+
+    The ``propertySuffix`` argument was introduced in EasyAdmin 4.20.0.
 
 Form Fieldsets
 ~~~~~~~~~~~~~~
@@ -474,12 +544,47 @@ The arguments of the ``addFieldset()`` method are:
 * ``$icon``: (type: ``?string``) the full CSS class of a `FontAwesome icon`_
   (e.g. ``far fa-folder-open``) that is displayed next to the fieldset label.
 
+.. note::
+
+    By default, EasyAdmin assumes that icon names correspond to `FontAwesome`_ CSS
+    classes. The necessary CSS styles and web fonts are included by default too,
+    so you don't need to take any additional steps to use FontAwesome icons. Alternatively,
+    you can :ref:`use your own icon sets <icon-customization>` instead of FontAwesome.
+
 When using form columns, fieldsets inside them display a slightly different
 design to better group the different fields. That's why it's recommended to
 use fieldsets whenever you use columns. This is how it looks like:
 
 .. image:: images/easyadmin-form-columns-fieldsets.png
    :alt: EasyAdmin form that uses three columns and several fieldsets to group fields
+
+By default, fieldsets are rendered using a special Symfony form type. The name of
+this type is ``ea_form_fieldset`` + a random ULID value. This makes it impossible to
+override its template using a form theme. To customize it, use the ``propertySuffix``
+optional argument of the ``addFieldset()`` method::
+
+    FormField::addFieldset('Contact information', propertySuffix: 'contact');
+
+Following this example, you can define the following blocks to override the
+design of this fieldset:
+
+.. code-block:: twig
+
+{% block _MyEntity_ea_form_fieldset_contact_row %}
+    {# ... #}
+    {{ block('ea_form_fieldset_open_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_fieldset_contact_row %}
+
+{% block _MyEntity_ea_form_fieldset_close_contact_row %}
+    {# ... #}
+    {{ block('ea_form_fieldset_close_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_fieldset_close_contact_row %}
+
+.. versionadded:: 4.20
+
+    The ``propertySuffix`` argument was introduced in EasyAdmin 4.20.0.
 
 Form Rows
 ~~~~~~~~~
@@ -575,6 +680,34 @@ force the creation of a new line (the next field will forcibly render on a new r
             BooleanField::new('published')->setColumns(2),
         ];
     }
+
+By default, rows are rendered using a special Symfony form type. The name of
+this type is ``ea_form_row`` + a random ULID value. This makes it impossible to
+override its template using a form theme. To customize it, use the ``propertySuffix``
+optional argument of the ``addRow()`` method::
+
+    FormField::addRow('xl', propertySuffix: 'main');
+
+Following this example, you can define the following blocks to override the
+design of this row:
+
+.. code-block:: twig
+
+{% block _MyEntity_ea_form_row_main_row %}
+    {# ... #}
+    {{ block('ea_form_row_open_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_row_main_row %}
+
+{% block _MyEntity_ea_form_row_close_main_row %}
+    {# ... #}
+    {{ block('ea_form_row_close_row') }}
+    {# ... #}
+{% endblock _MyEntity_ea_form_row_close_main_row %}
+
+.. versionadded:: 4.20
+
+    The ``propertySuffix`` argument was introduced in EasyAdmin 4.20.0.
 
 .. _fields_reference:
 
@@ -812,7 +945,10 @@ Misc. Options
         ->setFormTypeOptions(['option_name' => 'option_value'])
 
         // a custom HTML attribute added when rendering the field
-        // e.g. setAttribute('data-foo', 'bar') renders a 'data-foo="bar"' attribute in HTML
+        // e.g. setHtmlAttribute('data-foo', 'bar') renders a 'data-foo="bar"' attribute in HTML
+        // On 'index' and 'detail' pages, the attribute is added to the field container:
+        // <td> and div.field-group respectively
+        // On 'new' and 'edit' pages, the attribute is added to the form field;
         // it's a shortcut for the equivalent setFormTypeOption('attr.data-foo', 'bar)
         ->setHtmlAttribute('attribute_name', 'attribute_value')
 
@@ -992,4 +1128,4 @@ attribute of the tag to run your configurator before or after the built-in ones.
 .. _`Doctrine DBAL Type`: https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/types.html
 .. _`Custom Mapping Types`: https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/types.html#custom-mapping-types
 .. _`Custom Form Field Types`: https://symfony.com/doc/current/form/create_custom_field_type.html
-.. _`FontAwesome icon`: https://fontawesome.com/v6/search?m=free
+.. _`FontAwesome`: https://fontawesome.com/

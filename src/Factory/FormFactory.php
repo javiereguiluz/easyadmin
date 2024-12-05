@@ -5,7 +5,6 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Factory;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudFormType;
@@ -66,10 +65,7 @@ final class FormFactory
     {
         // filtering always returns to the index page of the same CRUD entity and with the same query parameters
         $urlQueryParameters = $request->query->all();
-        if ($urlQueryParameters[EA::CRUD_ACTION] ?? null) {
-            $urlQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
-        }
-        $actionUrl = $this->adminUrlGenerator->setAll($urlQueryParameters)->generateUrl();
+        $actionUrl = $this->adminUrlGenerator->setAll($urlQueryParameters)->setAction(Action::INDEX)->generateUrl();
 
         $filtersForm = $this->symfonyFormFactory->createNamed('filters', FiltersFormType::class, null, [
             'method' => 'GET',

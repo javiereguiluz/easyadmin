@@ -122,7 +122,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::INDEX, 'entity' => null])) {
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::INDEX, 'entity' => null, 'entityFqcn' => $context->getEntity()->getFqcn()])) {
             throw new ForbiddenActionException($context);
         }
 
@@ -172,7 +172,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::DETAIL, 'entity' => $context->getEntity()])) {
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::DETAIL, 'entity' => $context->getEntity(), 'entityFqcn' => $context->getEntity()->getFqcn()])) {
             throw new ForbiddenActionException($context);
         }
 
@@ -207,7 +207,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::EDIT, 'entity' => $context->getEntity()])) {
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::EDIT, 'entity' => $context->getEntity(), 'entityFqcn' => $context->getEntity()->getFqcn()])) {
             throw new ForbiddenActionException($context);
         }
 
@@ -289,7 +289,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::NEW, 'entity' => null])) {
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::NEW, 'entity' => null, 'entityFqcn' => $context->getEntity()->getFqcn()])) {
             throw new ForbiddenActionException($context);
         }
 
@@ -347,7 +347,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::DELETE, 'entity' => $context->getEntity()])) {
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::DELETE, 'entity' => $context->getEntity(), 'entityFqcn' => $context->getEntity()->getFqcn()])) {
             throw new ForbiddenActionException($context);
         }
 
@@ -391,7 +391,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $this->redirect($referrer);
         }
 
-        return $this->redirect($this->container->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
+        return $this->redirect($this->container->get(AdminUrlGenerator::class)->setController($context->getCrud()->getControllerFqcn())->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
     }
 
     public function batchDelete(AdminContext $context, BatchActionDto $batchActionDto): Response
@@ -415,7 +415,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             }
 
             $entityDto = $context->getEntity()->newWithInstance($entityInstance);
-            if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::DELETE, 'entity' => $entityDto])) {
+            if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::DELETE, 'entity' => $entityDto, 'entityFqcn' => $context->getEntity()->getFqcn()])) {
                 throw new ForbiddenActionException($context);
             }
 
@@ -425,6 +425,9 @@ abstract class AbstractCrudController extends AbstractController implements Crud
 
             $event = new BeforeEntityDeletedEvent($entityInstance);
             $this->container->get('event_dispatcher')->dispatch($event);
+            if ($event->isPropagationStopped()) {
+                return $event->getResponse();
+            }
             $entityInstance = $event->getEntityInstance();
 
             try {
@@ -628,7 +631,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
-        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'];
+        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'] ?? null;
 
         $url = match ($submitButtonName) {
             Action::SAVE_AND_CONTINUE => $this->container->get(AdminUrlGenerator::class)

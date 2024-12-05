@@ -1,0 +1,17 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider #}
+{% trans_default_domain ea.hasContext ? ea.i18n.translationDomain : (translation_domain is defined ? translation_domain ?? 'messages') %}
+
+{% set flash_messages = app.flashes %}
+
+{% if flash_messages|length > 0 %}
+    <div id="flash-messages">
+        {% for label, messages in flash_messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    {{ message|trans|raw }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}

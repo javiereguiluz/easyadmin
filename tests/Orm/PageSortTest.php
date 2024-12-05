@@ -53,7 +53,7 @@ class PageSortTest extends AbstractCrudTestCase
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextSame('th.header-for-field-association > a', 'Website');
-        $this->assertSelectorExists('th.header-for-field-association i.'.$expectedSortIcon);
+        $this->assertSelectorExists('th.header-for-field-association span.icon svg');
 
         $index = 1;
 
@@ -70,19 +70,19 @@ class PageSortTest extends AbstractCrudTestCase
         yield [
             [],
             null,
-            'fa-sort',
+            'internal:sort-arrows',
         ];
 
         yield [
             ['sort' => ['website' => 'ASC']],
             'asort',
-            'fa-arrow-up',
+            'internal:sort-arrow-up',
         ];
 
         yield [
             ['sort' => ['website' => 'DESC']],
             'arsort',
-            'fa-arrow-down',
+            'internal:sort-arrow-down',
         ];
     }
 }

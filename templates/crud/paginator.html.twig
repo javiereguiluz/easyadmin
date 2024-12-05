@@ -1,0 +1,56 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var paginator \EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator #}
+{% trans_default_domain 'EasyAdminBundle' %}
+
+<div class="list-pagination">
+    <div class="list-pagination-counter">
+        {% if render_detailed_pagination is defined ? render_detailed_pagination : true %}
+            {{ 'paginator.results'|trans({'%count%': paginator.numResults|format})|raw }}
+        {% endif %}
+    </div>
+    {% if paginator.hasPreviousPage or paginator.hasNextPage %}
+        <nav class="pager list-pagination-paginator {{ not paginator.hasPreviousPage ? 'first-page' }} {{ not paginator.hasNextPage ? 'last-page' }}">
+            <ul class="pagination">
+                <li class="page-item page-item-previous {{ not paginator.hasPreviousPage ? 'disabled' }}">
+                    <a class="page-link" href="{{ not paginator.hasPreviousPage ? '#' : paginator.generateUrlForPage(paginator.previousPage) }}">
+                        {% if 'rtl' == ea.i18n.textDirection %}
+                            <twig:ea:Icon name="internal:chevron-right" class="mx-1" aria-hidden="true" />
+                        {% else %}
+                            <twig:ea:Icon name="internal:chevron-left" class="mx-1" aria-hidden="true" />
+                        {% endif %}
+
+                        <span class="btn-label">{{ 'paginator.previous'|trans }}</span>
+                    </a>
+                </li>
+
+                {% if render_detailed_pagination is defined ? render_detailed_pagination : true %}
+                    {% for page in paginator.pageRange %}
+                        <li class="page-item {{ page == paginator.currentPage ? 'active' }} {{ page is null ? 'disabled' }}">
+                            {% if page is null %}
+                                <span class="page-link">&hellip;</span>
+                            {% else %}
+                                <a class="page-link" href="{{ paginator.generateUrlForPage(page) }}">{{ page }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="page-item active {{ paginator.currentPage is null ? 'disabled' }}">
+                        <a class="page-link" href="{{ paginator.generateUrlForPage(paginator.currentPage) }}">{{ paginator.currentPage }}</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item page-item-next {{ not paginator.hasNextPage ? 'disabled' }}">
+                    <a class="page-link" href="{{ not paginator.hasNextPage ? '#' : paginator.generateUrlForPage(paginator.nextPage) }}">
+                        <span class="btn-label">{{ 'paginator.next'|trans }}</span>
+
+                        {% if 'rtl' == ea.i18n.textDirection %}
+                            <twig:ea:Icon name="internal:chevron-left" class="mx-1" aria-hidden="true" />
+                        {% else %}
+                            <twig:ea:Icon name="internal:chevron-right" class="mx-1" aria-hidden="true" />
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+</div>

@@ -24,7 +24,7 @@ final class ClassMaker
      */
     public function make(string $generatedFilePathPattern, string $skeletonName, array $skeletonParameters): string
     {
-        $skeletonPath = sprintf('%s/%s', $this->kernel->locateResource('@EasyAdminBundle/Resources/skeleton'), $skeletonName);
+        $skeletonPath = sprintf('%s/%s', $this->kernel->locateResource('@EasyAdminBundle/src/Resources/skeleton'), $skeletonName);
         $generatedFileRelativeDir = u($generatedFilePathPattern)->beforeLast('/')->trimEnd('/')->toString();
         $generatedFileNamePattern = u($generatedFilePathPattern)->afterLast('/')->trimStart('/');
 

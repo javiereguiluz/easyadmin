@@ -15,19 +15,19 @@
 }
 trix-toolbar {
     background:  var(--form-type-text-editor-toolbar-bg);
-    border-bottom: 1px solid var(--form-input-border-color);
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
+    border-block-end: 1px solid var(--form-input-border-color);
+    border-start-start-radius: var(--border-radius);
+    border-start-end-radius: var(--border-radius);
     margin: -7px -7px 10px;
     padding: 0;
 }
 trix-toolbar .trix-button-row {
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
+    border-start-start-radius: var(--border-radius);
+    border-start-end-radius: var(--border-radius);
 }
 trix-toolbar .trix-button-group {
     border: 0;
-    margin-bottom: 0;
+    margin-block-end: 0;
 }
 trix-toolbar .trix-button {
     border: 0;
@@ -35,7 +35,7 @@ trix-toolbar .trix-button {
     margin: 0;
 }
 trix-toolbar .trix-button:not(:first-child) {
-    border-left: 0;
+    border-inline-start: 0;
 }
 trix-toolbar .trix-button:hover {
     background: var(--form-type-text-editor-toolbar-button-hover-color);
@@ -45,15 +45,15 @@ trix-toolbar .trix-button.trix-active {
     color: var(--form-type-text-editor-toolbar-button-active-color);
 }
 trix-toolbar .trix-button.trix-button--icon {
-    height: 32px;
-    width: 32px;
+    block-size: 32px;
+    inline-size: 32px;
 }
 trix-toolbar .trix-button.trix-button--icon::before {
     background-size: 22px;
     background-position: center;
     float: left;
-    height: 32px;
-    width: 32px;
+    block-size: 32px;
+    inline-size: 32px;
     text-indent: -999em;
 }
 .ea-dark-scheme trix-toolbar .trix-button.trix-button--icon::before {

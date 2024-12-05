@@ -184,7 +184,7 @@ final class Actions
         if (Action::DELETE === $actionName) {
             $cssClass = \in_array($pageName, [Crud::PAGE_DETAIL, Crud::PAGE_EDIT], true) ? 'btn btn-secondary pr-0 text-danger' : 'text-danger';
 
-            return Action::new(Action::DELETE, t('action.delete', domain: 'EasyAdminBundle'), Crud::PAGE_INDEX === $pageName ? null : 'fa fa-fw fa-trash-o')
+            return Action::new(Action::DELETE, t('action.delete', domain: 'EasyAdminBundle'), Crud::PAGE_INDEX === $pageName ? null : 'internal:delete')
                 ->linkToCrudAction(Action::DELETE)
                 ->setCssClass('action-'.Action::DELETE)
                 ->addCssClass($cssClass);
@@ -200,7 +200,7 @@ final class Actions
         }
 
         if (Action::SAVE_AND_CONTINUE === $actionName) {
-            return Action::new(Action::SAVE_AND_CONTINUE, t(Crud::PAGE_EDIT === $pageName ? 'action.save_and_continue' : 'action.create_and_continue', domain: 'EasyAdminBundle'), 'far fa-edit')
+            return Action::new(Action::SAVE_AND_CONTINUE, t(Crud::PAGE_EDIT === $pageName ? 'action.save_and_continue' : 'action.create_and_continue', domain: 'EasyAdminBundle'), 'internal:edit')
                 ->setCssClass('action-'.Action::SAVE_AND_CONTINUE)
                 ->addCssClass('btn btn-secondary action-save')
                 ->displayAsButton()

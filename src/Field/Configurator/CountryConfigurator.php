@@ -9,20 +9,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CountryField;
-use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Intl\Exception\MissingResourceException;
+use Twig\Environment;
 
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 final class CountryConfigurator implements FieldConfiguratorInterface
 {
-    private PackageInterface $assetPackage;
-
-    public function __construct(PackageInterface $assetPackage)
+    public function __construct(private Environment $twig)
     {
-        $this->assetPackage = $assetPackage;
     }
 
     public function supports(FieldDto $field, EntityDto $entityDto): bool
@@ -94,8 +91,7 @@ final class CountryConfigurator implements FieldConfiguratorInterface
             }
 
             $countryCodeAlpha2 = $usesAlpha3Codes ? Countries::getAlpha2Code($countryCode) : $countryCode;
-            $flagImagePath = $this->assetPackage->getUrl(sprintf('images/flags/%s.svg', $countryCodeAlpha2));
-            $choiceKey = sprintf('<div class="country-name-flag"><img src="%s" height="17" class="country-flag" loading="lazy" alt="%s"> <span>%s</span></div>', $flagImagePath, $countryName, $countryName);
+            $choiceKey = $this->twig->createTemplate(sprintf('<div class="country-name-flag"><twig:ea:Flag countryCode="%s" /> <span>%s</span></div>', $countryCodeAlpha2, $countryName))->render();
 
             $choices[$choiceKey] = $countryCode;
         }

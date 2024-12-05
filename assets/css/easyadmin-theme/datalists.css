@@ -5,14 +5,14 @@
 /* ------------------------------------------------------------------------- */
 
 .ea-detail .field-form_panel {
-  padding-bottom: 35px;
+  padding-block-end: 35px;
 }
 .ea-detail .form-panel-header {
   box-shadow: none;
 }
 
 dl.datalist {
-  margin-bottom: 0;
+  margin-block-end: 0;
 }
 dl.datalist .data-row {
   box-shadow: inset 0 -1px var(--datalist-border-color);
@@ -27,13 +27,13 @@ dl.datalist .data-row:first-child {
 dl.datalist dt {
   color: var(--datalist-label-color);
   font-weight: 400;
-  margin-bottom: 0;
-  padding-right: 10px;
+  margin-block-end: 0;
+  padding-inline-end: 10px;
 }
 
 dl.datalist dd {
   color: var(--datalist-value-color);
-  margin-bottom: 0;
+  margin-block-end: 0;
   overflow: auto;
 }
 
@@ -55,5 +55,5 @@ dl.datalist .data-help i {
 }
 .field-textarea dd,
 .field-text_editor dd {
-  max-width: 80ch;
+  max-inline-size: 80ch;
 }

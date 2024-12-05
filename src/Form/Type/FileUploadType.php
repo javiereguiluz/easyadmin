@@ -164,7 +164,7 @@ class FileUploadType extends AbstractType implements DataMapperInterface
                 return strtr($fileNamePatternOrCallable, [
                     '[contenthash]' => sha1_file($file->getRealPath()),
                     '[day]' => date('d'),
-                    '[extension]' => $file->guessClientExtension(),
+                    '[extension]' => $file->guessExtension(),
                     '[month]' => date('m'),
                     '[name]' => pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME),
                     '[randomhash]' => bin2hex(random_bytes(20)),

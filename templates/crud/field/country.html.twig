@@ -1,0 +1,31 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{# Regardless of the field options, country names are always stored
+   in field.formattedValue as ['alpha2CountryCode' => 'countryName'] #}
+{% set show_flag = field.customOptions.get('showFlag') %}
+{% set show_name = field.customOptions.get('showName') %}
+
+{% if show_flag and not show_name %}
+    {% for flag_code, country_name in field.formattedValue %}
+        {% if flag_code is not null %}
+            <twig:ea:Flag countryCode="{{ flag_code }}" height="17" />
+        {% endif %}
+    {% endfor %}
+{% elseif show_name and not show_flag  %}
+    {{ field.formattedValue|join(', ') }}
+{% else %}
+    {% for flag_code, country_name in field.formattedValue %}
+        <span>
+            {%- if show_flag -%}
+                {%- if flag_code is not null -%}
+                    <twig:ea:Flag countryCode="{{ flag_code }}" height="17" />
+                {%- endif -%}
+            {%- endif -%}
+
+            {%- if show_name -%}
+                {{- country_name ?? '' -}}
+            {%- endif -%}
+        </span>
+    {% endfor %}
+{% endif %}

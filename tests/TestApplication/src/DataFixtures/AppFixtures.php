@@ -14,7 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Entity\Website;
 
 class AppFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         for ($i = 0; $i < 30; ++$i) {
             $category = (new Category())

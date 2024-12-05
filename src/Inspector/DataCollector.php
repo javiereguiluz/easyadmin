@@ -3,8 +3,8 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Inspector;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector as BaseDataCollector;
@@ -17,11 +17,9 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector as BaseDataCollecto
  */
 class DataCollector extends BaseDataCollector
 {
-    private AdminContextProvider $adminContextProvider;
-
-    public function __construct(AdminContextProvider $adminContextProvider)
-    {
-        $this->adminContextProvider = $adminContextProvider;
+    public function __construct(
+        private readonly AdminContextProviderInterface $adminContextProvider,
+    ) {
     }
 
     public function reset(): void
@@ -53,7 +51,7 @@ class DataCollector extends BaseDataCollector
         return $this->data;
     }
 
-    private function collectData(AdminContext $context): array
+    private function collectData(AdminContextInterface $context): array
     {
         return [
             'CRUD Controller FQCN' => null === $context->getCrud() ? null : $context->getCrud()->getControllerFqcn(),

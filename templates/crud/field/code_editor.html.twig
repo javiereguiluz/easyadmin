@@ -1,0 +1,42 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% if ea.crud.currentAction == 'detail' %}
+    {{ _self.render_code_editor(field) }}
+{% else %}
+    {% set html_id = 'ea-code-editor-' ~ field.uniqueId %}
+    <a href="#" data-bs-toggle="modal" data-bs-target="#{{ html_id }}">
+        <twig:ea:Icon name="internal:code" /> {{ 'field.code_editor.view_code'|trans([], domain = 'EasyAdminBundle') }}
+    </a>
+
+    <div class="modal fade" id="{{ html_id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ field.label|trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'action.close'|trans([], domain = 'EasyAdminBundle') }}">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ _self.render_code_editor(field) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% macro render_code_editor(field) %}
+    {% set configuredHeight = field.customOptions.get('height') %}
+    <textarea
+            readonly
+            style="{{ configuredHeight is null ? 'max-height: 500px;' : 'max-height: unset; height: ' ~ configuredHeight ~ 'px' }}"
+            data-ea-code-editor-field="true"
+            data-language="{{ field.customOptions.get('language')|e('html_attr') }}"
+            data-tab-size="{{ field.customOptions.get('tabSize')|e('html_attr') }}"
+            data-indent-with-tabs="{{ field.customOptions.get('indentWithTabs') ? 'true' : 'false' }}"
+            data-show-line-numbers="{{ field.customOptions.get('showLineNumbers') ? 'true' : 'false' }}"
+            data-number-of-rows="{{ field.customOptions.get('numOfRows')|e('html_attr') }}"
+    >
+        {{- field.formattedValue|escape -}}
+    </textarea>
+{% endmacro %}

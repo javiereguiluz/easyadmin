@@ -8,18 +8,18 @@ body.page-login {
     body.page-login {
         align-items: center;
         display: flex;
-        height: 100vh;
+        block-size: 100vh;
         justify-content: center;
         overflow: hidden;
         position: absolute;
-        width: 100vw;
+        inline-size: 100vw;
     }
 }
 body.page-login #flash-messages {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    inline-size: 100%;
 }
 
 .login-wrapper {
@@ -27,18 +27,18 @@ body.page-login #flash-messages {
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    max-width: 28rem;
-    width: 94%;
+    max-inline-size: 28rem;
+    inline-size: 94%;
 }
 @media(min-width: 992px) {
     .login-wrapper {
-        margin-top: -225px;
-        width: 100%;
+        margin-block-start: -225px;
+        inline-size: 100%;
     }
 }
 .login-wrapper .main-header {
     display: block;
-    padding-right: 0;
+    padding-inline-end: 0;
 }
 .login-wrapper .main-header #header-logo a {
     font-size: var(--font-size-lg);
@@ -54,7 +54,7 @@ body.page-login #flash-messages {
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-lg);
     padding: 15px 30px;
-    width: 100%;
+    inline-size: 100%;
 }
 @media(min-width: 992px) {
     .login-wrapper .content {
@@ -65,7 +65,7 @@ body.page-login #flash-messages {
     background-color: var(--page-login-form-control-bg);
     border-color: var(--page-login-form-control-border-color);
     font-size: var(--font-size-lg);
-    height: 38px;
+    block-size: 38px;
     line-height: 38px;
 }
 .login-wrapper .form-widget .btn-primary {
@@ -73,5 +73,5 @@ body.page-login #flash-messages {
 }
 .login-wrapper .form-text {
     font-size: inherit;
-    margin-top: 5px;
+    margin-block-start: 5px;
 }

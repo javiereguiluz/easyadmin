@@ -35,6 +35,10 @@ jobs:
               with:
                   args: --diff --dry-run
 
+            - name: Lint logical CSS properties
+              run: |
+                  php ./src/Resources/bin/logical-css-properties-linter.php
+
     phpstan:
         runs-on: ubuntu-latest
         steps:
@@ -61,30 +65,30 @@ jobs:
                 include:
                     # Latest Symfony version support
                     - os: macos-latest
-                      php_version: "8.3"
-                      symfony_version: "7.0"
+                      php_version: "8.4"
+                      symfony_version: "7.2"
                       stability: "stable"
                     - os: windows-latest
-                      php_version: "8.3"
-                      symfony_version: "7.0"
+                      php_version: "8.4"
+                      symfony_version: "7.2"
                       stability: "stable"
                     # LTS Symfony version support
                     - os: macos-latest
-                      php_version: "8.3"
+                      php_version: "8.4"
                       symfony_version: "6.4"
                       stability: "stable"
                     - os: windows-latest
-                      php_version: "8.3"
+                      php_version: "8.4"
                       symfony_version: "6.4"
                       stability: "stable"
                     # Lowest deps support
                     - os: ubuntu-latest
-                      php_version: "8.0.2"
+                      php_version: "8.1"
                       composer_args: "--prefer-lowest"
                       stability: "stable"
                     # Lowest PHP version support. Remove when it is dropped
                     - os: ubuntu-latest
-                      php_version: "8.0"
+                      php_version: "8.1"
                       symfony_version: "5.4"
                       stability: "stable"
                     - os: ubuntu-latest
@@ -93,13 +97,17 @@ jobs:
                       stability: "stable"
                     - os: ubuntu-latest
                       php_version: "8.3"
-                      symfony_version: "7.0"
+                      symfony_version: "7.1"
+                      stability: "stable"
+                    - os: ubuntu-latest
+                      php_version: "8.4"
+                      symfony_version: "7.1"
                       stability: "stable"
                     # Upcoming Symfony versions
                     - os: ubuntu-latest
-                      php_version: "8.3"
-                      symfony_version: "7.1.x-dev"
-                      stability: "dev"
+                      php_version: "8.4"
+                      symfony_version: "7.2"
+                      stability: "stable"
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v4
@@ -124,15 +132,30 @@ jobs:
 
             - name: Configure Symfony version for symfony/flex
               if: ${{ matrix.symfony_version }}
-              run: composer config extra.symfony.require "${{ matrix.symfony_version }}"
+              run: composer config extra.symfony.require "${{ matrix.symfony_version }}.*"
 
             - name: Install dependencies
               run: |
-                  composer update ${{ matrix.composer_args }}
+                  composer update ${{ matrix.composer_args }};
                   vendor/bin/simple-phpunit install
 
+            - name: Show installed dependencies
+              run: |
+                  composer show
+
             - name: Run tests
-              continue-on-error: ${{ matrix.stability == 'dev' }}
+              continue-on-error: ${{ matrix.stability == 'dev' || matrix.symfony_version == '7.2' }}
               env:
-                  SYMFONY_DEPRECATIONS_HELPER: "weak"
-              run: vendor/bin/simple-phpunit
+                  SYMFONY_DEPRECATIONS_HELPER: "max[total]=999999&ignoreFile=./tests/baseline-ignore.txt"
+              run: |
+                  ./vendor/bin/simple-phpunit --exclude-group pretty_urls
+
+            - name: Run Pretty URLs tests
+                # Symfony 5.4 version doesn't include the #[Route] attribute needed to run these tests (it only includes the @Route annotation)
+              if: ${{ matrix.symfony_version != '5.4' && matrix.composer_args != '--prefer-lowest' }}
+              continue-on-error: ${{ matrix.stability == 'dev' || matrix.symfony_version == '7.2' }}
+              env:
+                  USE_PRETTY_URLS: "1"
+                  SYMFONY_DEPRECATIONS_HELPER: "max[total]=999999&ignoreFile=./tests/baseline-ignore.txt"
+              run: |
+                  ./vendor/bin/simple-phpunit tests/Controller/PrettyUrls/PrettyUrlsControllerTest.php

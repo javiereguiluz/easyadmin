@@ -124,10 +124,10 @@ a.btn.disabled, fieldset:disabled a.btn {
     cursor: inherit;
 }
 .btn > i + .btn-label {
-    margin-left: 4px;
+    margin-inline-start: 4px;
 }
 .btn > .btn-label + i {
-    margin-left: 4px;
+    margin-inline-start: 4px;
 }
 
 .btn-group-sm > .btn, .btn-sm {

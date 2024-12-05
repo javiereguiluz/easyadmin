@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Config;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\IconSet;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetsDto;
 
@@ -90,6 +91,18 @@ final class Assets
     public function addHtmlContentToBody(string $htmlContent): self
     {
         $this->dto->addHtmlContentToBody($htmlContent);
+
+        return $this;
+    }
+
+    public function useCustomIconSet(string $defaultIconPrefix = ''): self
+    {
+        if (str_contains($defaultIconPrefix, ':') || str_contains(trim($defaultIconPrefix), ' ')) {
+            throw new \InvalidArgumentException(sprintf('The default icon prefix cannot contain spaces or the ":" character ("%s" given).', $defaultIconPrefix));
+        }
+
+        $this->dto->setIconSet(IconSet::Custom);
+        $this->dto->setDefaultIconPrefix(trim($defaultIconPrefix));
 
         return $this;
     }

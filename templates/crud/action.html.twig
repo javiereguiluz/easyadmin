@@ -1,0 +1,18 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var action \EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% if 'a' == action.htmlElement %}
+    <a class="{{ isIncludedInDropdown|default(false) ? 'dropdown-item' }} {{ action.cssClass }}"
+       href="{{ action.linkUrl }}"
+       {% for name, value in action.htmlAttributes %}{{ name }}="{{ (value.trans is defined ? value|trans : value)|e('html_attr') }}" {% endfor %}>
+        {%- if action.icon %}<twig:ea:Icon name="{{ action.icon }}" class="action-icon" /> {% endif -%}
+        {%- if action.label is not empty -%}<span class="action-label">{{ action.label|trans|raw }}</span>{%- endif -%}
+    </a>
+{% elseif 'button' == action.htmlElement %}
+    <button class="{{ action.cssClass }}" {% for name, value in action.htmlAttributes %}{{ name }}="{{ (value.trans is defined ? value|trans : value)|e('html_attr') }}" {% endfor %}>
+        <span class="btn-label">
+            {%- if action.icon %}<twig:ea:Icon name="{{ action.icon }}" /> {% endif -%}
+            {%- if action.label is not empty -%}<span class="action-label">{{ action.label|trans|raw }}</span>{%- endif -%}
+        </span>
+    </button>
+{% endif %}

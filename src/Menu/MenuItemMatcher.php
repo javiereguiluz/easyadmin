@@ -28,7 +28,13 @@ class MenuItemMatcher implements MenuItemMatcherInterface
      */
     public function markSelectedMenuItem(array $menuItems, Request $request): array
     {
-        $menuItems = $this->doMarkSelectedMenuItem($menuItems, $request);
+        $usePrettyUrls = true === (bool) $request->attributes->get(EA::ROUTE_CREATED_BY_EASYADMIN);
+        if ($usePrettyUrls) {
+            $menuItems = $this->doMarkSelectedPrettyUrlsMenuItem($menuItems, $request);
+        } else {
+            $menuItems = $this->doMarkSelectedLegacyMenuItem($menuItems, $request);
+        }
+
         $menuItems = $this->doMarkExpandedMenuItem($menuItems);
 
         return $menuItems;
@@ -61,7 +67,7 @@ class MenuItemMatcher implements MenuItemMatcherInterface
      *
      * @return MenuItemDto[]
      */
-    private function doMarkSelectedMenuItem(array $menuItems, Request $request): array
+    private function doMarkSelectedLegacyMenuItem(array $menuItems, Request $request): array
     {
         // the menu-item matching is a 2-phase process:
         // 1) scan all menu items to list which controllers and actions are linked from the menu;
@@ -78,7 +84,7 @@ class MenuItemMatcher implements MenuItemMatcherInterface
             }
 
             if ([] !== $subItems = $menuItemDto->getSubItems()) {
-                $menuItemDto->setSubItems($this->doMarkSelectedMenuItem($subItems, $request));
+                $menuItemDto->setSubItems($this->doMarkSelectedLegacyMenuItem($subItems, $request));
             }
 
             $menuItemQueryString = null === $menuItemDto->getLinkUrl() ? null : parse_url($menuItemDto->getLinkUrl(), \PHP_URL_QUERY);
@@ -137,6 +143,69 @@ class MenuItemMatcher implements MenuItemMatcherInterface
                 $menuItemDto->setSelected(true);
 
                 break;
+            }
+        }
+
+        return $menuItems;
+    }
+
+    /**
+     * @param MenuItemDto[] $menuItems
+     *
+     * @return MenuItemDto[]
+     */
+    private function doMarkSelectedPrettyUrlsMenuItem(array $menuItems, Request $request): array
+    {
+        // the menu-item matching is a 2-phase process:
+        // 1) traverse all menu items and try to find an exact match with the current URL
+        // 2) if no exact match is found, traverse all menu items again and try to find a partial match:
+        // 2.1) strip the query string from the current URL and the menu item URL and look for a match
+        // 2.2) if no match is found, strip the action from the request (e.g. /admin/post/new -> /admin/post) and try to match again
+
+        // try to find an exact match with the current URL
+        foreach ($menuItems as $menuItemDto) {
+            if ($menuItemDto->isMenuSection()) {
+                continue;
+            }
+
+            if ([] !== $subItems = $menuItemDto->getSubItems()) {
+                $menuItemDto->setSubItems($this->doMarkSelectedPrettyUrlsMenuItem($subItems, $request));
+            }
+
+            // compare the ending of the URL instead of a strict equality because link URLs can be absolute URLs
+            if (str_ends_with($menuItemDto->getLinkUrl(), $request->getRequestUri())) {
+                $menuItemDto->setSelected(true);
+
+                return $menuItems;
+            }
+        }
+
+        // if no exact match is found, try to find a partial match
+        $currentRequestUri = $request->getUri();
+        $currentRequestUriWithoutQueryString = parse_url($currentRequestUri, \PHP_URL_PATH);
+        // remove the last segment of the URL but keep the trailing slash (e.g. /admin/post/new -> /admin/post/)
+        $currentRequestUriWithoutAction = preg_replace('#/[^/]+$#', '', $currentRequestUriWithoutQueryString);
+        // the edit URL is '/admin/foo/{id}/edit' so we need to remove the two last segments of the URL
+        if (str_ends_with($currentRequestUriWithoutQueryString, '/edit')) {
+            $currentRequestUriWithoutAction = preg_replace('#/[^/]+$#', '', $currentRequestUriWithoutAction);
+        }
+
+        foreach ($menuItems as $menuItemDto) {
+            if ($menuItemDto->isMenuSection()) {
+                continue;
+            }
+
+            $menuItemUrl = $menuItemDto->getLinkUrl();
+            $menuItemUrlWithoutQueryString = parse_url($menuItemUrl, \PHP_URL_PATH);
+
+            // compare the ending of the URL instead of a strict equality because link URLs can be absolute URLs
+            if (str_ends_with($menuItemUrl, $currentRequestUriWithoutQueryString)
+                || str_ends_with($menuItemUrl, $currentRequestUriWithoutAction)
+                || str_ends_with($menuItemUrlWithoutQueryString, $currentRequestUriWithoutQueryString)
+                || str_ends_with($menuItemUrlWithoutQueryString, $currentRequestUriWithoutAction)) {
+                $menuItemDto->setSelected(true);
+
+                return $menuItems;
             }
         }
 

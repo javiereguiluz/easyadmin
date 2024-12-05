@@ -1,6 +1,75 @@
 Upgrade between EasyAdmin 4.x versions
 ======================================
 
+EasyAdmin 4.20.0
+----------------
+
+### Country Flags now Use a Flag Twig Component
+
+Instead of rendering country flags (in `CountryField`) using an `<img>` tag,
+they are now rendered as plain `<svg>` files using a Twig component. This change
+removes hundreds of lines in our `manifest.json` file and also removes a JavaScript
+dependency. Flags still look and work the same as before.
+
+If you used the included country flags in your own templates (which is rare and
+not documented) you need to do the following change:
+
+```twig
+{# Before #}
+<img class="country-flag" height="17" alt="{{ country_name }}" title="{{ country_name }}" src="{{ asset('images/flags/' ~ flag_code ~ '.svg', ea.assets.defaultAssetPackageName) }}">
+
+{# After #}
+<twig:ea:Flag countryCode="{{ flag_code }}" height="17" />
+```
+
+EasyAdmin 4.18.0
+----------------
+
+### Reverted FontAwesome Icon Changes
+
+In EasyAdmin 4.16.0, we introduced a feature allowing the use of custom icon
+sets in addition to the default FontAwesome icons. As part of this update,
+FontAwesome icons were changed to be rendered as inline SVGs instead of being
+applied via CSS classes. **This change has been reverted in this version**,
+restoring the previous behavior so you can continue using FontAwesome icons as
+before in EasyAdmin.
+
+EasyAdmin 4.17.0
+----------------
+
+### Pretty URLs Changed Their Url Patterns
+
+This is a small BC break. When using pretty URLs, the generated URLs used
+underscores and they now use dashes and snake case. For example, before an URL
+could be `/admin/blog_post/batchDelete` and now it's `/admin/blog-post/batch-delete`
+
+The route names remain the same (e.g. `admin_blog_post_batch_delete`) and you
+probably always generate URLs using the route name, so this BC break won't impact you.
+
+EasyAdmin 4.16.0
+----------------
+
+### FontAwesome Icons Are Now Inlined as SVGs
+
+**REVERTED** This change was reverted in EasyAdmin 4.18.0. If you use FontAwesome
+icons, you don't have to do any change.
+
+EasyAdmin 4.14.0
+----------------
+
+### Added Pretty URLs Support
+
+Starting from 4.14.0 version, EasyAdmin includes a custom route loader that
+can generate pretty URLs in your backend. Enable this feature by creating the
+following routing file in your application:
+
+```yaml
+# config/routes/easyadmin.yaml
+easyadmin:
+    resource: .
+    type: easyadmin.routes
+```
+
 EasyAdmin 4.11.0
 ----------------
 
