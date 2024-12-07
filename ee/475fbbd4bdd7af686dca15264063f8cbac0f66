@@ -1,0 +1,38 @@
+---------------------------------------------------------------------------
+
+by pfpro at 2024-12-07T12:06:03Z
+
+BTW
+Did you notice that a margin-bottom property has now been added below the alerts:?
+
+![image](https://github.com/user-attachments/assets/8a3ecdef-3170-48e8-961a-9748f5dac1b5)
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-07T12:09:19Z
+
+@pfpro that's bad 😠 Could you please check where that error comes from and, if possible, send a pull request to fix it? If you can't create the PR, just debugging where this happens is fine. Thanks!
+
+---------------------------------------------------------------------------
+
+by pfpro at 2024-12-07T14:34:02Z
+
+I think we could change this line:
+
+https://github.com/EasyCorp/EasyAdminBundle/blob/03f593ab43599f129ad77fbb3293dd23c1793a3a/templates/flash_messages.html.twig#L10
+
+and add "mb-0":
+
+`<div class="alert alert-{{ label }} alert-dismissible fade show mb-0" role="alert">`
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-07T16:00:02Z
+
+@pfpro thanks! I've fixed that issue in this PR too.
+
+---------------------------------------------------------------------------
+
+by pfpro at 2024-12-07T16:04:08Z
+
+My pleasure!
