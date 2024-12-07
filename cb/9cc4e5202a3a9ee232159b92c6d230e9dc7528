@@ -1,0 +1,13 @@
+---------------------------------------------------------------------------
+
+by andersonamuller at 2024-12-05T20:25:35Z
+
+Further down is replacing the class of the icon element to switch `lock-open`/`lock`, but won't this be a problem with the `ux-icons`?
+
+https://github.com/EasyCorp/EasyAdminBundle/pull/6622/files#diff-3ad1b42cd463ffe486a9cda065418fd9f0a66e11bad79deba93715c844782a21L107-L118
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-07T08:54:57Z
+
+@andersonamuller good catch! you are right! I just fixed this during the #SymfonyHackday of the SymfonyCon 2024 Vienna.
