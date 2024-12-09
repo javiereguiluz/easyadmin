@@ -1,0 +1,12 @@
+---------------------------------------------------------------------------
+
+by Geolim4 at 2024-12-09T11:09:53Z
+
+Hello Javier, can you embed in this PR a fix for [unrewriten URLs ](https://github.com/EasyCorp/EasyAdminBundle/issues/6603) ? I'm ready to upgrade my EA project from 1.14, but still blocked by this last issue 😢
+Thank you.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-09T18:55:56Z
+
+@Geolim4 I'm afraid that I will need a reproducer for that bug. In https://github.com/EasyCorp/EasyAdminBundle/pull/6633/commits/898145cb43be6ac8d02f2950cacf0e0ddd516e08 I added a new test in this Pr that shows that having two dashboards work as expected: both the "link to Dashboard" and all the other links in the main menu work as expected for both dashboards. Thanks!
