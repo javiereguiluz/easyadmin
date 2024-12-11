@@ -7,7 +7,12 @@ const eaFileUploadHandler = function (event) {
 }
 
 window.addEventListener('DOMContentLoaded', eaFileUploadHandler);
-document.addEventListener('ea.collection.item-added', eaFileUploadHandler);
+document.addEventListener('ea.collection.item-added', function(){
+   setTimeout(function () {
+        eaFileUploadHandler;
+    }
+  }, 1000);
+});
 
 class FileUploadField {
     #fieldContainerElement;
