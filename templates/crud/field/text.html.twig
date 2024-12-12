@@ -2,7 +2,7 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 {% if ea.crud.currentAction == 'detail' %}
-    <span title="{{ field.value }}">{{ field.formattedValue|raw|nl2br }}</span>
+    {{ field.formattedValue|raw|nl2br }}
 {% else %}
-    <span title="{{ field.value }}">{{ field.formattedValue|raw }}</span>
+    {{ field.formattedValue|raw }}
 {% endif %}

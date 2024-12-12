@@ -32,6 +32,7 @@ class App {
         this.#createModalWindowsForDeleteActions();
         this.#createPopovers();
         this.#createTooltips();
+        this.#inlineScalarEditor();
 
         document.addEventListener('ea.collection.item-added', () => this.#createAutoCompleteFields());
     }
@@ -448,5 +449,73 @@ class App {
                 toggleVisibilityClasses(secondValue, comparisonWidget.value !== 'between');
             });
         });
+    }
+
+    #inlineScalarEditor() {
+        let selectedElement = null;
+        let currentData = null;
+        let newData = null;
+        let url = null;
+        document
+            .querySelectorAll('.field-number, .field-text')
+            .forEach(el => {
+                el.addEventListener('click', (event) => {
+                    if (selectedElement !== null) {
+                        return null;
+                    }
+                    selectedElement = event.target;
+                    currentData = selectedElement.textContent.trim();
+                    url = selectedElement.getAttribute('data-toggle-url');
+
+                    const newInput = document.createElement('input');
+                    this.#replace(newInput, selectedElement);
+
+                    if (selectedElement.firstChild) {
+                        selectedElement.replaceChild(newInput, selectedElement.firstChild);
+                    } else {
+                        selectedElement.appendChild(newInput);
+                    }
+
+                    newInput.value = currentData;
+                    newInput.focus();
+                    newInput.addEventListener('blur', (event) => {
+                        newData = document.querySelector('#inlineInput').value;
+                        let toggleUrl = url + "&newValue=" + newData;
+
+
+                        fetch(toggleUrl, {
+                            method: 'PATCH',
+                            // the XMLHttpRequest header is needed to keep compatibility with the previous code, which didn't use the Fetch API
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    return;
+                                }
+
+                                document.querySelector('#inlineInput').remove()
+                                selectedElement.textContent = newData
+
+                                //reset data
+                                selectedElement = null;
+                                currentData = null;
+                                newData = null;
+                                url = null;
+                            })
+                            .then(() => { /* do nothing else when the toggle request is successful */ })
+                        ;
+                    })
+                })
+            });
+    }
+
+    #replace(newInput, selectedElement) {
+        // add attribute
+        newInput.type = 'text';
+        newInput.id = 'inlineInput';
+        // add class Bootstrap
+        newInput.classList.add('form-control');
+
+        selectedElement.innerHTML = newInput.innerHTML
     }
 }

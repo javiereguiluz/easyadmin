@@ -19,6 +19,7 @@ final class NumberField implements FieldInterface
     public const OPTION_NUMBER_FORMAT = 'numberFormat';
     public const OPTION_THOUSANDS_SEPARATOR = 'thousandsSeparator';
     public const OPTION_DECIMAL_SEPARATOR = 'decimalSeparator';
+    public const OPTION_TOGGLE_URL = 'toggleUrl';
 
     /**
      * @param TranslatableInterface|string|false|null $label
@@ -37,7 +38,8 @@ final class NumberField implements FieldInterface
             ->setCustomOption(self::OPTION_STORED_AS_STRING, false)
             ->setCustomOption(self::OPTION_NUMBER_FORMAT, null)
             ->setCustomOption(self::OPTION_THOUSANDS_SEPARATOR, null)
-            ->setCustomOption(self::OPTION_DECIMAL_SEPARATOR, null);
+            ->setCustomOption(self::OPTION_DECIMAL_SEPARATOR, null)
+            ->setCustomOption(self::OPTION_TOGGLE_URL, null);
     }
 
     public function setNumDecimals(int $num): self

@@ -7,8 +7,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use function Symfony\Component\String\u;
 
 /**
@@ -16,6 +20,17 @@ use function Symfony\Component\String\u;
  */
 final class TextConfigurator implements FieldConfiguratorInterface
 {
+    private AdminUrlGeneratorInterface $adminUrlGenerator;
+    private ?CsrfTokenManagerInterface $csrfTokenManager;
+
+    public function __construct(
+        AdminUrlGeneratorInterface $adminUrlGenerator,
+        ?CsrfTokenManagerInterface $csrfTokenManager = null
+    ) {
+        $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->csrfTokenManager = $csrfTokenManager;
+    }
+
     public function supports(FieldDto $field, EntityDto $entityDto): bool
     {
         return \in_array($field->getFieldFqcn(), [TextField::class, TextareaField::class], true);
@@ -53,6 +68,18 @@ final class TextConfigurator implements FieldConfiguratorInterface
             $isDetailAction = Action::DETAIL === $context->getCrud()->getCurrentAction();
             $defaultMaxLength = $isDetailAction ? \PHP_INT_MAX : 64;
             $formattedValue = u($formattedValue)->truncate($configuredMaxLength ?? $defaultMaxLength, '…')->toString();
+        }
+
+        $crudDto = $context->getCrud();
+
+        if (null !== $crudDto && Action::NEW !== $crudDto->getCurrentAction()) {
+            $toggleUrl = $this->adminUrlGenerator
+                ->setAction(Action::EDIT)
+                ->setEntityId($entityDto->getPrimaryKeyValue())
+                ->set('fieldName', $field->getProperty())
+                ->set('csrfToken', $this->csrfTokenManager?->getToken(BooleanField::CSRF_TOKEN_NAME))
+                ->generateUrl();
+            $field->setCustomOption(NumberField::OPTION_TOGGLE_URL, $toggleUrl);
         }
 
         $field->setFormattedValue($formattedValue);

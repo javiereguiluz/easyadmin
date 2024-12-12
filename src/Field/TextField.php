@@ -17,6 +17,8 @@ final class TextField implements FieldInterface
     public const OPTION_RENDER_AS_HTML = 'renderAsHtml';
     public const OPTION_STRIP_TAGS = 'stripTags';
 
+    public const OPTION_TOGGLE_URL = 'toggleUrl';
+
     /**
      * @param TranslatableInterface|string|false|null $label
      */
@@ -31,7 +33,9 @@ final class TextField implements FieldInterface
             ->setDefaultColumns('col-md-6 col-xxl-5')
             ->setCustomOption(self::OPTION_MAX_LENGTH, null)
             ->setCustomOption(self::OPTION_RENDER_AS_HTML, false)
-            ->setCustomOption(self::OPTION_STRIP_TAGS, false);
+            ->setCustomOption(self::OPTION_STRIP_TAGS, false)
+            ->setCustomOption(self::OPTION_TOGGLE_URL, null)
+        ;
     }
 
     /**
