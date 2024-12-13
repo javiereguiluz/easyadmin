@@ -30,6 +30,7 @@ class FiltersFormType extends AbstractType
             'allow_extra_fields' => true,
             'csrf_protection' => false,
             'ea_filters' => FilterCollection::new(),
+            'validation_groups' => false,
         ]);
     }
 
