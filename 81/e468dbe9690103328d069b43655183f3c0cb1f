@@ -1,0 +1,31 @@
+---------------------------------------------------------------------------
+
+by dragosprotung at 2024-12-12T20:08:55Z
+
+>     * I created an `Enum` (the first one in this bundle!; this is fine because we now require PHP 8.1 and enums re supported there) to define the possible values of `variant`. I opted for the namespace `Config\Enum\...` because we already have `Config\Option\...` for the constant-based classes. The idea is to turn (in the future) the constants into enums, so we need a different namespace. Do you like `Enum\` or do you prefer a different name?
+
+Why not keep `BannerVariant` in the same namespace at the twig component ?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-12T20:29:21Z
+
+I don't want to use the exact same namespace because "component" != "component option".
+
+But your comment gave me an idea: use the Config/Option namespace inside Twig/Component namespace
+
+---------------------------------------------------------------------------
+
+by dragosprotung at 2024-12-12T20:58:25Z
+
+> I don't want to use the exact same namespace because "component" != "component option".
+>
+> But your comment gave me an idea: use the Config/Option namespace inside Twig/Component namespace
+
+Yes,  "component" != "component option", but will this option ever be used outside of configuring the component, or another component ?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-13T19:01:15Z
+
+Folks, thanks for the comments and reviews. I made most of the changes you proposed and also changed other things thanks to the comments shared on Symfony Slack. Thanks 🙌
