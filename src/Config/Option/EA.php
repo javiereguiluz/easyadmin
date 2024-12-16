@@ -32,4 +32,5 @@ final class EA
     /** @deprecated this parameter is no longer used because menu items are now highlighted automatically */
     public const SUBMENU_INDEX = 'submenuIndex';
     public const URL_SIGNATURE = 'signature';
+    public const LOCK_VERSION = '_lock_version';
 }
