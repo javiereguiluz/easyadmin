@@ -1,4 +1,6 @@
 {# @var assets \EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto[] #}
 {% for encore_asset in assets %}
-    {{ ea_call_function_if_exists('encore_entry_script_tags', encore_asset.value, encore_asset.webpackPackageName, encore_asset.webpackEntrypointName, encore_asset.htmlAttributes) }}
+    {% guard function encore_entry_script_tags %}
+        {{ encore_entry_script_tags(encore_asset.value, encore_asset.webpackPackageName, encore_asset.webpackEntrypointName, encore_asset.htmlAttributes) }}
+    {% endguard %}
 {% endfor %}

@@ -1,7 +1,9 @@
 {# @var assets \EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto[] #}
 {% for js_asset in assets %}
     {% if js_asset.preload %}
-        <link rel="preload" href="{{ ea_call_function_if_exists('preload', asset(js_asset.value, js_asset.packageName), { as: 'script', nopush: js_asset.nopush }) }}"
+        {% guard function preload %}
+            <link rel="preload" href="{{ preload(asset(js_asset.value, js_asset.packageName), { as: 'script', nopush: js_asset.nopush }) }}"
+        {% endguard %}
         {% for attr, value in js_asset.htmlAttributes %}{{ attr }}="{{ value|e('html_attr') }}" {% endfor %}>
     {% else %}
         <script src="{{ asset(js_asset.value, js_asset.packageName) }}" {{ js_asset.async ? 'async' }} {{ js_asset.defer ? 'defer' }}
