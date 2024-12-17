@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityBuiltEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Exception\EntityNotFoundException;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -28,14 +29,16 @@ final class EntityFactory
     private AuthorizationCheckerInterface $authorizationChecker;
     private ManagerRegistry $doctrine;
     private EventDispatcherInterface $eventDispatcher;
+    private PropertyAccessorInterface $propertyAccessor;
 
-    public function __construct(FieldFactory $fieldFactory, ActionFactory $actionFactory, AuthorizationCheckerInterface $authorizationChecker, ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher)
+    public function __construct(FieldFactory $fieldFactory, ActionFactory $actionFactory, AuthorizationCheckerInterface $authorizationChecker, ManagerRegistry $doctrine, EventDispatcherInterface $eventDispatcher, PropertyAccessorInterface $propertyAccessor)
     {
         $this->fieldFactory = $fieldFactory;
         $this->actionFactory = $actionFactory;
         $this->authorizationChecker = $authorizationChecker;
         $this->doctrine = $doctrine;
         $this->eventDispatcher = $eventDispatcher;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     public function processFields(EntityDto $entityDto, FieldCollection $fields): void
@@ -80,6 +83,14 @@ final class EntityFactory
         $entityDtos = [];
 
         foreach ($entityInstances as $entityInstance) {
+            if (is_array($entityInstance)) {
+                $tmp = $entityInstance;
+                $entityInstance = $tmp[0];
+                unset($tmp[0]);
+                foreach ($tmp as $name => $value) {
+                    $this->propertyAccessor->setValue($entityInstance, $name, $value);
+                }
+            }
             $newEntityDto = $entityDto->newWithInstance($entityInstance);
             $newEntityId = $newEntityDto->getPrimaryKeyValueAsString();
             if (!$this->authorizationChecker->isGranted(Permission::EA_ACCESS_ENTITY, $newEntityDto)) {
