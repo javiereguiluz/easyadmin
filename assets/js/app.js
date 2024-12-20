@@ -386,7 +386,7 @@ class App {
                     const deleteFormAction = actionElement.getAttribute('formaction');
                     const deleteForm = document.querySelector('#delete-form');
                     deleteForm.setAttribute('action', deleteFormAction);
-                    deleteForm.submit();
+                    deleteForm.requestSubmit();
                 });
             });
         });
