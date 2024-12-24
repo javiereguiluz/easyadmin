@@ -396,6 +396,7 @@ return static function (ContainerConfigurator $container) {
 
         ->set(AssetPackage::class)
             ->arg(0, service('request_stack'))
+            ->arg(1, service('asset_mapper.asset_package')->ignoreOnInvalid())
             ->tag('assets.package', ['package' => AssetPackage::PACKAGE_NAME])
 
         ->set(Icon::class)

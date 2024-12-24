@@ -22,19 +22,27 @@ final class AssetPackage implements PackageInterface
     public const PACKAGE_NAME = 'easyadmin.assets.package';
 
     private PackageInterface $package;
+    private ?PackageInterface $mapperAwareAssetPackage;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, ?PackageInterface $mapperAwareAssetPackage = null)
     {
         $this->package = new PathPackage(
             '/bundles/easyadmin',
             new JsonManifestVersionStrategy(__DIR__.'/../../public/manifest.json'),
             new RequestStackContext($requestStack)
         );
+        $this->mapperAwareAssetPackage = $mapperAwareAssetPackage;
     }
 
     public function getUrl(string $assetPath): string
     {
-        return $this->package->getUrl($assetPath);
+        $url = $this->package->getUrl($assetPath);
+
+        if (null !== $this->mapperAwareAssetPackage) {
+            return $this->mapperAwareAssetPackage->getUrl(ltrim($url, '/'));
+        }
+
+        return $url;
     }
 
     public function getVersion(string $assetPath): string

@@ -5,6 +5,12 @@ The design of the backend is ready for any kind of application. It's been
 created with `Bootstrap 5`_, and some custom CSS and JavaScript code; all
 managed by `Webpack`_ via Symfony's `Webpack Encore`_.
 
+.. tip::
+
+    If you have both `assets` and `asset_mapper` enabled, all the assets
+    url for this bundle will be automatically handled by asset mapper.
+    You can skip to execute below command.
+
 Like any other Symfony bundle, assets are copied to (or symlinked from) the
 ``public/bundles/`` directory of your application when installing or updating
 the bundle. If this doesn't work for any reason, your backend won't display the
