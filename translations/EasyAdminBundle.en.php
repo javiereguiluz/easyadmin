@@ -109,6 +109,7 @@ return [
         'anonymous' => 'Anonymous User',
         'sign_out' => 'Sign out',
         'exit_impersonation' => 'Exit impersonation',
+        'impersonate_user' => 'Impersonate user',
     ],
 
     'settings' => [
@@ -140,5 +141,9 @@ return [
         'no-results-found' => 'No results found',
         'no-more-results' => 'No more results',
         'loading-more-results' => 'Loading more results…',
+    ],
+
+    'impersonate' => [
+        'username' => 'Username to impersonate',
     ],
 ];

@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Config;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\AccessImpersonationMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\DashboardMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\ExitImpersonationMenuItem;
@@ -43,6 +44,14 @@ final class MenuItem
     public static function linkToExitImpersonation(TranslatableInterface|string $label, ?string $icon = null): ExitImpersonationMenuItem
     {
         return new ExitImpersonationMenuItem($label, $icon);
+    }
+
+    /**
+     * @param string|null $icon The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
+     */
+    public static function linkToAccessImpersonation(TranslatableInterface|string $label, ?string $icon = null): AccessImpersonationMenuItem
+    {
+        return new AccessImpersonationMenuItem($label, $icon);
     }
 
     /**

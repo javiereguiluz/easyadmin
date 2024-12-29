@@ -14,6 +14,7 @@ final class MenuItemDto
     public const TYPE_URL = 'url';
     public const TYPE_SECTION = 'section';
     public const TYPE_EXIT_IMPERSONATION = 'exit_impersonation';
+    public const TYPE_ACCESS_IMPERSONATION = 'access_impersonation';
     public const TYPE_DASHBOARD = 'dashboard';
     public const TYPE_LOGOUT = 'logout';
     public const TYPE_SUBMENU = 'submenu';

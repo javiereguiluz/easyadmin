@@ -69,6 +69,9 @@ abstract class AbstractDashboardController extends AbstractController implements
         if ($this->isGranted(Permission::EA_EXIT_IMPERSONATION)) {
             $userMenuItems[] = MenuItem::linkToExitImpersonation(t('user.exit_impersonation', domain: 'EasyAdminBundle'), 'internal:user-lock');
         }
+        if (!$this->isGranted(Permission::EA_EXIT_IMPERSONATION) && $this->isGranted(Permission::EA_CAN_SWITCH_USER)) {
+            $userMenuItems[] = MenuItem::linkToAccessImpersonation(t('user.impersonate_user', domain: 'EasyAdminBundle'), 'fa-user-lock');
+        }
 
         $userName = method_exists($user, '__toString') ? (string) $user : $user->getUserIdentifier();
 

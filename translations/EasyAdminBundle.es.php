@@ -108,7 +108,8 @@ return [
         'unnamed' => 'Usuario sin nombre',
         'anonymous' => 'Usuario anónimo',
         'sign_out' => 'Cerrar sesión',
-        'exit_impersonation' => 'Terminar impersonación',
+        'exit_impersonation' => 'Terminar suplantación',
+        'impersonate_user' => 'Suplantar usuario',
     ],
 
     'settings' => [
@@ -140,5 +141,9 @@ return [
         'no-results-found' => 'No se han encontrado resultados',
         'no-more-results' => 'No hay más resultados',
         'loading-more-results' => 'Cargando más resultados…',
+    ],
+
+    'impersonate' => [
+        'username' => 'Nombre de usuario a suplantar',
     ],
 ];
