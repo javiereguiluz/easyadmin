@@ -1,0 +1,42 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-30T15:57:12Z
+
+@kniziol thanks for this ... but we need some changes. Sadly, it's not uncommon to have menu items that span more than 1 line. In those cases, showing the icon centered looks very ugly.
+
+I'd say we should keep the `flex-start` alignment, but tweak some margin to make it look centered in the 1-line menu item case, which is the most common. Thanks.
+
+---------------------------------------------------------------------------
+
+by kniziol at 2024-12-30T18:47:31Z
+
+@javiereguiluz Got it. I added a `margin-top` to the icon so it lines up perfectly with the menu text. Take a look at the result 👇
+
+| Multiline - mobile | Multiline - desktop | Single line |
+|--------|--------|--------|
+| ![Icon and text alignment - mobile](https://github.com/user-attachments/assets/21c36bc9-8d8b-48e1-b8be-7158f9290df3) | ![Icon and text alignment - desktop](https://github.com/user-attachments/assets/31393bd0-ffdc-44d7-b97c-36cf5e1ead98) | ![Icon and text alignment - single line](https://github.com/user-attachments/assets/c3082e76-e33f-4bd7-8132-349e67e68f38) |
+
+I used the following code to generate a menu when testing:
+
+```php
+// src/Controller/Admin/DashboardController.php
+
+public function configureMenuItems(): iterable
+{
+    yield MenuItem::linkToDashboard('Ex excepteur commodo eu aliquip', 'fa fa-home');
+    yield MenuItem::subMenu('Magna occaecat reprehenderit officia minim voluptate', 'fas fa-list')
+        ->setSubItems([
+            MenuItem::linkToDashboard('Consequat sunt esse ad incididunt commodo', 'fa fa-home'),
+            MenuItem::linkToDashboard('Cillum laborum laborum sunt est Lorem', 'fa fa-home'),
+        ])
+    ;
+    // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+}
+```
+
+---------------------------------------------------------------------------
+
+by pfpro at 2024-12-30T19:41:02Z
+
+Hooray for symfony - featuring the marvelous easyadmin - and all the developers out there -
+2025 up and coming - chin chin dev-ops 🎉
