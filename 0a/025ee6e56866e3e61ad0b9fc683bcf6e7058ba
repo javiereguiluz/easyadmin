@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-27T19:12:36Z
+
+@FoxCie I'm not sure about these proposed changes.
+
+Currently, we have separate tests for ugly URLs and pretty URLs. See https://github.com/EasyCorp/EasyAdminBundle/blob/c4d72d40a5da6cca67aa0e5dc6346a81d56d10b4/.github/workflows/ci.yaml#L146-L161
+
+I prefer to have those two test suites separate because mixing pretty URLs with the existing tests that used the traditional ugly URLs is a mess in a my opinion. I'd prefer to keep both separated and then updated all tests to use pretty URLs only in the 5.x branch, which I hope to start soon.
+
+---------------------------------------------------------------------------
+
+by FoxCie at 2024-12-28T11:51:58Z
+
+Hello @javiereguiluz
+
+I reverted the changes to the tests, and added one in the PrettyUrlControllerTest to show that the AdminUrlGenerator does not behave well in tests when using pretty urls prior to this patch. This is not related to any controller, but since tests are invoked with this class only I added it there.
