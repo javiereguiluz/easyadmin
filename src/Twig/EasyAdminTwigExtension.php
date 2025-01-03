@@ -14,6 +14,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Icons\Twig\UXIconRuntime;
+use Twig\DeprecatedCallableInfo;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use Twig\Extension\AbstractExtension;
@@ -45,13 +46,13 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
     {
         return [
             new TwigFunction('ea_url', [$this, 'getAdminUrlGenerator']),
-            new TwigFunction('ea_csrf_token', [$this, 'renderCsrfToken']),
-            new TwigFunction('ea_call_function_if_exists', [$this, 'callFunctionIfExists'], ['needs_environment' => true, 'is_safe' => ['html' => true]]),
-            new TwigFunction('ea_create_field_layout', [$this, 'createFieldLayout']),
-            new TwigFunction('ea_importmap', [$this, 'renderImportmap'], ['is_safe' => ['html']]),
             new TwigFunction('ea_form_ealabel', null, ['node_class' => 'Symfony\Bridge\Twig\Node\SearchAndRenderBlockNode', 'is_safe' => ['html']]),
-            // TODO: remove this when Twig 3.15 is published and we can use the 'guard' tag
-            new TwigFunction('ea_ux_icon', [$this, 'renderIcon'], ['is_safe' => ['html']]),
+            // deprecated functions
+            new TwigFunction('ea_call_function_if_exists', [$this, 'callFunctionIfExists'], ['needs_environment' => true, 'is_safe' => ['html' => true], 'deprecation_info' => new DeprecatedCallableInfo('easycorp/easyadmin-bundle', '4.21.0', 'No alternative is provided because it\'s no longer needed thanks to the Twig guard tag.')]),
+            new TwigFunction('ea_create_field_layout', [$this, 'createFieldLayout'], ['deprecation_info' => new DeprecatedCallableInfo('easycorp/easyadmin-bundle', '4.8.0', 'No alternative is provided because it\'s no longer needed thanks to the new rendering engine')]),
+            new TwigFunction('ea_csrf_token', [$this, 'renderCsrfToken'], ['deprecation_info' => new DeprecatedCallableInfo('easycorp/easyadmin-bundle', '4.21.0', 'No alternative is provided because it\'s no longer needed thanks to the Twig guard tag.')]),
+            new TwigFunction('ea_importmap', [$this, 'renderImportmap'], ['is_safe' => ['html'], 'deprecation_info' => new DeprecatedCallableInfo('easycorp/easyadmin-bundle', '4.21.0', 'No alternative is provided because it\'s no longer needed thanks to the Twig guard tag.')]),
+            new TwigFunction('ea_ux_icon', [$this, 'renderIcon'], ['is_safe' => ['html'], 'deprecation_info' => new DeprecatedCallableInfo('easycorp/easyadmin-bundle', '4.21.0', 'No alternative is provided because it\'s no longer needed thanks to the Twig guard tag.')]),
         ];
     }
 
@@ -60,8 +61,9 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
         return [
             new TwigFilter('ea_flatten_array', [$this, 'flattenArray']),
             new TwigFilter('ea_filesize', [$this, 'fileSize']),
-            new TwigFilter('ea_apply_filter_if_exists', [$this, 'applyFilterIfExists'], ['needs_environment' => true]),
             new TwigFilter('ea_as_string', [$this, 'representAsString']),
+            // deprecated filters
+            new TwigFilter('ea_apply_filter_if_exists', [$this, 'applyFilterIfExists'], ['needs_environment' => true, 'deprecation_info' => new DeprecatedCallableInfo('easycorp/easyadmin-bundle', '4.21.0', 'No alternative is provided because it\'s no longer needed thanks to the Twig guard tag.')]),
         ];
     }
 
@@ -216,12 +218,6 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
 
     public function createFieldLayout(?FieldCollection $fieldDtos): FieldLayoutDto
     {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.8.0',
-            'The "ea_create_field_layout()" Twig function is deprecated in favor of "ea_create_form_layout()" and it will be removed in 5.0.0.',
-        );
-
         return FormLayoutFactory::createFromFieldDtos($fieldDtos);
     }
 

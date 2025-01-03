@@ -1,2 +1,4 @@
 {# @var assets \EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto[] #}
-{{ ea_importmap(assets|map(asset => asset.value)) }}
+{% guard function importmap %}
+    {{ importmap(assets|map(asset => asset.value)) }}
+{% endguard %}
