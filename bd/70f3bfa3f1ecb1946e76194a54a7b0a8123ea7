@@ -1,0 +1,53 @@
+---------------------------------------------------------------------------
+
+by yceruto at 2024-12-15T16:09:06Z
+
+Hey Javier! just a heads-up: after https://github.com/symfony/ux/pull/2019, anonymous components now have native bundle support. This might make the workaround mentioned in the article unnecessary. Let me know if there's anything else I can help with.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-16T18:32:50Z
+
+@yceruto thanks for your tip. I tried removing the config in `prepend()` but I see this error:
+
+```
+An exception has been thrown during the rendering of a template ("Unknown component
+"ea:ActionMenu:ActionList". And no matching anonymous component template was found.").
+```
+
+I think it's related to having defined `ea` as the prefix of EA components. Maybe it would work if I create the components in `templates/components/ea/...` instead of just `templates/components/...` I don't know if that would be a better practice. It might make overriding easier in apps, because right now you hae to use that `ea/` dir when you override EA's components. MAybe having the `ea/` dir explicitly in `templates/components/` would be better 🤔
+
+---------------------------------------------------------------------------
+
+by yceruto at 2024-12-16T18:53:45Z
+
+Well, the default convention uses the Twig `EasyAdmin` namespace for `EasyAdminBundle` to discover any template. In this case, it should be `<twig:EasyAdmin:ActionMenu:ActionList>`, which should look into `EasyAdminBundle/templates/components/ActionMenu/ActionList.html.twig` directory.
+
+Could you elaborate a bit more on why you want to create a new `ea` namespace?
+
+---------------------------------------------------------------------------
+
+by yceruto at 2024-12-16T19:00:50Z
+
+On the application side, if you want to override that component, you can create a new template at the following path:
+`<project_dir>/templates/components/EasyAdmin/ActionMenu/ActionList.html.twig`
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-16T19:24:09Z
+
+> Could you elaborate a bit more on why you want to create a new ea namespace?
+
+Becuase `EasyAdmin` is too long ... and error-prone because of the uppercase and lowercase mixing. We use `ea` in many places of the bundle, so using the components as `<twig:ea:... />` feels natural. I'll explain in the docs that you have to create `templates/components/ea/...` dir and I think it will be fine 🙏
+
+---------------------------------------------------------------------------
+
+by yceruto at 2024-12-16T19:27:59Z
+
+In that case, adding an extra Twig namespace `ea` for `EasyAdminBundle/templates/` dir during the prepending phase would be okay 👍
+
+---------------------------------------------------------------------------
+
+by yceruto at 2024-12-16T19:59:37Z
+
+By the way, in the description, you set `'templates/bundles/EasyAdminBundle/' => null`, if you want it to be the overridden path, it should instead be `'templates/bundles/EasyAdminBundle/' => 'ea'`, right?
