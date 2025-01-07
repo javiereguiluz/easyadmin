@@ -171,7 +171,7 @@
                                                         <twig:ea:ActionMenu:ActionList:Item
                                                             class="{{ action.cssClass }}" url="{{ action.linkUrl }}"
                                                             icon="{{ action.icon }}" icon:class="action-icon"
-                                                            htmlAttributes="{{ action.htmlAttributes }}"
+                                                            :htmlAttributes="action.htmlAttributes"
                                                             label="{{ action.label|trans }}" label:class="action-label" renderLabelRaw />
                                                     {% endfor %}
                                                 </twig:ea:ActionMenu:ActionList>

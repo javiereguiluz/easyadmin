@@ -94,14 +94,14 @@
 
                             <twig:ea:ActionMenu:ActionList:Header
                                     label="{{ item.label|trans }}" class="{{ item.cssClass }}"
-                                    icon="{{ item.icon }}" htmlAttributes="{{ item.htmlAttributes }}"
+                                    icon="{{ item.icon }}" :htmlAttributes="item.htmlAttributes"
                             />
                         {% else %}
                             <twig:ea:ActionMenu:ActionList:Item
                                 label="{{ item.label|trans }}"
                                 class="user-action {{ item.cssClass }}" icon="{{ item.icon }}"
                                 url="{{ item.linkUrl }}" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}"
-                                referrerpolicy="origin-when-cross-origin" htmlAttributes="{{ item.htmlAttributes }}"
+                                referrerpolicy="origin-when-cross-origin" :htmlAttributes="item.htmlAttributes"
                             />
                         {% endif %}
                     {% endfor %}
