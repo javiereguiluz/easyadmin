@@ -47,38 +47,6 @@ final class MenuItemDto
         $this->type = $type;
     }
 
-    /** @deprecated This was used in the past to get the selected menu item
-     *              Now the active menu item is detected automatically via the Request data
-     */
-    public function getIndex(): int
-    {
-        return -1;
-    }
-
-    /** @deprecated This was used in the past to set the selected menu item
-     *              Now the active menu item is detected automatically via the Request data
-     */
-    public function setIndex(int $index): void
-    {
-        // do nothing...
-    }
-
-    /** @deprecated This was used in the past to get the selected menu subitem
-     *              Now the active menu item is detected automatically via the Request data
-     */
-    public function getSubIndex(): int
-    {
-        return -1;
-    }
-
-    /** @deprecated This was used in the past to set the selected menu subitem
-     *              Now the active menu item is detected automatically via the Request data
-     */
-    public function setSubIndex(int $subIndex): void
-    {
-        // do nothing
-    }
-
     /**
      * @return bool Returns true when this menu item is the selected one
      */

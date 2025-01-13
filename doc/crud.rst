@@ -799,7 +799,7 @@ the ``unsetAll()`` method to remove all existing query parameters::
             $url = $this->adminUrlGenerator->set('page', 2)->generateUrl();
 
             // you can remove existing parameters
-            $url = $this->adminUrlGenerator->unset('menuIndex')->generateUrl();
+            $url = $this->adminUrlGenerator->unset('page')->generateUrl();
             $url = $this->adminUrlGenerator->unsetAll()->set('foo', 'someValue')->generateUrl();
 
             // the URL builder provides shortcuts for the most common parameters

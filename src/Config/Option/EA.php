@@ -19,8 +19,6 @@ final class EA
     public const ENTITY_FQCN = 'entityFqcn';
     public const ENTITY_ID = 'entityId';
     public const FILTERS = 'filters';
-    /** @deprecated this parameter is no longer used because menu items are now highlighted automatically */
-    public const MENU_INDEX = 'menuIndex';
     public const PAGE = 'page';
     public const QUERY = 'query';
     /** @deprecated this parameter is no longer used because the referrer URL is now generated automatically */
@@ -29,7 +27,5 @@ final class EA
     public const ROUTE_PARAMS = 'routeParams';
     public const ROUTE_CREATED_BY_EASYADMIN = 'routeCreatedByEasyAdmin';
     public const SORT = 'sort';
-    /** @deprecated this parameter is no longer used because menu items are now highlighted automatically */
-    public const SUBMENU_INDEX = 'submenuIndex';
     public const URL_SIGNATURE = 'signature';
 }

@@ -627,7 +627,7 @@ Check out the URL of the page and you'll see the trick used by EasyAdmin to
 integrate Symfony actions.
 
 Instead of the expected ``/admin/business-stats`` clean URL, the generated URL
-is ``/admin?menuIndex=...&submenuIndex=...&routeName=admin_business_stats``.
+is ``/admin?routeName=admin_business_stats``.
 This is an admin URL, so EasyAdmin can create the :ref:`admin context <admin-context>`,
 load the appropriate menu, etc. However, thanks to the ``routeName`` query string
 parameter, EasyAdmin knows that it must forward the request to the Symfony
