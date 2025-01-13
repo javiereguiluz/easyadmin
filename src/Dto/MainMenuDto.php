@@ -24,20 +24,4 @@ final class MainMenuDto
     {
         return $this->items;
     }
-
-    /** @deprecated Don't use this method; the selected menu item is now detected automatically using
-     *              the Request data instead of having to deal with menuIndex/submenuIndex query params
-     */
-    public function isSelected(MenuItemDto $menuItemDto): bool
-    {
-        return $menuItemDto->isSelected();
-    }
-
-    /** @deprecated Don't use this method; the expanded menu item is now detected automatically using
-     *              the Request data instead of having to deal with menuIndex/submenuIndex query params
-     */
-    public function isExpanded(MenuItemDto $menuItemDto): bool
-    {
-        return $menuItemDto->isExpanded();
-    }
 }

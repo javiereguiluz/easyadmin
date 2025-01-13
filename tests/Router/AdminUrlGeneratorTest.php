@@ -185,27 +185,6 @@ class AdminUrlGeneratorTest extends WebTestCase
     }
 
     /**
-     * @legacy
-     */
-    public function testLegacyParameters()
-    {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
-        $adminUrlGenerator->set(EA::MENU_INDEX, 3);
-
-        $this->assertSame(3, $adminUrlGenerator->get(EA::MENU_INDEX));
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testDeprecatedParameterMessage()
-    {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
-        $this->expectDeprecation('Since easycorp/easyadmin-bundle 4.5.0: Using the "menuIndex" query parameter is deprecated. Menu items are now highlighted automatically based on the Request data, so you don\'t have to deal with menu items manually anymore.');
-        $adminUrlGenerator->set('menuIndex', 1);
-    }
-
-    /**
      * @group legacy
      */
     public function testIncludeReferrer()
