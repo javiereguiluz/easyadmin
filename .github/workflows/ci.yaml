@@ -83,14 +83,10 @@ jobs:
                       stability: "stable"
                     # Lowest deps support
                     - os: ubuntu-latest
-                      php_version: "8.1"
+                      php_version: "8.2"
                       composer_args: "--prefer-lowest"
                       stability: "stable"
                     # Lowest PHP version support. Remove when it is dropped
-                    - os: ubuntu-latest
-                      php_version: "8.1"
-                      symfony_version: "5.4"
-                      stability: "stable"
                     - os: ubuntu-latest
                       php_version: "8.2"
                       symfony_version: "6.4"
@@ -144,16 +140,14 @@ jobs:
                   composer show
 
             - name: Run tests
-              continue-on-error: ${{ matrix.stability == 'dev' || matrix.symfony_version == '7.2' }}
+              continue-on-error: ${{ matrix.stability == 'dev' || matrix.symfony_version == '7.3' }}
               env:
                   SYMFONY_DEPRECATIONS_HELPER: "max[total]=999999&ignoreFile=./tests/baseline-ignore.txt"
               run: |
                   ./vendor/bin/simple-phpunit --exclude-group pretty_urls
 
             - name: Run Pretty URLs tests
-                # Symfony 5.4 version doesn't include the #[Route] attribute needed to run these tests (it only includes the @Route annotation)
-              if: ${{ matrix.symfony_version != '5.4' && matrix.composer_args != '--prefer-lowest' }}
-              continue-on-error: ${{ matrix.stability == 'dev' || matrix.symfony_version == '7.2' }}
+              continue-on-error: ${{ matrix.stability == 'dev' || matrix.symfony_version == '7.3' }}
               env:
                   USE_PRETTY_URLS: "1"
                   SYMFONY_DEPRECATIONS_HELPER: "max[total]=999999&ignoreFile=./tests/baseline-ignore.txt"
