@@ -494,6 +494,13 @@ Templates and Form Options
                 ['validation_groups' => ['my_validation_group']],
                 ['validation_groups' => ['Default'], '...' => '...'],
             );
+            
+            // this method allows to set a custom css class for each rendered row on `index` page
+            // argument can be string or callable with current entity as its argument
+            // return type of the callable must be string
+            ->setIndexRowClass(
+                fn ($entityInstance) => $entityInstance->getStatus()
+            );
         ;
     }
 

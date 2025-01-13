@@ -429,4 +429,11 @@ class Crud
     {
         return [self::PAGE_DETAIL, self::PAGE_EDIT, self::PAGE_INDEX, self::PAGE_NEW];
     }
+
+    public function setIndexRowClass(string|callable $indexRowClass): self
+    {
+        $this->dto->setIndexRowClass($indexRowClass);
+
+        return $this;
+    }
 }

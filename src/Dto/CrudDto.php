@@ -25,6 +25,8 @@ final class CrudDto
     private ?string $entityFqcn = null;
     private $entityLabelInSingular;
     private $entityLabelInPlural;
+    private $indexRowClass;
+
     private array $defaultPageTitles = [
         Crud::PAGE_DETAIL => 'page_title.detail',
         Crud::PAGE_EDIT => 'page_title.edit',
@@ -506,5 +508,19 @@ final class CrudDto
     public function hideNullValues(bool $hide): void
     {
         $this->hideNullValues = $hide;
+    }
+
+    public function setIndexRowClass(string|callable $indexRowClass): void
+    {
+        $this->indexRowClass = $indexRowClass;
+    }
+
+    public function getIndexRowClass($entityInstance)
+    {
+        return match (true) {
+            \is_string($this->indexRowClass) => $this->indexRowClass,
+            \is_callable($this->indexRowClass) => \call_user_func($this->indexRowClass, $entityInstance),
+            default => null,
+        };
     }
 }
