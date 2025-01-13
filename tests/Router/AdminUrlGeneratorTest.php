@@ -184,62 +184,11 @@ class AdminUrlGeneratorTest extends WebTestCase
         $this->assertNull($adminUrlGenerator->get('foo'));
     }
 
-    /**
-     * @group legacy
-     */
-    public function testIncludeReferrer()
+    public function testGeneratedUrlsContainNoReferrerByDefault()
     {
         $adminUrlGenerator = $this->getAdminUrlGenerator();
 
-        $adminUrlGenerator->includeReferrer();
-        $this->assertSame('http://localhost/admin?foo=bar&referrer=/?foo%3Dbar', $adminUrlGenerator->generateUrl());
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testRemoveReferrer()
-    {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
-
-        $adminUrlGenerator->removeReferrer();
-        $this->assertSame('http://localhost/admin?foo=bar', $adminUrlGenerator->generateUrl());
-
-        $adminUrlGenerator->setReferrer('https://example.com/foo');
-        $adminUrlGenerator->removeReferrer();
-        $this->assertSame('http://localhost/admin?foo=bar', $adminUrlGenerator->generateUrl());
-    }
-
-    public function testNoReferrerByDefault()
-    {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
-
-        $this->assertStringNotContainsString('referrer', $adminUrlGenerator->generateUrl());
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testCustomReferrer()
-    {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
-
-        $adminUrlGenerator->setReferrer('any_custom_value');
-        $this->assertSame('http://localhost/admin?foo=bar&referrer=any_custom_value', $adminUrlGenerator->generateUrl());
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testPersistentCustomReferrer()
-    {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
-        $adminUrlGenerator->setReferrer('any_custom_value');
-        $this->assertSame('http://localhost/admin?foo=bar&referrer=any_custom_value', $adminUrlGenerator->generateUrl());
-
-        // test that the custom referrer value does not persist after generating the URL
-        $adminUrlGenerator->includeReferrer();
-        $this->assertSame('http://localhost/admin?foo=bar&referrer=/?foo%3Dbar', $adminUrlGenerator->generateUrl());
+        $this->assertStringNotContainsString('referrer', $adminUrlGenerator->generateUrl(), 'The referrer query string parameter was deprecated in 4.x version');
     }
 
     public function testRelativeUrls()
