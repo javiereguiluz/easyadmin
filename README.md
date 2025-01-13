@@ -1,11 +1,13 @@
+## ⚠️ WARNING: This is the 5.x branch of this bundle, which is still in development. You probably want to check out the [4.x branch](https://github.com/EasyCorp/EasyAdminBundle/tree/4.x)
+
+-----
+
 EasyAdmin
 =========
 
 EasyAdmin is a fast, beautiful and modern admin generator for Symfony applications.
 
 ![EasyAdmin, a fast, beautiful and modern admin generator for Symfony applications](/doc/images/easyadmin-promo.jpg)
-
-## ⚠️ WARNING: This is the 5.x branch of this bundle, which is still in development. You probably want to check out the [4.x branch](https://github.com/EasyCorp/EasyAdminBundle/tree/4.x)
 
 Installation
 ------------
