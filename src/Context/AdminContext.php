@@ -92,18 +92,6 @@ final class AdminContext implements AdminContextInterface
         return $this->assetDto;
     }
 
-    public function getSignedUrls(): bool
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.1.0',
-            'EasyAdmin URLs no longer include signatures because they don\'t provide any additional security. The "%s" method will be removed in EasyAdmin 5.0.0, so you should stop using it.',
-            __METHOD__
-        );
-
-        return $this->dashboardDto->getSignedUrls();
-    }
-
     public function getAbsoluteUrls(): bool
     {
         return $this->dashboardDto->getAbsoluteUrls();

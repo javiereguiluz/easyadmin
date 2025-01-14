@@ -128,30 +128,6 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
         return $this;
     }
 
-    public function addSignature(bool $addSignature = true): AdminUrlGeneratorInterface
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.1.0',
-            'EasyAdmin URLs no longer include signatures because they don\'t provide any additional security. Calling the "%s" method has no effect, so you can stop calling it. This method will be removed in future EasyAdmin versions.',
-            __METHOD__,
-        );
-
-        return $this;
-    }
-
-    public function getSignature(): string
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.1.0',
-            'EasyAdmin URLs no longer include signatures because they don\'t provide any additional security. Calling the "%s" method will always return an empty string, so you can stop calling it. This method will be removed in future EasyAdmin versions.',
-            __METHOD__,
-        );
-
-        return '';
-    }
-
     // this method allows to omit the 'generateUrl()' call in templates, making code more concise
     public function __toString(): string
     {

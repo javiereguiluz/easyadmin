@@ -193,7 +193,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testRelativeUrls()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator(false, true);
+        $adminUrlGenerator = $this->getAdminUrlGenerator(true);
 
         $adminUrlGenerator->set('foo1', 'bar1');
         $adminUrlGenerator->setController('App\Controller\Admin\SomeCrudController');
@@ -206,13 +206,12 @@ class AdminUrlGeneratorTest extends WebTestCase
         $this->assertSame('http://localhost/admin?crudAction=index&crudControllerFqcn=App%5CController%5CAdmin%5CSomeCrudController&foo=bar&foo1=bar1', $adminUrlGenerator->generateUrl());
     }
 
-    private function getAdminUrlGenerator(bool $signedUrls = false, bool $absoluteUrls = true): AdminUrlGeneratorInterface
+    private function getAdminUrlGenerator(bool $absoluteUrls = true): AdminUrlGeneratorInterface
     {
         self::bootKernel();
 
         $adminContext = $this->getMockBuilder(AdminContext::class)->disableOriginalConstructor()->getMock();
         $adminContext->method('getDashboardRouteName')->willReturn('admin');
-        $adminContext->method('getSignedUrls')->willReturn($signedUrls);
         $adminContext->method('getAbsoluteUrls')->willReturn($absoluteUrls);
         $adminContext->method('getRequest')->willReturn(new Request(['foo' => 'bar']));
 
