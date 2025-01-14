@@ -163,8 +163,7 @@ class AdminRouterSubscriber implements EventSubscriberInterface
 
         // if this is a ugly URL from legacy EasyAdmin versions and the application
         // uses pretty URLs, redirect to the equivalent pretty URL
-        if ($this->adminRouteGenerator->usesPrettyUrls()) {
-            $entityFqcnOrCrudControllerFqcn = $request->query->get(EA::CRUD_CONTROLLER_FQCN);
+        if ($this->adminRouteGenerator->usesPrettyUrls() && null !== $entityFqcnOrCrudControllerFqcn = $request->query->get(EA::CRUD_CONTROLLER_FQCN)) {
             if (is_subclass_of($entityFqcnOrCrudControllerFqcn, CrudControllerInterface::class)) {
                 $crudControllerFqcn = $entityFqcnOrCrudControllerFqcn;
             } else {
