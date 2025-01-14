@@ -134,7 +134,7 @@ final class ActionFactory
 
         if (Action::DELETE === $actionDto->getName()) {
             $actionDto->addHtmlAttributes([
-                'formaction' => $this->adminUrlGenerator->setController($adminContext->getCrud()->getControllerFqcn())->setAction(Action::DELETE)->setEntityId($entityDto->getPrimaryKeyValue())->removeReferrer()->generateUrl(),
+                'formaction' => $this->adminUrlGenerator->setController($adminContext->getCrud()->getControllerFqcn())->setAction(Action::DELETE)->setEntityId($entityDto->getPrimaryKeyValue())->generateUrl(),
                 'data-bs-toggle' => 'modal',
                 'data-bs-target' => '#modal-delete',
             ]);

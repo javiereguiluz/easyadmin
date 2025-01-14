@@ -49,6 +49,7 @@
                 </div>
             {% endif %}
 
+            {% block login_form_wrapper %}
             <form method="post" action="{{ action|default('') }}">
                 {% if csrf_token_intention|default(false) %}
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
@@ -56,25 +57,27 @@
 
                 <input type="hidden" name="{{ target_path_parameter|default('_target_path') }}" value="{{ target_path|default(ea.hasContext ? path(ea.dashboardRouteName) : '/') }}" />
 
-                <div class="form-group">
-                    <label class="form-control-label required" for="username">{{ _username_label }}</label>
-                    <div class="form-widget">
-                        <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control" value="{{ last_username|default('') }}" required autofocus autocomplete="username">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label required" for="password">{{ _password_label }}</label>
-                    <div class="form-widget">
-                        <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control" required autocomplete="current-password">
-                    </div>
-
-                    {% if forgot_password_enabled|default(false) %}
-                        <div class="form-text">
-                            <a href="{{ forgot_password_path|default('#') }}">{{ _forgot_password_label }}</a>
+                {% block login_form_credentials_wrapper %}
+                    <div class="form-group">
+                        <label class="form-control-label required" for="username">{{ _username_label }}</label>
+                        <div class="form-widget">
+                            <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control" value="{{ last_username|default('') }}" required autofocus autocomplete="username">
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label required" for="password">{{ _password_label }}</label>
+                        <div class="form-widget">
+                            <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control" required autocomplete="current-password">
+                        </div>
+
+                        {% if forgot_password_enabled|default(false) %}
+                            <div class="form-text">
+                                <a href="{{ forgot_password_path|default('#') }}">{{ _forgot_password_label }}</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endblock login_form_credentials_wrapper %}
 
                 {% if remember_me_enabled|default(false) %}
                     <div class="form-group">
@@ -89,6 +92,7 @@
             </form>
 
             <script src="{{ asset('login.js', constant('EasyCorp\\Bundle\\EasyAdminBundle\\Asset\\AssetPackage::PACKAGE_NAME')) }}"></script>
+            {% endblock login_form_wrapper %}
         </section>
     </div>
 {% endblock %}

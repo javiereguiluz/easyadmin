@@ -537,7 +537,7 @@ If you do that, EasyAdmin will inject a DTO with all the batch action data::
 
             $entityManager->flush();
 
-            return $this->redirect($batchActionDto->getReferrerUrl());
+            return $this->redirectToRoute('admin_user_index');
         }
     }
 

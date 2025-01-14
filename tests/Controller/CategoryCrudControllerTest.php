@@ -89,6 +89,8 @@ class CategoryCrudControllerTest extends AbstractCrudTestCase
 
     /**
      * @dataProvider edit
+     *
+     * @group legacy
      */
     public function testEdit(?string $invalidCsrfToken, ?string $expectedErrorMessage)
     {
@@ -131,6 +133,8 @@ class CategoryCrudControllerTest extends AbstractCrudTestCase
 
     /**
      * @dataProvider delete
+     *
+     * @group legacy
      */
     public function testDelete(?string $invalidCsrfToken, callable $expectedCategoriesCount)
     {

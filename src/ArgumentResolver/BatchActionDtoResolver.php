@@ -41,7 +41,8 @@ if (interface_exists(ValueResolverInterface::class)) {
                 $context->getRequest()->request->all()[EA::BATCH_ACTION_ENTITY_IDS] ?? [],
                 $context->getRequest()->request->get(EA::ENTITY_FQCN),
                 $this->getReferrerUrl($context, $request),
-                $context->getRequest()->request->get(EA::BATCH_ACTION_CSRF_TOKEN)
+                $context->getRequest()->request->get(EA::BATCH_ACTION_CSRF_TOKEN),
+                false
             );
         }
 
@@ -95,7 +96,8 @@ if (interface_exists(ValueResolverInterface::class)) {
                 $context->getRequest()->request->all()[EA::BATCH_ACTION_ENTITY_IDS] ?? [],
                 $context->getRequest()->request->get(EA::ENTITY_FQCN),
                 $this->getReferrerUrl($context, $request),
-                $context->getRequest()->request->get(EA::BATCH_ACTION_CSRF_TOKEN)
+                $context->getRequest()->request->get(EA::BATCH_ACTION_CSRF_TOKEN),
+                false
             );
         }
 

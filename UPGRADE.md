@@ -1,6 +1,25 @@
 Upgrade between EasyAdmin 4.x versions
 ======================================
 
+EasyAdmin 4.22.0
+----------------
+
+The `referrerUrl` property and the `getReferrerUrl()` method of `BatchActionDto`
+are deprecated. This is similar to the rest of deprecations of features related
+to the "referrer URL".
+
+The referrer URL is now handled automatically inside EasyAdmin. In your own
+batch actions, you can redirect to a specific URL (built with the `AdminUrlGenerator`)
+or get the referrer URL from the HTTP headers provided by browsers:
+
+```php
+// Before
+return $this->redirect($batchActionDto->getReferrer());
+
+// After
+return $this->redirect($adminContext->getRequest()->headers->get('referer'));
+```
+
 EasyAdmin 4.20.0
 ----------------
 

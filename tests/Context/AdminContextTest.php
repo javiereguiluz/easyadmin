@@ -17,6 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AdminContextTest extends TestCase
 {
+    /**
+     * @group legacy
+     */
     public function testGetReferrerEmptyString()
     {
         $request = $this->createMock(Request::class);

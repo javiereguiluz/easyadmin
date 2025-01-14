@@ -32,10 +32,19 @@ interface AdminUrlGeneratorInterface
 
     public function unsetAllExcept(string ...$namesOfParamsToKeep): self;
 
+    /**
+     * @deprecated since 4.9.0, will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.
+     */
     public function includeReferrer(): self;
 
+    /**
+     * @deprecated since 4.9.0, will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.
+     */
     public function removeReferrer(): self;
 
+    /**
+     * @deprecated since 4.9.0, will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.
+     */
     public function setReferrer(string $referrer): self;
 
     public function addSignature(bool $addSignature = true): self;

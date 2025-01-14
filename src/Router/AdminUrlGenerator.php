@@ -150,6 +150,12 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
 
     public function removeReferrer(): AdminUrlGeneratorInterface
     {
+        trigger_deprecation(
+            'easycorp/easyadmin-bundle',
+            '4.9.0',
+            'Removing the referrer argument in the admin URLs via the AdminUrlGenerator::removeReferrer() method is deprecated and it will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.',
+        );
+
         if (false === $this->isInitialized) {
             $this->initialize();
         }

@@ -18,6 +18,9 @@ interface AdminContextInterface
 {
     public function getRequest(): Request;
 
+    /**
+     * @deprecated since 4.8.11, will be removed in 5.0. Use $context->getRequest()->headers->get('referer') or redirect to some specific URL
+     */
     public function getReferrer(): ?string;
 
     public function getI18n(): I18nDto;
