@@ -19,10 +19,7 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
 {
     private bool $isInitialized = false;
     private ?string $dashboardRoute = null;
-    private ?bool $includeReferrer = null;
     private array $routeParameters = [];
-    private ?string $currentPageReferrer = null;
-    private ?string $customPageReferrer = null;
 
     public function __construct(
         private readonly AdminContextProviderInterface $adminContextProvider,
@@ -131,58 +128,6 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
         return $this;
     }
 
-    public function includeReferrer(): AdminUrlGeneratorInterface
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.9.0',
-            'Adding the referrer argument in the admin URLs via the AdminUrlGenerator::includeReferrer() method is deprecated and it will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.',
-        );
-
-        if (false === $this->isInitialized) {
-            $this->initialize();
-        }
-
-        $this->includeReferrer = true;
-
-        return $this;
-    }
-
-    public function removeReferrer(): AdminUrlGeneratorInterface
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.9.0',
-            'Removing the referrer argument in the admin URLs via the AdminUrlGenerator::removeReferrer() method is deprecated and it will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.',
-        );
-
-        if (false === $this->isInitialized) {
-            $this->initialize();
-        }
-
-        $this->includeReferrer = false;
-
-        return $this;
-    }
-
-    public function setReferrer(string $referrer): AdminUrlGeneratorInterface
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.9.0',
-            'Adding the referrer argument in the admin URLs via the AdminUrlGenerator::setReferrer() method is deprecated and it will be removed in 5.0.0. The referrer will now be determined automatically based on the current request.',
-        );
-
-        if (false === $this->isInitialized) {
-            $this->initialize();
-        }
-
-        $this->includeReferrer = true;
-        $this->customPageReferrer = $referrer;
-
-        return $this;
-    }
-
     public function addSignature(bool $addSignature = true): AdminUrlGeneratorInterface
     {
         trigger_deprecation(
@@ -220,10 +165,6 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
         }
 
         $usePrettyUrls = $this->adminRouteGenerator->usesPrettyUrls();
-
-        if (true === $this->includeReferrer) {
-            $this->setRouteParameter(EA::REFERRER, $this->customPageReferrer ?? $this->currentPageReferrer);
-        }
 
         // this avoids forcing users to always be explicit about the action to execute
         if (null !== $this->get(EA::CRUD_CONTROLLER_FQCN) && null === $this->get(EA::CRUD_ACTION)) {
@@ -351,17 +292,11 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
 
         if (null === $adminContext) {
             $this->dashboardRoute = null;
-            $currentRouteParameters = $routeParametersForReferrer = [];
-            $this->currentPageReferrer = null;
+            $currentRouteParameters = [];
         } else {
             $this->dashboardRoute = $adminContext->getDashboardRouteName();
-            $currentRouteParameters = $routeParametersForReferrer = $adminContext->getRequest()->query->all();
-            unset($routeParametersForReferrer[EA::REFERRER]);
-            $this->currentPageReferrer = sprintf('%s%s?%s', $adminContext->getRequest()->getBaseUrl(), $adminContext->getRequest()->getPathInfo(), http_build_query($routeParametersForReferrer));
+            $currentRouteParameters = $adminContext->getRequest()->query->all();
         }
-
-        $this->includeReferrer = null;
-        $this->customPageReferrer = null;
 
         $this->routeParameters = $currentRouteParameters;
     }

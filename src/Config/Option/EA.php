@@ -21,8 +21,6 @@ final class EA
     public const FILTERS = 'filters';
     public const PAGE = 'page';
     public const QUERY = 'query';
-    /** @deprecated this parameter is no longer used because the referrer URL is now generated automatically */
-    public const REFERRER = 'referrer';
     public const ROUTE_NAME = 'routeName';
     public const ROUTE_PARAMS = 'routeParams';
     public const ROUTE_CREATED_BY_EASYADMIN = 'routeCreatedByEasyAdmin';

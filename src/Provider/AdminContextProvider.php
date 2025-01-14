@@ -53,18 +53,6 @@ final class AdminContextProvider implements AdminContextProviderInterface
         return $this->getContext(true)->getRequest();
     }
 
-    public function getReferrer(): ?string
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.8.11',
-            'EasyAdmin URLs no longer include the referrer URL. If you still need it, you can get the referrer provided by browsers via $context->getRequest()->headers->get(\'referer\').',
-            __METHOD__,
-        );
-
-        return $this->getContext(true)->getReferrer();
-    }
-
     public function getI18n(): I18nDto
     {
         return $this->getContext(true)->getI18n();

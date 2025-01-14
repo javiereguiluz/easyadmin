@@ -2,7 +2,6 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Context;
 
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
@@ -66,20 +65,6 @@ final class AdminContext implements AdminContextInterface
     public function getRequest(): Request
     {
         return $this->request;
-    }
-
-    public function getReferrer(): ?string
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.8.11',
-            'EasyAdmin URLs no longer include the referrer URL. If you still need it, you can get the referrer provided by browsers via $context->getRequest()->headers->get(\'referer\').',
-            __METHOD__,
-        );
-
-        $referrer = $this->request->query->get(EA::REFERRER);
-
-        return '' !== $referrer ? $referrer : null;
     }
 
     public function getI18n(): I18nDto
