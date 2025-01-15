@@ -127,16 +127,6 @@ class CrudFormType extends AbstractType
         $builder->addEventSubscriber(new FormLayoutSubscriber());
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options): void
-    {
-        $view->vars['ea_crud_form'] = [
-            'assets' => '** This variable no longer stores field assets. Instead, use "ea.crud.fieldAssets()" in your Twig template.',
-            'entity' => $options['entityDto'],
-            'form_tabs' => $form->getConfig()->getAttribute('ea_form_tabs'),
-            'form_fieldsets' => $form->getConfig()->getAttribute('ea_form_fieldsets'),
-        ];
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
