@@ -30,21 +30,8 @@ final class EntityDto
     private ?FieldCollection $fields = null;
     private ?ActionCollection $actions = null;
 
-    public function __construct(string $entityFqcn, ClassMetadata $entityMetadata, string|Expression|null $entityPermission = null, /* ?object */ $entityInstance = null)
+    public function __construct(string $entityFqcn, ClassMetadata $entityMetadata, string|Expression|null $entityPermission = null, ?object $entityInstance = null)
     {
-        if (!\is_object($entityInstance)
-            && null !== $entityInstance) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$entityInstance',
-                __METHOD__,
-                '"object" or "null"',
-                \gettype($entityInstance)
-            );
-        }
-
         $this->fqcn = $entityFqcn;
         $this->metadata = $entityMetadata;
         $this->instance = $entityInstance;
@@ -251,20 +238,8 @@ final class EntityDto
         $this->primaryKeyValue = null;
     }
 
-    public function newWithInstance(/* object */ $newEntityInstance): self
+    public function newWithInstance(object $newEntityInstance): self
     {
-        if (!\is_object($newEntityInstance)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$newEntityInstance',
-                __METHOD__,
-                '"object"',
-                \gettype($newEntityInstance)
-            );
-        }
-
         if (null !== $this->instance && !$newEntityInstance instanceof $this->fqcn) {
             throw new \InvalidArgumentException(sprintf('The new entity instance must be of the same type as the previous instance (original instance: "%s", new instance: "%s").', $this->fqcn, $newEntityInstance::class));
         }

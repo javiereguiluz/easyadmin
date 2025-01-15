@@ -47,23 +47,9 @@ class Crud
 
     /**
      * @param TranslatableInterface|string|callable $label The callable signature is: fn ($entityInstance, $pageName): string
-     *
-     * @psalm-param mixed $label
      */
-    public function setEntityLabelInSingular($label): self
+    public function setEntityLabelInSingular(TranslatableInterface|string|callable $label): self
     {
-        if (!\is_string($label) && !$label instanceof TranslatableInterface && !\is_callable($label)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$label',
-                __METHOD__,
-                '"string" or "TranslatableInterface" or "callable"',
-                \gettype($label)
-            );
-        }
-
         $this->dto->setEntityLabelInSingular($label);
 
         return $this;
@@ -71,23 +57,9 @@ class Crud
 
     /**
      * @param TranslatableInterface|string|callable $label The callable signature is: fn ($entityInstance, $pageName): string
-     *
-     * @psalm-param mixed $label
      */
-    public function setEntityLabelInPlural($label): self
+    public function setEntityLabelInPlural(TranslatableInterface|string|callable $label): self
     {
-        if (!\is_string($label) && !$label instanceof TranslatableInterface && !\is_callable($label)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$label',
-                __METHOD__,
-                '"string" or "callable"',
-                \gettype($label)
-            );
-        }
-
         $this->dto->setEntityLabelInPlural($label);
 
         return $this;
@@ -95,23 +67,9 @@ class Crud
 
     /**
      * @param TranslatableInterface|string|callable $title The callable signature is: fn ($entityInstance): string
-     *
-     * @psalm-param mixed $title
      */
-    public function setPageTitle(string $pageName, $title): self
+    public function setPageTitle(string $pageName, TranslatableInterface|string|callable $title): self
     {
-        if (!\is_string($title) && !$title instanceof TranslatableInterface && !\is_callable($title)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$title',
-                __METHOD__,
-                '"string" or "TranslatableInterface" or "callable"',
-                \gettype($title)
-            );
-        }
-
         if (!\in_array($pageName, $this->getValidPageNames(), true)) {
             throw new \InvalidArgumentException(sprintf('The first argument of the "%s()" method must be one of these valid page names: %s ("%s" given).', __METHOD__, implode(', ', $this->getValidPageNames()), $pageName));
         }
