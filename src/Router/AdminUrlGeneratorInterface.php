@@ -32,9 +32,5 @@ interface AdminUrlGeneratorInterface
 
     public function unsetAllExcept(string ...$namesOfParamsToKeep): self;
 
-    public function addSignature(bool $addSignature = true): self;
-
-    public function getSignature(): string;
-
     public function generateUrl(): string;
 }
