@@ -5,7 +5,6 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Factory;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldLayoutDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormColumnCloseType;
@@ -360,45 +359,5 @@ final class FormLayoutFactory
             ->setFormType(EaFormTabPaneCloseType::class)
             ->setFormTypeOptions(['mapped' => false, 'required' => false])
             ->getAsDto();
-    }
-
-    public static function createFromFieldDtos(?FieldCollection $fieldDtos): FieldLayoutDto
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.8.0',
-            '"FormLayoutFactory::createFromFieldDtos()" has been deprecated in favor of "FormLayoutFactory::createLayout()" and it will be removed in 5.0.0.',
-        );
-
-        if (null === $fieldDtos) {
-            return new FieldLayoutDto();
-        }
-
-        $hasTabs = false;
-        foreach ($fieldDtos as $fieldDto) {
-            if ($fieldDto->isFormTab()) {
-                $hasTabs = true;
-                break;
-            }
-        }
-
-        $tabs = [];
-        $fields = [];
-        $currentTab = null;
-        /** @var FieldDto $fieldDto */
-        foreach ($fieldDtos as $fieldDto) {
-            if ($fieldDto->isFormTab()) {
-                $currentTab = $fieldDto;
-                $tabs[$fieldDto->getUniqueId()] = $fieldDto;
-            } else {
-                if ($hasTabs) {
-                    $fields[$currentTab->getUniqueId()][] = $fieldDto;
-                } else {
-                    $fields[] = $fieldDto;
-                }
-            }
-        }
-
-        return new FieldLayoutDto($fields, $tabs);
     }
 }
