@@ -364,7 +364,9 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
             $this->currentPageReferrer = null;
         } else {
             $this->dashboardRoute = $adminContext->getDashboardRouteName();
-            $currentRouteParameters = $routeParametersForReferrer = $adminContext->getRequest()->query->all();
+            $routeParams = $adminContext->getRequest()->attributes->get('_route_params', []);
+            unset($routeParams[EA::ROUTE_CREATED_BY_EASYADMIN]);
+            $currentRouteParameters = $routeParametersForReferrer = array_merge($routeParams, $adminContext->getRequest()->query->all());
             unset($routeParametersForReferrer[EA::REFERRER]);
             $this->currentPageReferrer = sprintf('%s%s?%s', $adminContext->getRequest()->getBaseUrl(), $adminContext->getRequest()->getPathInfo(), http_build_query($routeParametersForReferrer));
         }
