@@ -89,18 +89,10 @@ final class FilterDto
     /**
      * @param TranslatableInterface|string|false|null $label
      */
-    public function setLabel($label): void
+    public function setLabel(TranslatableInterface|string|bool|null $label): void
     {
-        if (!\is_string($label) && !$label instanceof TranslatableInterface && false !== $label && null !== $label) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$label',
-                __METHOD__,
-                '"string", "false" or "null"',
-                \gettype($label)
-            );
+        if (true === $label) {
+            throw new \InvalidArgumentException(sprintf('The value passed to the label of the "%s" filter is not valid. When passing boolean values, you can only pass a false value (to hide the label) but you passed a true value.', $this->propertyName));
         }
 
         $this->label = $label;

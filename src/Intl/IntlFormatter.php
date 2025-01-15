@@ -116,22 +116,8 @@ final class IntlFormatter
         return $formattedCurrency;
     }
 
-    /**
-     * @param int|float $number
-     */
-    public function formatNumber($number, array $attrs = [], string $style = 'decimal', string $type = 'default', ?string $locale = null): string
+    public function formatNumber(int|float $number, array $attrs = [], string $style = 'decimal', string $type = 'default', ?string $locale = null): string
     {
-        if (null === $number) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.8.5',
-                'Passing null values to "%s()" method is deprecated and will throw an exception in EasyAdmin 5.0.0.',
-                __METHOD__,
-            );
-
-            return '0';
-        }
-
         if (!isset(self::NUMBER_TYPES[$type])) {
             throw new RuntimeError(sprintf('The type "%s" does not exist, known types are: "%s".', $type, implode('", "', array_keys(self::NUMBER_TYPES))));
         }

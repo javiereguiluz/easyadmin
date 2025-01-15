@@ -12,16 +12,6 @@ class ActionTest extends TestCase
     use ExpectDeprecationTrait;
 
     /**
-     * @group legacy
-     */
-    public function testDeprecatedActionLabels()
-    {
-        $this->expectDeprecation('Since easycorp/easyadmin-bundle 4.0.5: Argument "$label" for "EasyCorp\Bundle\EasyAdminBundle\Config\Action::new" must be one of these types: "Symfony\Contracts\Translation\TranslatableInterface", "string", "callable", "false" or "null". Passing type "integer" will cause an error in 5.0.0.');
-
-        Action::new(Action::EDIT, 7);
-    }
-
-    /**
      * @dataProvider provideAutomaticActionLabels
      */
     public function testActionWithAutomaticLabel(string $actionName, string $automaticLabel)

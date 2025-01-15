@@ -190,23 +190,8 @@ final class ActionDto
         return $this->routeParameters;
     }
 
-    /**
-     * @param array|callable $routeParameters
-     */
-    public function setRouteParameters($routeParameters): void
+    public function setRouteParameters(array|callable $routeParameters): void
     {
-        if (!\is_array($routeParameters) && !\is_callable($routeParameters)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$routeParameters',
-                __METHOD__,
-                '"array" or "callable"',
-                \gettype($routeParameters)
-            );
-        }
-
         $this->routeParameters = $routeParameters;
     }
 
@@ -218,23 +203,8 @@ final class ActionDto
         return $this->url;
     }
 
-    /**
-     * @param string|callable $url
-     */
-    public function setUrl($url): void
+    public function setUrl(string|callable $url): void
     {
-        if (!\is_string($url) && !\is_callable($url)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$url',
-                __METHOD__,
-                '"string" or "callable"',
-                \gettype($url)
-            );
-        }
-
         $this->url = $url;
     }
 

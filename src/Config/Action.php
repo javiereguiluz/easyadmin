@@ -45,22 +45,10 @@ final class Action
      * @param TranslatableInterface|string|(callable(object $entity): string)|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
      * @param string|null                                                                $icon  The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
      */
-    public static function new(string $name, $label = null, ?string $icon = null): self
+    public static function new(string $name, TranslatableInterface|string|callable|bool|null $label = null, ?string $icon = null): self
     {
-        if (!\is_string($label)
-            && !$label instanceof TranslatableInterface
-            && !\is_callable($label)
-            && false !== $label
-            && null !== $label) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$label',
-                __METHOD__,
-                sprintf('"%s", "string", "callable", "false" or "null"', TranslatableInterface::class),
-                \gettype($label)
-            );
+        if (true === $label) {
+            throw new \InvalidArgumentException(sprintf('The value passed to the label of the "%s" action is not valid. When passing boolean values, you can only pass a false value (to hide the label) but you passed a true value.', $name));
         }
 
         $dto = new ActionDto();
@@ -92,22 +80,10 @@ final class Action
     /**
      * @param TranslatableInterface|string|(callable(object $entity): string)|false|null $label Use FALSE to hide the label; use NULL to autogenerate it
      */
-    public function setLabel($label): self
+    public function setLabel(TranslatableInterface|string|callable|bool|null $label): self
     {
-        if (!\is_string($label)
-            && !$label instanceof TranslatableInterface
-            && !\is_callable($label)
-            && false !== $label
-            && null !== $label) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$label',
-                __METHOD__,
-                sprintf('"%s", "string", "callable", "false" or "null"', TranslatableInterface::class),
-                \gettype($label)
-            );
+        if (true === $label) {
+            throw new \InvalidArgumentException(sprintf('The value passed to the label of the "%s" action is not valid. When passing boolean values, you can only pass a false value (to hide the label) but you passed a true value.', $this->dto->getName()));
         }
 
         $this->dto->setLabel($label ?? self::humanizeString($this->dto->getName()));
@@ -193,23 +169,8 @@ final class Action
         return $this;
     }
 
-    /**
-     * @param string|callable $url
-     */
-    public function linkToUrl($url): self
+    public function linkToUrl(string|callable $url): self
     {
-        if (!\is_string($url) && !\is_callable($url)) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$url',
-                __METHOD__,
-                '"string" or "callable"',
-                \gettype($url)
-            );
-        }
-
         $this->dto->setUrl($url);
 
         return $this;
