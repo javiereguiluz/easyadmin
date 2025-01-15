@@ -22,7 +22,7 @@
 {% block form_errors %}
     {% if errors|length > 0 %}
         {% for error in errors %}
-            <div class="{{ attr.class|default('') }} invalid-feedback d-block">{{ error.message }}</div>
+            <div class="{{ attr.class|default('') }} invalid-feedback d-block">{{ error.message|raw }}</div>
         {% endfor %}
     {% endif %}
 {% endblock form_errors %}

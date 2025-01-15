@@ -60,8 +60,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\EntityConfigurator as En
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\NullConfigurator as NullFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\NumericConfigurator as NumericFilterConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\TextConfigurator as TextFilterConfigurator;
+use EasyCorp\Bundle\EasyAdminBundle\Form\EventListener\LockVersionValidationListener;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Extension\CollectionTypeExtension;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Extension\EaCrudFormTypeExtension;
+use EasyCorp\Bundle\EasyAdminBundle\Form\Extension\LockVersionExtension;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudFormType;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FileUploadType;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\FiltersFormType;
@@ -121,6 +123,17 @@ return static function (ContainerConfigurator $container) {
         ->set(DataCollector::class)
             ->arg(0, service(AdminContextProvider::class))
             ->tag('data_collector', ['id' => 'easyadmin', 'template' => '@EasyAdmin/inspector/data_collector.html.twig'])
+
+        ->set(LockVersionExtension::class)
+        ->arg(0, service(LockVersionValidationListener::class))
+        ->arg(1, service(AdminContextProvider::class))
+            ->tag('form.type_extension')
+
+        ->set(LockVersionValidationListener::class)
+        ->arg(0, service(AdminUrlGenerator::class))
+        ->arg(1, service('translator'))
+        ->arg(2, service(AdminContextProvider::class))
+            ->tag('kernel.event_subscriber')
 
         ->set(ExceptionListener::class)
             ->arg(0, '%kernel.debug%')
