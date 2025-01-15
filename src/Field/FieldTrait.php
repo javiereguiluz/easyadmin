@@ -58,11 +58,12 @@ trait FieldTrait
         return $this;
     }
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public function setLabel($label): self
+    public function setLabel(TranslatableInterface|string|bool|null $label): self
     {
+        if (true === $label) {
+            throw new \InvalidArgumentException(sprintf('The value passed to the label of the "%s" field is not valid. When passing boolean values, you can only pass a false value (to hide the label) but you passed a true value.', $this->dto->getProperty()));
+        }
+
         $this->dto->setLabel($label);
 
         return $this;

@@ -22,10 +22,7 @@ final class CodeEditorField implements FieldInterface
 
     private const ALLOWED_LANGUAGES = ['css', 'dockerfile', 'js', 'javascript', 'markdown', 'nginx', 'php', 'shell', 'sql', 'twig', 'xml', 'yaml-frontmatter', 'yaml'];
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

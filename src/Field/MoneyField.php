@@ -20,10 +20,7 @@ final class MoneyField implements FieldInterface
     public const OPTION_NUM_DECIMALS = 'numDecimals';
     public const OPTION_STORED_AS_CENTS = 'storedAsCents';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

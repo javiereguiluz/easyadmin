@@ -16,10 +16,7 @@ final class DateField implements FieldInterface
     public const OPTION_DATE_PATTERN = 'datePattern';
     public const OPTION_WIDGET = 'widget';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

@@ -67,7 +67,7 @@ final class EntityDto
         return sprintf('%s #%s', $this->getName(), substr($this->getPrimaryKeyValueAsString(), 0, 16));
     }
 
-    public function getInstance()/* : ?object */
+    public function getInstance(): ?object
     {
         return $this->instance;
     }

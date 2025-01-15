@@ -18,10 +18,7 @@ final class LocaleField implements FieldInterface
     public const OPTION_LOCALE_CODES_TO_KEEP = 'localeCodesToKeep';
     public const OPTION_LOCALE_CODES_TO_REMOVE = 'localeCodesToRemove';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

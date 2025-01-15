@@ -20,10 +20,7 @@ final class NumberField implements FieldInterface
     public const OPTION_THOUSANDS_SEPARATOR = 'thousandsSeparator';
     public const OPTION_DECIMAL_SEPARATOR = 'decimalSeparator';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

@@ -17,10 +17,7 @@ final class TextEditorField implements FieldInterface
     public const OPTION_NUM_OF_ROWS = 'numOfRows';
     public const OPTION_TRIX_EDITOR_CONFIG = 'trixEditorConfig';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

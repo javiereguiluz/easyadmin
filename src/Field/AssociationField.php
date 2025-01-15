@@ -39,10 +39,7 @@ final class AssociationField implements FieldInterface
     public const OPTION_SORT_PROPERTY = 'sortProperty';
     public const OPTION_ESCAPE_HTML_CONTENTS = 'escapeHtml';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

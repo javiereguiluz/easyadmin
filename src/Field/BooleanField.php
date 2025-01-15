@@ -23,10 +23,7 @@ final class BooleanField implements FieldInterface
     /** @internal */
     public const CSRF_TOKEN_NAME = 'ea-toggle';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)
