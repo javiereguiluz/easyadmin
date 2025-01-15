@@ -17,10 +17,7 @@ final class TextField implements FieldInterface
     public const OPTION_RENDER_AS_HTML = 'renderAsHtml';
     public const OPTION_STRIP_TAGS = 'stripTags';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

@@ -27,10 +27,7 @@ final class ChoiceField implements FieldInterface
     public const WIDGET_AUTOCOMPLETE = 'autocomplete';
     public const WIDGET_NATIVE = 'native';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

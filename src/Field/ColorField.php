@@ -16,10 +16,7 @@ final class ColorField implements FieldInterface
     public const OPTION_SHOW_SAMPLE = 'showSample';
     public const OPTION_SHOW_VALUE = 'showValue';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

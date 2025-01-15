@@ -26,20 +26,18 @@ final class FormField implements FieldInterface
     public const OPTION_TAB_ERROR_COUNT = 'tabErrorCount';
 
     /**
-     * @internal Use the other named constructors instead (addPanel(), etc.)
-     *
-     * @param TranslatableInterface|string|false|null $label
+     * @internal Use the other named constructors instead (addFieldset(), etc.)
      */
-    public static function new(string $propertyName, $label = null)
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null)
     {
-        throw new \RuntimeException('Instead of this method, use the "addPanel()" method.');
+        throw new \RuntimeException('Instead of this method, use any of the methods to add elements: "addFieldset()", "addTab()", etc.');
     }
 
     /**
      * @param TranslatableInterface|string|false|null $label
      * @param string|null                             $icon  The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
      */
-    public static function addFieldset($label = false, ?string $icon = null, ?string $propertySuffix = null): self
+    public static function addFieldset(TranslatableInterface|string|bool|null $label = false, ?string $icon = null, ?string $propertySuffix = null): self
     {
         $field = new self();
 

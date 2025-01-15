@@ -23,10 +23,7 @@ final class CountryField implements FieldInterface
     public const OPTION_COUNTRY_CODES_TO_REMOVE = 'countryCodesToRemove';
     public const OPTION_ALLOW_MULTIPLE_CHOICES = 'allowMultipleChoices';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

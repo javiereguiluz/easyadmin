@@ -17,10 +17,7 @@ final class AvatarField implements FieldInterface
     public const OPTION_IS_GRAVATAR_EMAIL = 'isGravatarEmail';
     public const OPTION_HEIGHT = 'height';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

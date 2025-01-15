@@ -16,10 +16,7 @@ final class TimeField implements FieldInterface
     public const OPTION_TIME_PATTERN = 'timePattern';
     public const OPTION_WIDGET = 'widget';
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)
