@@ -48,28 +48,6 @@ class MenuItemMatcher implements MenuItemMatcherInterface
     }
 
     /**
-     * @deprecated because you can't decide which menu item to select by only looking at the menu item itself. You need to check all menu items at the same time to solve edge-cases like multiple menu items linking to the same action of the same entity
-     * @see markSelectedMenuItem()
-     */
-    public function isSelected(MenuItemDto $menuItemDto): bool
-    {
-        @trigger_deprecation('easycorp/easyadmin-bundle', '4.11', 'The "%s()" method is deprecated. Use the "%s()" method instead.', __METHOD__, 'markSelectedMenuItem()');
-
-        return false;
-    }
-
-    /**
-     * @deprecated because you can't decide which menu item to render expanded by only looking at the menu item itself. You need to check all menu items at the same time.
-     * @see markExpandedMenuItem()
-     */
-    public function isExpanded(MenuItemDto $menuItemDto): bool
-    {
-        @trigger_deprecation('easycorp/easyadmin-bundle', '4.11', 'The "%s()" method is deprecated. Use the "%s()" method instead.', __METHOD__, 'markExpandedMenuItem()');
-
-        return false;
-    }
-
-    /**
      * @param MenuItemDto[] $menuItems
      *
      * @return MenuItemDto[]
