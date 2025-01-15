@@ -39,21 +39,6 @@ final class FormField implements FieldInterface
      * @param TranslatableInterface|string|false|null $label
      * @param string|null                             $icon  The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
      */
-    public static function addPanel($label = false, ?string $icon = null): self
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.7.7',
-            '"FormField::addPanel()" has been deprecated in favor of "FormField::addFieldset()" and it will be removed in 5.0.0.',
-        );
-
-        return self::addFieldset($label, $icon);
-    }
-
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     * @param string|null                             $icon  The full CSS classes of the FontAwesome icon to render (see https://fontawesome.com/v6/search?m=free)
-     */
     public static function addFieldset($label = false, ?string $icon = null, ?string $propertySuffix = null): self
     {
         $field = new self();

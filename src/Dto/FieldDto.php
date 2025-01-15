@@ -92,17 +92,6 @@ final class FieldDto
         $this->uniqueId = $uniqueId;
     }
 
-    public function isFormDecorationField(): bool
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.8.0',
-            '"FieldDto::isFormDecorationField()" has been deprecated in favor of "FieldDto::isFormLayoutField()" and it will be removed in 5.0.0.',
-        );
-
-        return $this->isFormLayoutField();
-    }
-
     public function isFormLayoutField(): bool
     {
         $formLayoutFieldClasses = [

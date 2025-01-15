@@ -2,10 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Twig;
 
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldLayoutDto;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\FormLayoutFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\AssetMapper\ImportMap\ImportMapRenderer;
@@ -47,7 +44,6 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
             new TwigFunction('ea_url', [$this, 'getAdminUrlGenerator']),
             new TwigFunction('ea_csrf_token', [$this, 'renderCsrfToken']),
             new TwigFunction('ea_call_function_if_exists', [$this, 'callFunctionIfExists'], ['needs_environment' => true, 'is_safe' => ['html' => true]]),
-            new TwigFunction('ea_create_field_layout', [$this, 'createFieldLayout']),
             new TwigFunction('ea_importmap', [$this, 'renderImportmap'], ['is_safe' => ['html']]),
             new TwigFunction('ea_form_ealabel', null, ['node_class' => 'Symfony\Bridge\Twig\Node\SearchAndRenderBlockNode', 'is_safe' => ['html']]),
             // TODO: remove this when Twig 3.15 is published and we can use the 'guard' tag
@@ -212,17 +208,6 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
         } catch (\Exception) {
             return '';
         }
-    }
-
-    public function createFieldLayout(?FieldCollection $fieldDtos): FieldLayoutDto
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.8.0',
-            'The "ea_create_field_layout()" Twig function is deprecated in favor of "ea_create_form_layout()" and it will be removed in 5.0.0.',
-        );
-
-        return FormLayoutFactory::createFromFieldDtos($fieldDtos);
     }
 
     /**
