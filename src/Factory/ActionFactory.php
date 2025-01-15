@@ -36,6 +36,7 @@ final class ActionFactory
     {
         $currentPage = $this->adminContextProvider->getContext()->getCrud()->getCurrentPage();
         $entityActions = [];
+        $propertyActions = [];
         foreach ($actionsDto->getActions()->all() as $actionDto) {
             if (!$actionDto->isEntityAction()) {
                 continue;
@@ -65,10 +66,20 @@ final class ActionFactory
                 $actionDto->setCssClass($actionDto->getCssClass().' '.$addedCssClass);
             }
 
-            $entityActions[$actionDto->getName()] = $this->processAction($currentPage, $actionDto, $entityDto);
+            if (null === $actionDto->getProperty()) {
+                $entityActions[$actionDto->getName()] = $this->processAction($currentPage, $actionDto, $entityDto);
+            } else {
+                if (!isset($propertyActions[$actionDto->getProperty()])) {
+                    $propertyActions[$actionDto->getProperty()] = [];
+                }
+                $propertyActions[$actionDto->getProperty()][$actionDto->getName()] = $this->processAction($currentPage, $actionDto, $entityDto);
+            }
         }
 
         $entityDto->setActions(ActionCollection::new($entityActions));
+        foreach ($propertyActions as $property => $actions) {
+            $entityDto->getFields()->getByProperty($property)?->setActions(ActionCollection::new($actions));
+        }
     }
 
     public function processGlobalActions(?ActionConfigDto $actionsDto = null): ActionCollection

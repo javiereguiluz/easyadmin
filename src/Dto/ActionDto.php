@@ -28,6 +28,7 @@ final class ActionDto
     private $url;
     private array $translationParameters = [];
     private $displayCallable;
+    private ?string $property = null;
 
     public function getType(): string
     {
@@ -310,5 +311,15 @@ final class ActionDto
         }
 
         return $action;
+    }
+
+    public function getProperty(): ?string
+    {
+        return $this->property;
+    }
+
+    public function setProperty(?string $property): void
+    {
+        $this->property = $property;
     }
 }

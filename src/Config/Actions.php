@@ -25,9 +25,9 @@ final class Actions
         return new self($dto);
     }
 
-    public function add(string $pageName, Action|string $actionNameOrObject): self
+    public function add(string $pageName, Action|string $actionNameOrObject, ?string $property = null): self
     {
-        return $this->doAddAction($pageName, $actionNameOrObject);
+        return $this->doAddAction($pageName, $actionNameOrObject, false, $property);
     }
 
     public function addBatchAction(Action|string $actionNameOrObject): self
@@ -220,7 +220,7 @@ final class Actions
         throw new \InvalidArgumentException(sprintf('The "%s" action is not a built-in action, so you can\'t add or configure it via its name. Either refer to one of the built-in actions or create a custom action called "%s".', $actionName, $actionName));
     }
 
-    private function doAddAction(string $pageName, Action|string $actionNameOrObject, bool $isBatchAction = false): self
+    private function doAddAction(string $pageName, Action|string $actionNameOrObject, bool $isBatchAction = false, ?string $property = null): self
     {
         $actionName = \is_string($actionNameOrObject) ? $actionNameOrObject : (string) $actionNameOrObject;
         $action = \is_string($actionNameOrObject) ? $this->createBuiltInAction($pageName, $actionNameOrObject) : $actionNameOrObject;
@@ -232,6 +232,10 @@ final class Actions
         $actionDto = $action->getAsDto();
         if ($isBatchAction) {
             $actionDto->setType(Action::TYPE_BATCH);
+        }
+
+        if (Crud::PAGE_DETAIL === $pageName) {
+            $actionDto->setProperty($property);
         }
 
         if (Crud::PAGE_INDEX === $pageName && Action::DELETE === $actionName) {

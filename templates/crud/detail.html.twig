@@ -83,8 +83,18 @@
             </div>
         {% endif %}
 
-        <div class="field-value">
-            {{ include(field.templatePath, { field: field, entity: entity }, with_context = false) }}
+        <div>
+            <div class="field-value">
+                {{ include(field.templatePath, { field: field, entity: entity }, with_context = false) }}
+            </div>
+
+            {% if field.actions is not null %}
+                <div class="field-actions">
+                    {% for action in field.actions %}
+                        {{ include(action.templatePath, { action: action }, with_context = false) }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endmacro %}
