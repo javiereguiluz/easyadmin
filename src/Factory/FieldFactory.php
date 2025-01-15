@@ -73,7 +73,9 @@ final class FieldFactory
         $isDetailOrIndex = \in_array($currentPage, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true);
         foreach ($fields as $fieldDto) {
             if ((null !== $currentPage && false === $fieldDto->isDisplayedOn($currentPage))
-                || false === $this->authorizationChecker->isGranted(Permission::EA_VIEW_FIELD, $fieldDto)) {
+                || false === $fieldDto->isDisplayed($entityDto)
+                || false === $this->authorizationChecker->isGranted(Permission::EA_VIEW_FIELD, $fieldDto)
+            ) {
                 $fields->unset($fieldDto);
 
                 continue;
