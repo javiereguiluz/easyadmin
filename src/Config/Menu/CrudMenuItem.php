@@ -60,20 +60,8 @@ final class CrudMenuItem implements MenuItemInterface
         return $this;
     }
 
-    public function setEntityId(/* AbstractUid|int|string */ $entityId): self
+    public function setEntityId(AbstractUid|int|string $entityId): self
     {
-        if (!\is_int($entityId) && !\is_string($entityId) && !$entityId instanceof AbstractUid) {
-            trigger_deprecation(
-                'easycorp/easyadmin-bundle',
-                '4.0.5',
-                'Argument "%s" for "%s" must be one of these types: %s. Passing type "%s" will cause an error in 5.0.0.',
-                '$entityId',
-                __METHOD__,
-                sprintf('"int", "string" or "%s"', AbstractUid::class),
-                \gettype($entityId)
-            );
-        }
-
         $this->dto->setRouteParameters(array_merge(
             $this->dto->getRouteParameters(),
             [EA::ENTITY_ID => $entityId]
