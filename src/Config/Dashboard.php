@@ -71,20 +71,6 @@ final class Dashboard
         return $this;
     }
 
-    public function disableUrlSignatures(bool $disableSignatures = true): self
-    {
-        trigger_deprecation(
-            'easycorp/easyadmin-bundle',
-            '4.1.0',
-            'EasyAdmin URLs no longer include signatures because they don\'t provide any additional security. You can stop calling the "%s" method to disable them. This method will be removed in future EasyAdmin versions.',
-            __METHOD__,
-        );
-
-        $this->dto->setSignedUrls(!$disableSignatures);
-
-        return $this;
-    }
-
     public function generateRelativeUrls(bool $relativeUrls = true): self
     {
         $this->dto->setAbsoluteUrls(!$relativeUrls);

@@ -28,11 +28,6 @@ interface AdminContextInterface
 
     public function getAssets(): AssetsDto;
 
-    /**
-     * @deprecated since 4.1.0, will be removed in 5.0.0. Signed URLs don't provide additional security in backends and have been removed without a replacement.
-     */
-    public function getSignedUrls(): bool;
-
     public function getAbsoluteUrls(): bool;
 
     public function getDashboardTitle(): string;

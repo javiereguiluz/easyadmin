@@ -79,7 +79,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Registry\DashboardControllerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteLoader;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use EasyCorp\Bundle\EasyAdminBundle\Router\UrlSigner;
 use EasyCorp\Bundle\EasyAdminBundle\Security\AuthorizationChecker;
 use EasyCorp\Bundle\EasyAdminBundle\Security\SecurityVoter;
 use EasyCorp\Bundle\EasyAdminBundle\Twig\Component\Alert;
@@ -222,9 +221,6 @@ return static function (ContainerConfigurator $container) {
             ->arg(1, service('filesystem'))
             ->arg(2, '%kernel.build_dir%')
             ->tag('routing.loader', ['type' => AdminRouteLoader::ROUTE_LOADER_TYPE])
-
-        ->set(UrlSigner::class)
-            ->arg(0, '%kernel.secret%')
 
         ->set(MenuFactory::class)
             ->arg(0, service(AdminContextProvider::class))

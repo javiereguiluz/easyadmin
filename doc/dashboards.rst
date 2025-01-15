@@ -393,11 +393,6 @@ explained later)::
         }
     }
 
-.. deprecated:: 4.1.0
-
-    The ``disableUrlSignatures()`` dashboard method was deprecated in
-    EasyAdmin 4.1.0 because backend URLs no longer include signatures.
-
 Customizing the Dashboard Contents
 ----------------------------------
 
