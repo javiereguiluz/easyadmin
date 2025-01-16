@@ -271,7 +271,13 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
             $currentRouteParameters = [];
         } else {
             $this->dashboardRoute = $adminContext->getDashboardRouteName();
-            $currentRouteParameters = $adminContext->getRequest()->query->all();
+            $routeParameters = array_filter([
+                EA::DASHBOARD_CONTROLLER_FQCN => $adminContext->getRequest()->attributes->get(EA::DASHBOARD_CONTROLLER_FQCN),
+                EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN),
+                EA::CRUD_ACTION => $adminContext->getRequest()->attributes->get(EA::CRUD_ACTION),
+                EA::ENTITY_ID => $adminContext->getRequest()->attributes->get(EA::ENTITY_ID),
+            ]);
+            $currentRouteParameters = array_merge($routeParameters, $adminContext->getRequest()->query->all());
         }
 
         $this->routeParameters = $currentRouteParameters;

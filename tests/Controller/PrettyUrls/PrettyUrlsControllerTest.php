@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\BlogPostCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\CategoryCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\DashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\SecondDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Kernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -279,6 +280,59 @@ class PrettyUrlsControllerTest extends WebTestCase
         ;
 
         $this->assertSame('http://localhost/admin/pretty/urls/blog-post', $blogPostIndexUrl);
+    }
+
+    public function testAdminUrlGenerator(): void
+    {
+        $client = static::createClient();
+        $client->followRedirects();
+
+        self::bootKernel();
+        $container = static::getContainer();
+        $adminUrlGenerator = $container->get(AdminUrlGenerator::class);
+
+        $url = $adminUrlGenerator
+            ->setDashboard(DashboardController::class)
+            ->setController(CategoryCrudController::class)
+            ->setAction('customAction')
+            ->generateUrl()
+        ;
+       $client->request('GET', $url);
+
+        $this->assertSelectorTextSame('#url1', 'http://localhost/admin/pretty/urls?'.http_build_query([
+            'crudAction' => 'customAction',
+            'crudControllerFqcn' => CategoryCrudController::class,
+            'dashboardControllerFqcn' => DashboardController::class,
+        ]));
+
+
+        $this->assertSelectorTextSame('#url2', 'http://localhost/admin/pretty/urls?'.http_build_query([
+            'crudAction' => 'customAction',
+            'crudControllerFqcn' => CategoryCrudController::class,
+            'dashboardControllerFqcn' => DashboardController::class,
+            'page' => 2,
+        ]));
+
+        $this->assertSelectorTextSame('#url3', 'http://localhost/admin/pretty/urls/category/new');
+
+        $this->assertSelectorTextSame('#url4', 'http://localhost/admin/pretty/urls?'.http_build_query([
+            'crudAction' => 'customAction',
+            'crudControllerFqcn' => BlogPostCrudController::class,
+            'dashboardControllerFqcn' => DashboardController::class,
+        ]));
+
+        $this->assertSelectorTextSame('#url5', 'http://localhost/second/dashboard?'.http_build_query([
+            'crudAction' => 'customAction',
+            'crudControllerFqcn' => CategoryCrudController::class,
+            'dashboardControllerFqcn' => SecondDashboardController::class,
+        ]));
+
+        $this->assertSelectorTextSame('#url6', 'http://localhost/second/dashboard?'.http_build_query([
+            'crudAction' => 'detail',
+            'crudControllerFqcn' => BlogPostCrudController::class,
+            'dashboardControllerFqcn' => SecondDashboardController::class,
+            'entityId' => 3,
+        ]));
     }
 
     /**

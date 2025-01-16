@@ -1,0 +1,11 @@
+{# this temaplte tests that the admin URL generator works as expected when using pretty URLs #}
+<span id="url1">{{ ea_url() }}</span>
+<span id="url2">{{ ea_url().set('page', 2) }}</span>
+<span id="url3">{{ ea_url().setAction('new') }}</span>
+<span id="url4">{{ ea_url().setController('EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\PrettyUrlsTestApplication\\Controller\\BlogPostCrudController') }}</span>
+<span id="url5">{{ ea_url().setDashboard('EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\PrettyUrlsTestApplication\\Controller\\SecondDashboardController') }}</span>
+<span id="url6">{{ ea_url()
+    .setAction('detail').setEntityId(3)
+    .setController('EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\PrettyUrlsTestApplication\\Controller\\BlogPostCrudController')
+    .setDashboard('EasyCorp\\Bundle\\EasyAdminBundle\\Tests\\PrettyUrlsTestApplication\\Controller\\SecondDashboardController')
+}}</span>
