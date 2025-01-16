@@ -281,6 +281,10 @@ final class ActionDto
         $action->setHtmlAttributes($this->htmlAttributes);
         $action->setTranslationParameters($this->translationParameters);
 
+        if (null !== $this->url) {
+            $action->linkToUrl($this->url);
+        }
+
         if (null !== $this->templatePath) {
             $action->setTemplatePath($this->templatePath);
         }
