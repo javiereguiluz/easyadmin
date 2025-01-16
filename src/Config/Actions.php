@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Config;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Action\ActionInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionConfigDto;
 use Symfony\Component\ExpressionLanguage\Expression;
 use function Symfony\Component\Translation\t;
@@ -25,17 +26,17 @@ final class Actions
         return new self($dto);
     }
 
-    public function add(string $pageName, Action|string $actionNameOrObject): self
+    public function add(string $pageName, ActionInterface|string $actionNameOrObject): self
     {
         return $this->doAddAction($pageName, $actionNameOrObject);
     }
 
-    public function addBatchAction(Action|string $actionNameOrObject): self
+    public function addBatchAction(ActionInterface|string $actionNameOrObject): self
     {
         return $this->doAddAction(Crud::PAGE_INDEX, $actionNameOrObject, true);
     }
 
-    public function set(string $pageName, Action|string $actionNameOrObject): self
+    public function set(string $pageName, ActionInterface|string $actionNameOrObject): self
     {
         $action = \is_string($actionNameOrObject) ? $this->createBuiltInAction($pageName, $actionNameOrObject) : $actionNameOrObject;
 
@@ -220,7 +221,7 @@ final class Actions
         throw new \InvalidArgumentException(sprintf('The "%s" action is not a built-in action, so you can\'t add or configure it via its name. Either refer to one of the built-in actions or create a custom action called "%s".', $actionName, $actionName));
     }
 
-    private function doAddAction(string $pageName, Action|string $actionNameOrObject, bool $isBatchAction = false): self
+    private function doAddAction(string $pageName, ActionInterface|string $actionNameOrObject, bool $isBatchAction = false): self
     {
         $actionName = \is_string($actionNameOrObject) ? $actionNameOrObject : (string) $actionNameOrObject;
         $action = \is_string($actionNameOrObject) ? $this->createBuiltInAction($pageName, $actionNameOrObject) : $actionNameOrObject;
