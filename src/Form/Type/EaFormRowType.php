@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
  * some HTML tags and it must be added to a form as "unmapped" and "non required".
  *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
+ *
+ * @deprecated since 4.8.0, use the equivalent form type in the new namespace: 'EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout\EaFormRowType'
  */
 class EaFormRowType extends AbstractType
 {

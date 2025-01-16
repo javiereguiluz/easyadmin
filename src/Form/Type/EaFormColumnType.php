@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
  * some HTML tags and it must be added to a form as "unmapped" and "non required".
  *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
+ *
+ * @deprecated since 4.8.0, use the alternatives types in the 'EasyCorp\Bundle\EasyAdminBundle\Form\Type\Layout' namespace instead
  */
 class EaFormColumnType extends AbstractType
 {
