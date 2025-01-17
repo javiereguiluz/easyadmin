@@ -3,6 +3,7 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Router;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminAction;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\ExtendableDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
@@ -101,6 +102,53 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         return $adminRoutes[$dashboardFqcn][$crudControllerFqcn][$actionName] ?? null;
     }
 
+    // Get dashboard controllers with #[ExtendableDashboard] attribute.
+    public function getExtendableDashboards(): array
+    {
+        $extendableDashboards = [];
+        foreach ($this->dashboardControllers as $dashboardController) {
+            $dashboardFqcn = $dashboardController::class;
+
+            /** @var ExtendableDashboard $instance */
+            if (null !== $instance = $this->getPhpAttributeInstance(
+                    $dashboardFqcn,
+                    ExtendableDashboard::class)
+            ) {
+                $extendableDashboards[$dashboardFqcn] = $dashboardFqcn;
+            }
+        }
+
+        return $extendableDashboards;
+    }
+
+    // Get dashboard controllers which extend from dashboard controllers with the #[ExtendableDashboard] attribute.
+    private function getExtendedDashboards(array $extendableDashboards): array
+    {
+        if ($extendableDashboards === []) {
+            return [];
+        }
+
+        $extendedDashboards = [];
+
+        foreach ($this->dashboardControllers as $dashboardController) {
+            $dashboardFqcn = $dashboardController::class;
+
+            foreach ($extendableDashboards as $extendableDashboard) {
+                if (is_subclass_of($dashboardFqcn, $extendableDashboard)) {
+                    /** @var ExtendableDashboard $instance */
+                    $instance = $this->getPhpAttributeInstance($dashboardFqcn, ExtendableDashboard::class);
+                    $extendedDashboards[$dashboardFqcn] = [
+                        'fqcn' => $dashboardFqcn,
+                        'parent' => $extendableDashboard,
+                        'process_extra_routes' => $instance?->hasExtraRoutes() ?? false,
+                    ];
+                }
+            }
+        }
+
+        return $extendedDashboards;
+    }
+
     /**
      * @return array<string, Route>
      */
@@ -111,8 +159,21 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         /** @var array<string> $addedRouteNames Temporary cache that stores the route names to ensure that we don't add duplicated admin routes */
         $addedRouteNames = [];
 
+        $extendableDashboards = $this->getExtendableDashboards();
+        $extendedDashboards = $this->getExtendedDashboards($extendableDashboards);
+
         foreach ($this->dashboardControllers as $dashboardController) {
             $dashboardFqcn = $dashboardController::class;
+
+            $processExtraRoutes = false;
+            if (isset($extendedDashboards[$dashboardFqcn])) {
+                if ($extendedDashboards[$dashboardFqcn]['process_extra_routes']) {
+                    $processExtraRoutes = true;
+                } else {
+                    continue;
+                }
+            }
+
             [$allowedCrudControllers, $deniedCrudControllers] = $this->getAllowedAndDeniedControllers($dashboardFqcn);
             $defaultRoutesConfig = $this->getDefaultRoutesConfig($dashboardFqcn);
             $dashboardRouteConfig = $this->getDashboardsRouteConfig()[$dashboardFqcn];
@@ -149,7 +210,11 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
                     $adminRouteName = sprintf('%s_%s_%s', $dashboardRouteConfig['routeName'], $crudControllerRouteConfig['routeName'], $actionRouteConfig['routeName']);
 
                     if (\in_array($adminRouteName, $addedRouteNames, true)) {
-                        throw new \RuntimeException(sprintf('When using pretty URLs, all CRUD controllers must have unique PHP class names to generate unique route names. However, your application has at least two controllers with the FQCN "%s", generating the route "%s". Even if both CRUD controllers are in different namespaces, they cannot have the same class name. Rename one of these controllers to resolve the issue.', $crudControllerFqcn, $adminRouteName));
+                        if ($processExtraRoutes) {
+                            continue;
+                        }
+
+                        throw new \RuntimeException(sprintf('When using pretty URLs, all CRUD controllers must have unique PHP class names to generate unique route names. However, your application has at least two controllers with the FQCN "%s", generating the route "%s". Even if both CRUD controllers are in different namespaces, they cannot have the same class name. Rename one of these controllers to resolve the issue. If you are extending a Dashboard Controller, consider adding the #[ExtendableDashboard(extraRoutes: true)] attribute to both controllers.', $crudControllerFqcn, $adminRouteName));
                     }
 
                     $defaults = [
