@@ -109,7 +109,6 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         foreach ($this->dashboardControllers as $dashboardController) {
             $dashboardFqcn = $dashboardController::class;
 
-            /** @var ExtendableDashboard|null $instance */
             if (null !== $this->getPhpAttributeInstance($dashboardFqcn, ExtendableDashboard::class)
             ) {
                 $extendableDashboards[$dashboardFqcn] = $dashboardFqcn;
