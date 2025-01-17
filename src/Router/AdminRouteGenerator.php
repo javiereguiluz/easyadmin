@@ -3,9 +3,9 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Router;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminAction;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\ExtendableDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminCrud;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\ExtendableDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -109,10 +109,8 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         foreach ($this->dashboardControllers as $dashboardController) {
             $dashboardFqcn = $dashboardController::class;
 
-            /** @var ExtendableDashboard $instance */
-            if (null !== $instance = $this->getPhpAttributeInstance(
-                    $dashboardFqcn,
-                    ExtendableDashboard::class)
+            /** @var ExtendableDashboard|null $instance */
+            if (null !== $this->getPhpAttributeInstance($dashboardFqcn, ExtendableDashboard::class)
             ) {
                 $extendableDashboards[$dashboardFqcn] = $dashboardFqcn;
             }
@@ -124,7 +122,7 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
     // Get dashboard controllers which extend from dashboard controllers with the #[ExtendableDashboard] attribute.
     private function getExtendedDashboards(array $extendableDashboards): array
     {
-        if ($extendableDashboards === []) {
+        if ([] === $extendableDashboards) {
             return [];
         }
 
@@ -135,7 +133,7 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
 
             foreach ($extendableDashboards as $extendableDashboard) {
                 if (is_subclass_of($dashboardFqcn, $extendableDashboard)) {
-                    /** @var ExtendableDashboard $instance */
+                    /** @var ExtendableDashboard|null $instance */
                     $instance = $this->getPhpAttributeInstance($dashboardFqcn, ExtendableDashboard::class);
                     $extendedDashboards[$dashboardFqcn] = [
                         'fqcn' => $dashboardFqcn,

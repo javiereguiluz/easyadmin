@@ -16,9 +16,6 @@ class ExtendableDashboard
     {
     }
 
-    /**
-     * @return bool|null
-     */
     public function hasExtraRoutes(): ?bool
     {
         return $this->hasExtraRoutes;
