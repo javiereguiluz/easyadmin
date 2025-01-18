@@ -94,11 +94,16 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         return $this->applicationUsesPrettyUrls ??= $this->filesystem->exists(sprintf('%s/%s', $this->buildDir, AdminRouteLoader::PRETTY_URLS_CONTEXT_FILE_NAME));
     }
 
-    public function findRouteName(string $dashboardFqcn, string $crudControllerFqcn, string $actionName): ?string
+    public function findRouteName(?string $dashboardFqcn = null, ?string $crudControllerFqcn = null, ?string $actionName = null): ?string
     {
         $adminRoutes = $this->cache->getItem(self::CACHE_KEY_FQCN_TO_ROUTE)->get();
 
-        return $adminRoutes[$dashboardFqcn][$crudControllerFqcn][$actionName] ?? null;
+        if (null === $dashboardFqcn) {
+            $dashboardControllers = iterator_to_array($this->dashboardControllers);
+            $dashboardFqcn = $dashboardControllers[array_key_first($dashboardControllers)]::class;
+        }
+
+        return $adminRoutes[$dashboardFqcn][$crudControllerFqcn ?? ''][$actionName ?? ''] ?? null;
     }
 
     /**
