@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -17,6 +18,7 @@ class MenuItemMatcher implements MenuItemMatcherInterface
 {
     public function __construct(
         private AdminUrlGenerator $adminUrlGenerator,
+        private AdminRouteGenerator $adminRouteGenerator,
     ) {
     }
 
@@ -35,8 +37,7 @@ class MenuItemMatcher implements MenuItemMatcherInterface
      */
     public function markSelectedMenuItem(array $menuItems, Request $request): array
     {
-        $usePrettyUrls = true === (bool) $request->attributes->get(EA::ROUTE_CREATED_BY_EASYADMIN);
-        if ($usePrettyUrls) {
+        if ($this->adminRouteGenerator->usesPrettyUrls()) {
             $menuItems = $this->doMarkSelectedPrettyUrlsMenuItem($menuItems, $request);
         } else {
             $menuItems = $this->doMarkSelectedLegacyMenuItem($menuItems, $request);

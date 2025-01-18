@@ -63,7 +63,7 @@
 {% endblock %}
 
 {% macro render_field_contents(entity, field) %}
-    <div class="field-group {{ field.cssClass }}" {% for name, value in field.htmlAttributes %}{{ name }}="{{ value|e('html_attr') }}" {% endfor %}>
+    <div class="field-group {{ field.cssClass }}" {% for name, value in field.htmlAttributes %}{{ name }}="{{ value|e('html') }}" {% endfor %}>
         {% if field.label is same as (false) %}
             {# a FALSE label value means that the field doesn't even display the <label> element;
                use an empty string to not display a label but keep the <label> element to not mess with the layout #}
@@ -73,7 +73,7 @@
                     {%- if field.help is not empty -%}
                         data-bs-toggle="tooltip" data-bs-placement="auto" data-bs-animation="false"
                         data-bs-html="true" data-bs-custom-class="ea-detail-label-tooltip"
-                        data-bs-title="{{ field.help|trans|e('html_attr') }}"
+                        data-bs-title="{{ field.help|trans|e('html') }}"
                     {%- endif -%}
                 {%- endset -%}
 
@@ -157,7 +157,7 @@
     {% set tab_id_option_name = constant('EasyCorp\\Bundle\\EasyAdminBundle\\Field\\FormField::OPTION_TAB_ID') %}
     {% set tab_is_active_option_name = constant('EasyCorp\\Bundle\\EasyAdminBundle\\Field\\FormField::OPTION_TAB_IS_ACTIVE') %}
 
-    <div id="{{ field.getCustomOption(tab_id_option_name) }}" class="tab-pane {% if field.getCustomOption(tab_is_active_option_name) %}active{% endif %} {{ field.cssClass }}" {% for key, value in field.getFormTypeOption('attr') %}{{ key }}="{{ value|e('html_attr') }}"{% endfor %}>
+    <div id="{{ field.getCustomOption(tab_id_option_name) }}" class="tab-pane {% if field.getCustomOption(tab_is_active_option_name) %}active{% endif %} {{ field.cssClass }}" {% for key, value in field.getFormTypeOption('attr') %}{{ key }}="{{ value|e('html') }}"{% endfor %}>
         {% if field.help %}
             <div class="content-header-help tab-help">
                 {{ field.help|trans(domain = ea.i18n.translationDomain)|raw }}
@@ -391,7 +391,7 @@
             {{ field.label|trans|raw }}
 
             {% if field.help is not empty %}
-                <a tabindex="0" class="data-help" data-bs-toggle="popover" data-bs-custom-class="ea-content-help-popover" data-bs-animation="true" data-bs-html="true" data-bs-placement="right" data-bs-trigger="focus" data-bs-content="{{ field.help|trans|e('html_attr') }}">
+                <a tabindex="0" class="data-help" data-bs-toggle="popover" data-bs-custom-class="ea-content-help-popover" data-bs-animation="true" data-bs-html="true" data-bs-placement="right" data-bs-trigger="focus" data-bs-content="{{ field.help|trans|e('html') }}">
                     <twig:ea:Icon name="internal:circle-info" />
                 </a>
             {% endif %}

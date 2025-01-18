@@ -597,7 +597,7 @@
     {% set tab_is_active_option_name = constant('EasyCorp\\Bundle\\EasyAdminBundle\\Field\\FormField::OPTION_TAB_IS_ACTIVE') %}
     {% set field = form.vars.ea_vars.field %}
 
-    <div id="{{ ea_tab_id }}" class="tab-pane {% if field.getCustomOption(tab_is_active_option_name) %}active{% endif %} {{ ea_css_class }}" {% for key, value in form.vars.attr %}{{ key }}={{ value|e('html_attr') }}{% endfor %}>
+    <div id="{{ ea_tab_id }}" class="tab-pane {% if field.getCustomOption(tab_is_active_option_name) %}active{% endif %} {{ ea_css_class }}" {% for key, value in form.vars.attr %}{{ key }}={{ value|e('html') }}{% endfor %}>
         {% if ea_help %}
             <div class="content-header-help tab-help">
                 {{ ea_help|trans(domain = ea.i18n.translationDomain)|raw }}
@@ -622,7 +622,7 @@
                 <div class="filter-heading" id="filter-heading-{{ loop.index }}">
                     <input type="checkbox" class="filter-checkbox" {% if field.vars.name in applied_filters %}checked{% endif %}>
                     <a data-bs-toggle="collapse" href="#filter-content-{{ loop.index }}" aria-expanded="{{ field.vars.name in applied_filters ? 'true' : 'false' }}" aria-controls="filter-content-{{ loop.index }}"
-                        {% for name, value in field.vars.label_attr|default([]) %}{{ name }}="{{ value|e('html_attr') }}" {% endfor %}>
+                        {% for name, value in field.vars.label_attr|default([]) %}{{ name }}="{{ value|e('html') }}" {% endfor %}>
                         {{ field.vars.label|default(field.vars.name|humanize)|trans(domain = ea.i18n.translationDomain) }}
                     </a>
                 </div>
@@ -800,8 +800,8 @@
     <div class="input-group">
         {{ block('form_widget') }}
         <button type="button" class="btn"
-                data-icon-locked="{{ component('ea:Icon', {name: 'internal:lock'})|e('html_attr') }}"
-                data-icon-unlocked="{{ component('ea:Icon', {name: 'internal:lock-open-solid'})|e('html_attr') }}">
+                data-icon-locked="{{ component('ea:Icon', {name: 'internal:lock'})|e('html') }}"
+                data-icon-unlocked="{{ component('ea:Icon', {name: 'internal:lock-open-solid'})|e('html') }}">
             <twig:ea:Icon name="internal:lock" />
         </button>
     </div>

@@ -139,7 +139,7 @@
         {% block table_body %}
             {% for entity in entities %}
                 {% if entity.isAccessible %}
-                    <tr data-id="{{ entity.primaryKeyValueAsString }}">
+                    <tr data-id="{{ entity.primaryKeyValueAsString }}" {% block entity_row_attributes %}{% endblock %}>
                         {% if has_batch_actions %}
                             <td class="batch-actions-selector">
                                 <div class="form-check">
@@ -151,7 +151,7 @@
                         {% for field in entity.fields %}
                             {% set is_searchable = null == ea.crud.searchFields or field.property in ea.crud.searchFields %}
 
-                            <td data-column="{{ field.property }}" data-label="{{ field.label|trans|e('html_attr') }}" class="{{ is_searchable ? 'searchable' }} {{ field.property == sort_field_name ? 'sorted' }} text-{{ field.textAlign }} {{ field.cssClass }}" dir="{{ ea.i18n.textDirection }}" {% for name, value in field.htmlAttributes %}{{ name }}="{{ value|e('html_attr') }}" {% endfor %}>
+                            <td data-column="{{ field.property }}" data-label="{{ field.label|trans|e('html') }}" class="{{ is_searchable ? 'searchable' }} {{ field.property == sort_field_name ? 'sorted' }} text-{{ field.textAlign }} {{ field.cssClass }}" dir="{{ ea.i18n.textDirection }}" {% for name, value in field.htmlAttributes %}{{ name }}="{{ value|e('html_attr') }}" {% endfor %}>
                                 {{ include(field.templatePath, { field: field, entity: entity }, with_context = false) }}
                             </td>
                         {% endfor %}

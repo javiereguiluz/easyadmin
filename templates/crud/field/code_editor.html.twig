@@ -31,11 +31,11 @@
             readonly
             style="{{ configuredHeight is null ? 'max-height: 500px;' : 'max-height: unset; height: ' ~ configuredHeight ~ 'px' }}"
             data-ea-code-editor-field="true"
-            data-language="{{ field.customOptions.get('language')|e('html_attr') }}"
-            data-tab-size="{{ field.customOptions.get('tabSize')|e('html_attr') }}"
+            data-language="{{ field.customOptions.get('language')|e('html') }}"
+            data-tab-size="{{ field.customOptions.get('tabSize')|e('html') }}"
             data-indent-with-tabs="{{ field.customOptions.get('indentWithTabs') ? 'true' : 'false' }}"
             data-show-line-numbers="{{ field.customOptions.get('showLineNumbers') ? 'true' : 'false' }}"
-            data-number-of-rows="{{ field.customOptions.get('numOfRows')|e('html_attr') }}"
+            data-number-of-rows="{{ field.customOptions.get('numOfRows')|e('html') }}"
     >
         {{- field.formattedValue|escape -}}
     </textarea>

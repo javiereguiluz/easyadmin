@@ -2,5 +2,5 @@
 {% for js_asset in assets %}
     {% set src = asset(js_asset.value, js_asset.packageName) %}
     <script src="{{ (js_asset.preload ? ea_call_function_if_exists('preload', src, { as: 'script', nopush: js_asset.nopush }))|default(src) }}" {{ js_asset.async ? 'async' }} {{ js_asset.defer ? 'defer' }}
-    {%- for attr, value in js_asset.htmlAttributes %} {{ attr }}="{{ value|e('html_attr') }}"{% endfor %}></script>
+    {%- for attr, value in js_asset.htmlAttributes %} {{ attr }}="{{ value|e('html') }}"{% endfor %}></script>
 {% endfor %}

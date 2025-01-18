@@ -350,7 +350,7 @@
 
                                                     {% block content_help %}
                                                         {% if has_help_message %}
-                                                            <a tabindex="0" class="content-header-help" data-bs-toggle="popover" data-bs-custom-class="ea-content-help-popover" data-bs-animation="true" data-bs-html="true" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="{{ ea.crud.helpMessage|trans|e('html_attr') }}">
+                                                            <a tabindex="0" class="content-header-help" data-bs-toggle="popover" data-bs-custom-class="ea-content-help-popover" data-bs-animation="true" data-bs-html="true" data-bs-placement="bottom" data-bs-trigger="focus" data-bs-content="{{ ea.crud.helpMessage|trans|e('html') }}">
                                                                 <twig:ea:Icon name="internal:circle-info" />
                                                             </a>
                                                         {% endif %}

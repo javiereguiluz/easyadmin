@@ -297,14 +297,13 @@ class PrettyUrlsControllerTest extends WebTestCase
             ->setAction('customAction')
             ->generateUrl()
         ;
-       $client->request('GET', $url);
+        $client->request('GET', $url);
 
         $this->assertSelectorTextSame('#url1', 'http://localhost/admin/pretty/urls?'.http_build_query([
             'crudAction' => 'customAction',
             'crudControllerFqcn' => CategoryCrudController::class,
             'dashboardControllerFqcn' => DashboardController::class,
         ]));
-
 
         $this->assertSelectorTextSame('#url2', 'http://localhost/admin/pretty/urls?'.http_build_query([
             'crudAction' => 'customAction',

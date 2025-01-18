@@ -37,7 +37,7 @@
 
 {% macro render_html_attributes(item) %}
     {% for attribute_name, attribute_value in item.htmlAttributes %}
-        {{ attribute_name }}="{{ attribute_value|e('html_attr') }}"
+        {{ attribute_name }}="{{ attribute_value|e('html') }}"
     {% endfor %}
 {% endmacro %}
 
