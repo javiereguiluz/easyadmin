@@ -2,6 +2,8 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Registry;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
+
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
@@ -31,9 +33,9 @@ final class CrudControllerRegistry
         return $this->entityFqcnToCrudFqcnMap[$entityFqcn] ?? null;
     }
 
-    public function findEntityFqcnByCrudFqcn(string $controllerFqcn): ?string
+    public function findEntityFqcnByCrud(CrudControllerInterface $controllerFqcn): string
     {
-        return $this->crudFqcnToEntityFqcnMap[$controllerFqcn] ?? null;
+        return $this->crudFqcnToEntityFqcnMap[$controllerFqcn::class] ?? $controllerFqcn::getEntityFqcn();
     }
 
     public function findCrudFqcnByCrudId(string $crudId): ?string
