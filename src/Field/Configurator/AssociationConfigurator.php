@@ -304,15 +304,22 @@ final class AssociationConfigurator implements FieldConfiguratorInterface
             $targetCrudControllerPageName = $field->getCustomOption(AssociationField::OPTION_EMBEDDED_CRUD_FORM_EDIT_PAGE_NAME) ?? Crud::PAGE_EDIT;
         }
 
+        try {
+            $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
+            $relatedEntityId = $propertyAccessor->getValue($entityDto->getInstance(), $propertyName.'.'.$metadata->getIdentifierFieldNames()[0]);
+        } catch (UnexpectedTypeException) {
+            // this may crash if something in the tree is null, so just do nothing then
+        }
+
         $field->setFormTypeOption(
             'entityDto',
-            $this->createEntityDto($targetEntityFqcn, $targetCrudControllerFqcn, $targetCrudControllerAction, $targetCrudControllerPageName),
+            $this->createEntityDto($targetEntityFqcn, $targetCrudControllerFqcn, $targetCrudControllerAction, $targetCrudControllerPageName, $relatedEntityId ?? null),
         );
     }
 
-    private function createEntityDto(string $entityFqcn, string $crudControllerFqcn, string $crudControllerAction, string $crudControllerPageName): EntityDto
+    private function createEntityDto(string $entityFqcn, string $crudControllerFqcn, string $crudControllerAction, string $crudControllerPageName, ?string $entityId = null): EntityDto
     {
-        $entityDto = $this->entityFactory->create($entityFqcn);
+        $entityDto = $this->entityFactory->create($entityFqcn, $entityId);
 
         $crudController = $this->controllerFactory->getCrudControllerInstance(
             $crudControllerFqcn,
