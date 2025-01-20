@@ -33,4 +33,5 @@ final class EA
     public const SUBMENU_INDEX = 'submenuIndex';
     /** @deprecated this parameter is no longer used because URLs no longer include a signed hash */
     public const URL_SIGNATURE = 'signature';
+    public const LOCK_VERSION = '_lock_version';
 }

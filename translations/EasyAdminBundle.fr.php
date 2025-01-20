@@ -141,4 +141,11 @@ return [
         'no-more-results' => 'Aucun autre résultat trouvé',
         'loading-more-results' => 'Chargement de résultats supplémentaires…',
     ],
+    'flash_lock_error' => [
+        'message' => 'Cet enregistrement a été modifié par un autre utilisateur depuis que vous avez commencé à le modifier.
+                Vos modifications ne peuvent pas être enregistrées pour prévenir la perte de données.
+                %link_start%Cliquez ici pour %reload_text%%link_end% et obtenir la dernière version.',
+
+        'reload_page' => 'recharger la page',
+    ],
 ];
