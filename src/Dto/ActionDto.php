@@ -305,6 +305,10 @@ final class ActionDto
             $action->linkToRoute($this->routeName, $this->routeParameters);
         }
 
+        if (null !== $this->url) {
+            $action->linkToUrl($this->url);
+        }
+
         if (null !== $this->displayCallable) {
             $action->displayIf($this->displayCallable);
         }
