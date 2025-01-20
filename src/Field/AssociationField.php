@@ -11,7 +11,9 @@ use Symfony\Contracts\Translation\TranslatableInterface;
  */
 final class AssociationField implements FieldInterface
 {
-    use FieldTrait;
+    use FieldTrait {
+        FieldTrait::setRequired as parentSetRequired;
+    }
 
     public const OPTION_AUTOCOMPLETE = 'autocomplete';
     public const OPTION_EMBEDDED_CRUD_FORM_CONTROLLER = 'crudControllerFqcn';
@@ -87,6 +89,14 @@ final class AssociationField implements FieldInterface
     public function setQueryBuilder(\Closure $queryBuilderCallable): self
     {
         $this->setCustomOption(self::OPTION_QUERY_BUILDER_CALLABLE, $queryBuilderCallable);
+
+        return $this;
+    }
+
+    public function setRequired(bool $isRequired): self
+    {
+        $this->parentSetRequired($isRequired);
+        $this->setHtmlAttribute('required', $isRequired);
 
         return $this;
     }
