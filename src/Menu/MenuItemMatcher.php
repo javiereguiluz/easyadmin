@@ -84,7 +84,7 @@ class MenuItemMatcher implements MenuItemMatcherInterface
         // 2) decide which is the most appropriate menu item (if any) to mark as selected based on the current request
         $controllersAndActionsLinkedInTheMenu = $this->getControllersAndActionsLinkedInTheMenu($menuItems);
         $currentPageQueryParameters = $request->query->all();
-        $currentRequestUri = $request->getUri();
+        $currentRequestUri = $request->getRequestUri();
 
         foreach ($menuItems as $menuItemDto) {
             if ($menuItemDto->isMenuSection()) {
