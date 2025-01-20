@@ -28,6 +28,7 @@ final class ActionDto
     private $url;
     private array $translationParameters = [];
     private $displayCallable;
+    private ?bool $batchConfirmationModal = true;
 
     public function getType(): string
     {
@@ -268,6 +269,16 @@ final class ActionDto
     public function setDisplayCallable(callable $displayCallable): void
     {
         $this->displayCallable = $displayCallable;
+    }
+
+    public function getBatchConfirmationModal(): ?bool
+    {
+        return $this->batchConfirmationModal;
+    }
+
+    public function setBatchConfirmationModal(?bool $batchConfirmationModal): void
+    {
+        $this->batchConfirmationModal = $batchConfirmationModal;
     }
 
     /**
