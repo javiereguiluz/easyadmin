@@ -64,6 +64,7 @@ final class CommonPreConfigurator implements FieldConfiguratorInterface
 
         $isRequired = $this->buildRequiredOption($field, $entityDto);
         $field->setFormTypeOption('required', $isRequired);
+        $field->setHtmlAttribute('required', $isRequired);
 
         $isSortable = $this->buildSortableOption($field, $entityDto);
         $field->setSortable($isSortable);

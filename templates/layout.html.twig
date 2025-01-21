@@ -141,9 +141,14 @@
                             {% endif %}
 
                             {% for localeDto in ea.dashboardLocales %}
+                                {% if ea.usePrettyUrls %}
+                                    {% set url = ea_url().set('_locale', localeDto.locale).set('entityId', app.request.attributes.get('entityId')) %}
+                                {% else %}
+                                    {% set url = ea_url().set('_locale', localeDto.locale) %}
+                                {% endif %}
                                 <twig:ea:ActionMenu:ActionList:Item
                                     class="{{ app.request.locale == localeDto.locale ? 'active' }}"
-                                    url="{{ ea_url().set('_locale', localeDto.locale).set('entityId', app.request.attributes.get('entityId')).generateUrl() }}"
+                                    url="{{ url.generateUrl() }}"
                                     icon="{{ localeDto.icon }}" label="{{ localeDto.name }}" />
                             {% endfor %}
 

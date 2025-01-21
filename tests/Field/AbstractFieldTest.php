@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Field;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
@@ -30,15 +31,16 @@ abstract class AbstractFieldTest extends KernelTestCase
         return $this->entityDto = $entityDtoMock;
     }
 
-    private function getAdminContext(string $pageName, string $requestLocale): AdminContext
+    private function getAdminContext(string $pageName, string $requestLocale, string $actionName): AdminContext
     {
         self::bootKernel();
 
         $crudMock = $this->getMockBuilder(CrudDto::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getCurrentPage', 'getDatePattern', 'getDateTimePattern', 'getTimePattern'])
+            ->onlyMethods(['getCurrentPage', 'getCurrentAction', 'getDatePattern', 'getDateTimePattern', 'getTimePattern'])
             ->getMock();
         $crudMock->method('getCurrentPage')->willReturn($pageName);
+        $crudMock->method('getCurrentAction')->willReturn($actionName);
         $crudMock->method('getDatePattern')->willReturn(DateTimeField::FORMAT_MEDIUM);
         $crudMock->method('getTimePattern')->willReturn(DateTimeField::FORMAT_MEDIUM);
         $crudMock->method('getDateTimePattern')->willReturn([DateTimeField::FORMAT_MEDIUM, DateTimeField::FORMAT_MEDIUM]);
@@ -80,10 +82,10 @@ abstract class AbstractFieldTest extends KernelTestCase
         return $this->adminContext = $adminContextMock;
     }
 
-    protected function configure(FieldInterface $field, string $pageName = Crud::PAGE_INDEX, string $requestLocale = 'en'): FieldDto
+    protected function configure(FieldInterface $field, string $pageName = Crud::PAGE_INDEX, string $requestLocale = 'en', string $actionName = Action::INDEX): FieldDto
     {
         $fieldDto = $field->getAsDto();
-        $this->configurator->configure($fieldDto, $this->getEntityDto(), $this->getAdminContext($pageName, $requestLocale));
+        $this->configurator->configure($fieldDto, $this->getEntityDto(), $this->getAdminContext($pageName, $requestLocale, $actionName));
 
         return $fieldDto;
     }

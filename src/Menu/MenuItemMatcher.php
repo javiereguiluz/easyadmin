@@ -6,9 +6,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 class MenuItemMatcher implements MenuItemMatcherInterface
 {
     public function __construct(
-        private AdminUrlGenerator $adminUrlGenerator,
-        private AdminRouteGenerator $adminRouteGenerator,
+        private AdminUrlGeneratorInterface $adminUrlGenerator,
+        private AdminRouteGeneratorInterface $adminRouteGenerator,
     ) {
     }
 
