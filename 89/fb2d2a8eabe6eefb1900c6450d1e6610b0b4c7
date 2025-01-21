@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2025-01-20T19:13:49Z
+
+@Sobak thanks for this contribution. I don't mind the trait extending solution ... but I was wondering, shouldn't we instead add the new code line below these two lines?
+
+https://github.com/EasyCorp/EasyAdminBundle/blob/8e2c26812af85fd1b2b6eecf98b14627a52a9731/src/Field/Configurator/CommonPreConfigurator.php#L65-L66
+
+---------------------------------------------------------------------------
+
+by Sobak at 2025-01-21T04:10:58Z
+
+Hi @javiereguiluz, thanks for the quick review.
+
+I didn't feel confident enough with the project to suggest such solution, I don't know for sure if it's going to cause some backwards incompatible changes, but if you say it's a sensible behavior for all field types, then I'll update this PR momentarily.
+
+---------------------------------------------------------------------------
+
+by Sobak at 2025-01-21T04:18:12Z
+
+Done, I force-pushed the commit. I also tested your suggested change with my project manually and it works like expected for `AssociationField`.
