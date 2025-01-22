@@ -758,7 +758,7 @@ You can use any of these routes to generate the admin URLs thanks to the
     ]);
 
     // generating an admin URL in a Twig template
-    <a href="{{ path('admin_blog_post_edit', {entityId: post.id}) }}">Edit Blog Post</a>
+    <a href="{{ ea_url().setRoute('admin_blog_post_edit', {entityId: post.id}) }}">Edit Blog Post</a>
 
 Building Admin URLs
 ~~~~~~~~~~~~~~~~~~~

@@ -190,7 +190,7 @@
 
                         <div id="responsive-header-logo" class="text-truncate ms-auto">
                             {% block responsive_header_logo %}
-                                <a class="responsive-logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
+                                <a class="responsive-logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ ea_url().setRoute(ea.dashboardRouteName) }}">
                                     {{ ea.dashboardTitle|raw }}
                                 </a>
                             {% endblock responsive_header_logo %}
@@ -224,7 +224,7 @@
                                     {% block header_navbar %}
                                         <div id="header-logo">
                                             {% block header_logo %}
-                                                <a class="logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
+                                                <a class="logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ ea_url().setRoute(ea.dashboardRouteName) }}">
                                                     <span class="logo-custom">{{ ea.dashboardTitle|raw }}</span>
                                                     <span class="logo-compact"><twig:ea:Icon name="internal:home" /></span>
                                                 </a>
