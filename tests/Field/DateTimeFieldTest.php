@@ -12,15 +12,7 @@ class DateTimeFieldTest extends AbstractFieldTest
     {
         parent::setUp();
 
-        $intlFormatterMock = $this->getMockBuilder(IntlFormatter::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['formatDateTime'])
-            ->getMock();
-        $intlFormatterMock->method('formatDateTime')->willReturnCallback(
-            static function ($value, ?string $dateFormat = 'medium', ?string $timeFormat = 'medium', string $pattern = '', $timezone = null, string $calendar = 'gregorian', ?string $locale = null) { return sprintf('value: %s | dateFormat: %s | timeFormat: %s | pattern: %s | timezone: %s | calendar: %s | locale: %s', $value->format('Y-m-d'), $dateFormat, $timeFormat, $pattern, $timezone, $calendar, $locale); }
-        );
-
-        $this->configurator = new DateTimeConfigurator($intlFormatterMock);
+        $this->configurator = new DateTimeConfigurator(new IntlFormatter());
     }
 
     public function testFieldWithWrongTimezone()
@@ -94,7 +86,7 @@ class DateTimeFieldTest extends AbstractFieldTest
         $fieldDto = $this->configure($field);
 
         $this->assertSame(DateTimeField::FORMAT_LONG, $fieldDto->getCustomOption(DateTimeField::OPTION_DATE_PATTERN));
-        $this->assertSame('value: 2015-01-16 | dateFormat: long | timeFormat: none | pattern:  | timezone:  | calendar: gregorian | locale: ', $fieldDto->getFormattedValue());
+        $this->assertSame('January 16, 2015', $fieldDto->getFormattedValue());
     }
 
     public function testFieldWithCustomPattern()
@@ -105,7 +97,7 @@ class DateTimeFieldTest extends AbstractFieldTest
         $fieldDto = $this->configure($field);
 
         $this->assertSame('HH:mm:ss ZZZZ a', $fieldDto->getCustomOption(DateTimeField::OPTION_DATE_PATTERN));
-        $this->assertSame('value: 2015-01-16 | dateFormat:  | timeFormat:  | pattern: HH:mm:ss ZZZZ a | timezone:  | calendar: gregorian | locale: ', $fieldDto->getFormattedValue());
+        $this->assertSame('00:00:00 GMT AM', $fieldDto->getFormattedValue());
     }
 
     public function testFieldDefaultWidget()

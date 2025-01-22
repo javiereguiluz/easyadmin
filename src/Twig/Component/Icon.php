@@ -3,8 +3,8 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Twig\Component;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\IconSet;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\IconDto;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 
 class Icon
 {
@@ -13,7 +13,7 @@ class Icon
     private ?string $iconSet = null;
 
     public function __construct(
-        private AdminContextProvider $adminContextProvider,
+        private AdminContextProviderInterface $adminContextProvider,
     ) {
     }
 

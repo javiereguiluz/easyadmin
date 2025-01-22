@@ -3,7 +3,7 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Provider;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetsDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
@@ -33,7 +33,7 @@ final class AdminContextProvider implements AdminContextProviderInterface
         return null !== $currentRequest && $currentRequest->attributes->has(EA::CONTEXT_REQUEST_ATTRIBUTE);
     }
 
-    public function getContext(bool $throw = false): ?AdminContext
+    public function getContext(bool $throw = false): ?AdminContextInterface
     {
         $currentRequest = $this->requestStack->getCurrentRequest();
 

@@ -2,15 +2,19 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Field;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextDirection;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\I18nDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Registry\TemplateRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,66 +24,54 @@ abstract class AbstractFieldTest extends KernelTestCase
     protected $adminContext;
     protected $configurator;
 
-    private function getEntityDto(): EntityDto
+    protected function getEntityDto(): EntityDto
     {
-        $entityDtoMock = $this->createMock(EntityDto::class);
-        $entityDtoMock
-            ->expects($this->any())
-            ->method('getInstance')
-            ->willReturn(new class {});
+        $reflectedClass = new \ReflectionClass(ClassMetadata::class);
+        $classMetadata = $reflectedClass->newInstanceWithoutConstructor();
 
-        return $this->entityDto = $entityDtoMock;
+        $reflectedClass = new \ReflectionClass(EntityDto::class);
+        $entityDto = $reflectedClass->newInstanceWithoutConstructor();
+        $instanceProperty = $reflectedClass->getProperty('instance');
+        $instanceProperty->setValue($entityDto, new class {});
+        $metadataProperty = $reflectedClass->getProperty('metadata');
+        $metadataProperty->setValue($entityDto, $classMetadata);
+
+        return $this->entityDto = $entityDto;
     }
 
-    private function getAdminContext(string $pageName, string $requestLocale, string $actionName): AdminContext
+    private function getAdminContext(string $pageName, string $requestLocale, string $actionName): AdminContextInterface
     {
         self::bootKernel();
 
-        $crudMock = $this->getMockBuilder(CrudDto::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getCurrentPage', 'getCurrentAction', 'getDatePattern', 'getDateTimePattern', 'getTimePattern'])
-            ->getMock();
-        $crudMock->method('getCurrentPage')->willReturn($pageName);
-        $crudMock->method('getCurrentAction')->willReturn($actionName);
-        $crudMock->method('getDatePattern')->willReturn(DateTimeField::FORMAT_MEDIUM);
-        $crudMock->method('getTimePattern')->willReturn(DateTimeField::FORMAT_MEDIUM);
-        $crudMock->method('getDateTimePattern')->willReturn([DateTimeField::FORMAT_MEDIUM, DateTimeField::FORMAT_MEDIUM]);
+        $crudDto = new CrudDto();
+        $crudDto->setPageName($pageName);
+        $crudDto->setCurrentAction($actionName);
+        $crudDto->setDatePattern(DateTimeField::FORMAT_MEDIUM);
+        $crudDto->setTimePattern(DateTimeField::FORMAT_MEDIUM);
+        $crudDto->setDateTimePattern(DateTimeField::FORMAT_MEDIUM, DateTimeField::FORMAT_MEDIUM);
 
-        $i18nMock = $this->getMockBuilder(I18nDto::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getTranslationParameters', 'getTranslationDomain'])
-            ->getMock();
-        $i18nMock->method('getTranslationParameters')->willReturn([]);
-        $i18nMock->method('getTranslationDomain')->willReturn('messages');
+        $i18Dto = new I18nDto($requestLocale, TextDirection::LTR, 'messages', []);
 
-        $requestMock = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getLocale'])
-            ->getMock();
-        $requestMock->method('getLocale')->willReturn($requestLocale);
+        $reflectedClass = new \ReflectionClass(Request::class);
+        $request = $reflectedClass->newInstanceWithoutConstructor();
+        $instanceProperty = $reflectedClass->getProperty('locale');
+        $instanceProperty->setValue($request, $requestLocale);
 
-        $adminContextMock = $this->getMockBuilder(AdminContext::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getRequest', 'getCrud', 'getI18n', 'getTemplatePath'])
-            ->getMock();
-        $adminContextMock
-            ->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($requestMock);
-        $adminContextMock
-            ->expects($this->any())
-            ->method('getCrud')
-            ->willReturn($crudMock);
-        $adminContextMock
-            ->expects($this->any())
-            ->method('getI18n')
-            ->willReturn($i18nMock);
-        $adminContextMock
-            ->expects($this->any())
-            ->method('getTemplatePath')
-            ->willReturn('@EasyAdmin/layout.html.twig'); // return any path to avoid injecting a TemplateRegistry
+        $reflectedClass = new \ReflectionClass(TemplateRegistry::class);
+        $templateRegistry = $reflectedClass->newInstanceWithoutConstructor();
 
-        return $this->adminContext = $adminContextMock;
+        $reflectedClass = new \ReflectionClass(AdminContext::class);
+        $adminContext = $reflectedClass->newInstanceWithoutConstructor();
+        $requestProperty = $reflectedClass->getProperty('request');
+        $requestProperty->setValue($adminContext, $request);
+        $crudDtoProperty = $reflectedClass->getProperty('crudDto');
+        $crudDtoProperty->setValue($adminContext, $crudDto);
+        $i18nDtoProperty = $reflectedClass->getProperty('i18nDto');
+        $i18nDtoProperty->setValue($adminContext, $i18Dto);
+        $templateRegistryProperty = $reflectedClass->getProperty('templateRegistry');
+        $templateRegistryProperty->setValue($adminContext, $templateRegistry);
+
+        return $this->adminContext = $adminContext;
     }
 
     protected function configure(FieldInterface $field, string $pageName = Crud::PAGE_INDEX, string $requestLocale = 'en', string $actionName = Action::INDEX): FieldDto

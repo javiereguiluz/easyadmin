@@ -3,7 +3,8 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Twig\Component;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\IconSet;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetsDto;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Twig\Component\Icon;
@@ -123,11 +124,11 @@ class IconTest extends TestCase
      */
     private function getAdminContextProviderMock(string $appIconSet)
     {
-        $adminContextProvider = $this->getMockBuilder(AdminContextProvider::class)->disableOriginalConstructor()->getMock();
-        $adminContext = $this->getMockBuilder(AdminContext::class)->disableOriginalConstructor()->getMock();
-        $assetsDto = $this->getMockBuilder(AssetsDto::class)->disableOriginalConstructor()->getMock();
-        $assetsDto->method('getIconSet')->willReturn($appIconSet);
-        $assetsDto->method('getDefaultIconPrefix')->willReturn(''); // TODO
+        $adminContextProvider = $this->getMockBuilder(AdminContextProviderInterface::class)->disableOriginalConstructor()->getMock();
+        $adminContext = $this->getMockBuilder(AdminContextInterface::class)->disableOriginalConstructor()->getMock();
+        $assetsDto = new AssetsDto();
+        $assetsDto->setIconSet($appIconSet);
+        $assetsDto->setDefaultIconPrefix(''); // TODO
         $adminContext->method('getAssets')->willReturn($assetsDto);
         $adminContextProvider->method('getContext')->willReturn($adminContext);
 

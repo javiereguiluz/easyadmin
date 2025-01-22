@@ -15,10 +15,6 @@
         <server name="KERNEL_CLASS" value="EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Kernel" />
     </php>
 
-    <extensions>
-        <extension class="EasyCorp\Bundle\EasyAdminBundle\Test\PhpUnitExtension"/>
-    </extensions>
-
     <testsuites>
         <testsuite name="EasyAdmin Test Suite">
             <directory>tests/</directory>

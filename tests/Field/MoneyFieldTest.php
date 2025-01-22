@@ -2,10 +2,10 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Field;
 
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\MoneyConfigurator;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Intl\IntlFormatter;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class MoneyFieldTest extends AbstractFieldTest
 {
@@ -13,22 +13,7 @@ class MoneyFieldTest extends AbstractFieldTest
     {
         parent::setUp();
 
-        $intlFormatterMock = $this->getMockBuilder(IntlFormatter::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['formatCurrency'])
-            ->getMock();
-        $intlFormatterMock->method('formatCurrency')->willReturnCallback(
-            function ($value) { return $value.'€'; }
-        );
-
-        $propertyAccessorMock = $this->getMockBuilder(PropertyAccessor::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isReadable', 'getValue'])
-            ->getMock();
-        $propertyAccessorMock->method('isReadable')->willReturn(true);
-        $propertyAccessorMock->method('getValue')->willReturn('USD');
-
-        $this->configurator = new MoneyConfigurator($intlFormatterMock, $propertyAccessorMock);
+        $this->configurator = new MoneyConfigurator(new IntlFormatter(), static::getContainer()->get('property_accessor'));
     }
 
     public function testFieldWithoutCurrency()
@@ -72,6 +57,25 @@ class MoneyFieldTest extends AbstractFieldTest
         self::assertSame('EUR', $fieldDto->getFormTypeOption('currency'));
     }
 
+    protected function getEntityDto(): EntityDto
+    {
+        $reflectedClass = new \ReflectionClass(EntityDto::class);
+        $entityDto = $reflectedClass->newInstanceWithoutConstructor();
+        $primaryKeyNameProperty = $reflectedClass->getProperty('primaryKeyName');
+        $primaryKeyNameProperty->setValue($entityDto, 'id');
+        $primaryKeyValueProperty = $reflectedClass->getProperty('primaryKeyValue');
+        $primaryKeyValueProperty->setValue($entityDto, 1);
+        $fqcnProperty = $reflectedClass->getProperty('fqcn');
+        $fqcnProperty->setValue($entityDto, 'App\Entity\MyEntity');
+        $instanceProperty = $reflectedClass->getProperty('instance');
+        $instanceProperty->setValue($entityDto, new class {
+            public int $id = 1;
+            public string $bar = 'USD';
+        });
+
+        return $this->entityDto = $entityDto;
+    }
+
     public function testFieldWithPropertyPathCurrency()
     {
         $field = MoneyField::new('foo')->setValue(100)->setCurrencyPropertyPath('bar');
@@ -97,7 +101,7 @@ class MoneyFieldTest extends AbstractFieldTest
     {
         $field = MoneyField::new('foo')->setValue(100)->setCurrency('EUR');
         $fieldDto = $this->configure($field);
-        self::assertSame('1€', $fieldDto->getFormattedValue());
+        self::assertSame('€1.00', $fieldDto->getFormattedValue());
         self::assertSame(100, $fieldDto->getFormTypeOption('divisor'));
     }
 
@@ -106,7 +110,7 @@ class MoneyFieldTest extends AbstractFieldTest
         $field = MoneyField::new('foo')->setValue(100)->setCurrency('EUR');
         $field->setStoredAsCents(false);
         $fieldDto = $this->configure($field);
-        self::assertSame('100€', $fieldDto->getFormattedValue());
+        self::assertSame('€100.00', $fieldDto->getFormattedValue());
         self::assertSame(1, $fieldDto->getFormTypeOption('divisor'));
     }
 
@@ -115,7 +119,7 @@ class MoneyFieldTest extends AbstractFieldTest
         $field = MoneyField::new('foo')->setValue(725)->setCurrency('EUR');
         $field->setFormTypeOption('divisor', 10000);
         $fieldDto = $this->configure($field);
-        self::assertSame('0.0725€', $fieldDto->getFormattedValue());
+        self::assertSame('€0.07', $fieldDto->getFormattedValue());
         self::assertSame(10000, $fieldDto->getFormTypeOption('divisor'));
     }
 }

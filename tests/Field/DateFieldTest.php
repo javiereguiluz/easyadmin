@@ -13,15 +13,7 @@ class DateFieldTest extends AbstractFieldTest
     {
         parent::setUp();
 
-        $intlFormatterMock = $this->getMockBuilder(IntlFormatter::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['formatDate'])
-            ->getMock();
-        $intlFormatterMock->method('formatDate')->willReturnCallback(
-            static function ($value, ?string $dateFormat = 'medium', string $pattern = '', $timezone = null, string $calendar = 'gregorian', ?string $locale = null) { return sprintf('value: %s | dateFormat: %s | pattern: %s | timezone: %s | calendar: %s | locale: %s', $value instanceof \DateTimeInterface ? $value->format('Y-m-d H:i:s') : $value, $dateFormat, $pattern, $timezone, $calendar, $locale); }
-        );
-
-        $this->configurator = new DateTimeConfigurator($intlFormatterMock);
+        $this->configurator = new DateTimeConfigurator(new IntlFormatter());
     }
 
     public function testFieldWithWrongTimezone()
@@ -77,7 +69,7 @@ class DateFieldTest extends AbstractFieldTest
         $fieldDto = $this->configure($field);
 
         $this->assertSame(DateTimeField::FORMAT_LONG, $fieldDto->getCustomOption(DateField::OPTION_DATE_PATTERN));
-        $this->assertSame('value: 2006-01-02 15:04:05 | dateFormat: long | pattern:  | timezone:  | calendar: gregorian | locale: ', $fieldDto->getFormattedValue());
+        $this->assertSame('January 2, 2006', $fieldDto->getFormattedValue());
     }
 
     public function testFieldWithCustomPattern()
@@ -88,7 +80,7 @@ class DateFieldTest extends AbstractFieldTest
         $fieldDto = $this->configure($field);
 
         $this->assertSame('HH:mm:ss ZZZZ a', $fieldDto->getCustomOption(DateField::OPTION_DATE_PATTERN));
-        $this->assertSame('value: 2006-01-02 15:04:05 | dateFormat:  | pattern: HH:mm:ss ZZZZ a | timezone:  | calendar: gregorian | locale: ', $fieldDto->getFormattedValue());
+        $this->assertSame('15:04:05 GMT PM', $fieldDto->getFormattedValue());
     }
 
     public function testFieldDefaultWidget()

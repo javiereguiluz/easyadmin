@@ -4,19 +4,19 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Field\Configurator;
 
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Intl\IntlFormatterInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\PercentField;
-use EasyCorp\Bundle\EasyAdminBundle\Intl\IntlFormatter;
 
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 final class PercentConfigurator implements FieldConfiguratorInterface
 {
-    private IntlFormatter $intlFormatter;
+    private IntlFormatterInterface $intlFormatter;
 
-    public function __construct(IntlFormatter $intlFormatter)
+    public function __construct(IntlFormatterInterface $intlFormatter)
     {
         $this->intlFormatter = $intlFormatter;
     }

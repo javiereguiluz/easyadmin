@@ -175,10 +175,20 @@ class EasyAdminTwigExtension extends AbstractExtension implements GlobalsInterfa
             }
 
             if (method_exists($value, 'getId')) {
-                return sprintf('%s #%s', $value::class, $value->getId());
+                return sprintf(
+                    '%s #%s',
+                    // remove null bytes from class name (this happens in anonymous classes)
+                    str_replace("\0", '', $value::class),
+                    $value->getId()
+                );
             }
 
-            return sprintf('%s #%s', $value::class, hash('xxh32', (string) spl_object_id($value)));
+            return sprintf(
+                '%s #%s',
+                // remove null bytes from class name (this happens in anonymous classes)
+                str_replace("\0", '', $value::class),
+                hash('xxh32', (string) spl_object_id($value))
+            );
         }
 
         return '';

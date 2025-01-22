@@ -5,21 +5,21 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Field\Configurator;
 use Doctrine\DBAL\Types\Types;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Intl\IntlFormatterInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Intl\IntlFormatter;
 
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 final class DateTimeConfigurator implements FieldConfiguratorInterface
 {
-    private IntlFormatter $intlFormatter;
+    private IntlFormatterInterface $intlFormatter;
 
-    public function __construct(IntlFormatter $intlFormatter)
+    public function __construct(IntlFormatterInterface $intlFormatter)
     {
         $this->intlFormatter = $intlFormatter;
     }

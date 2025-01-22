@@ -13,5 +13,8 @@ interface FieldConfiguratorInterface
 {
     public function supports(FieldDto $field, EntityDto $entityDto): bool;
 
+    /**
+     * @param AdminContext $context This will change to AdminContextInterface in the next major version
+     */
     public function configure(FieldDto $field, EntityDto $entityDto, AdminContext $context): void;
 }

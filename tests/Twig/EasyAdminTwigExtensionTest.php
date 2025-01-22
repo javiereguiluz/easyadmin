@@ -2,15 +2,10 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Twig;
 
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Twig\EasyAdminTwigExtension;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\AssetMapper\ImportMap\ImportMapRenderer;
-use Symfony\Component\DependencyInjection\ServiceLocator;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\UX\Icons\Twig\UXIconRuntime;
 
 class EasyAdminTwigExtensionTest extends KernelTestCase
 {
@@ -19,45 +14,46 @@ class EasyAdminTwigExtensionTest extends KernelTestCase
      */
     public function testRepresentAsString($value, $expectedValue, bool $assertRegex = false, string|callable|null $toStringMethod = null): void
     {
-        $translator = $this->getMockBuilder(TranslatorInterface::class)->disableOriginalConstructor()->getMock();
-        $translator->method('trans')->willReturnCallback(fn ($value) => '*'.$value);
+        $customTranslator = new class implements TranslatorInterface {
+            public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
+            {
+                return '*'.$id;
+            }
 
-        $extension = new EasyAdminTwigExtension(
-            $this->getMockBuilder(ServiceLocator::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(AdminContextProvider::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(CsrfTokenManagerInterface::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(ImportMapRenderer::class)->disableOriginalConstructor()->getMock(),
-            $translator,
-            $this->getMockBuilder(UXIconRuntime::class)->disableOriginalConstructor()->getMock(),
-        );
+            public function getLocale(): string
+            {
+                return 'en';
+            }
+        };
 
-        $result = $extension->representAsString($value, $toStringMethod);
+        $reflectedClass = new \ReflectionClass(EasyAdminTwigExtension::class);
+        $twigExtensionInstance = $reflectedClass->newInstanceWithoutConstructor();
+        $property = $reflectedClass->getProperty('translator');
+        $property->setValue($twigExtensionInstance, $customTranslator);
+
+        $result = $twigExtensionInstance->representAsString($value, $toStringMethod);
 
         if ($assertRegex) {
             $this->assertMatchesRegularExpression($expectedValue, $result);
         } else {
             $this->assertSame($expectedValue, $result);
         }
+
+        $this->assertStringNotContainsString("\0", $result, 'The string representation of a value must not contain the null character (which can happen when the original value is an anonymous class object)');
     }
 
-    public function testRepresentAsStringExcepion()
+    public function testRepresentAsStringException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageMatches('/The method "someMethod\(\)" does not exist or is not callable in the value of type "class@anonymous.*"/');
 
-        $extension = new EasyAdminTwigExtension(
-            $this->getMockBuilder(ServiceLocator::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(AdminContextProvider::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(CsrfTokenManagerInterface::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(ImportMapRenderer::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(TranslatorInterface::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(UXIconRuntime::class)->disableOriginalConstructor()->getMock(),
-        );
+        $reflectedClass = new \ReflectionClass(EasyAdminTwigExtension::class);
+        $twigExtensionInstance = $reflectedClass->newInstanceWithoutConstructor();
 
-        $extension->representAsString(new class {}, 'someMethod');
+        $twigExtensionInstance->representAsString(new class {}, 'someMethod');
     }
 
-    public function provideValuesForRepresentAsString()
+    public function provideValuesForRepresentAsString(): iterable
     {
         yield [null, ''];
         yield ['foo bar', 'foo bar'];
