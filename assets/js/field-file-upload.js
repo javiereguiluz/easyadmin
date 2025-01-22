@@ -9,7 +9,7 @@ const eaFileUploadHandler = function (event) {
 window.addEventListener('DOMContentLoaded', eaFileUploadHandler);
 document.addEventListener('ea.collection.item-added', function(){
    setTimeout(function () {
-        eaFileUploadHandler;
+        eaFileUploadHandler();
     }
   }, 1000);
 });
