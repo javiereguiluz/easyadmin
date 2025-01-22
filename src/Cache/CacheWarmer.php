@@ -25,7 +25,7 @@ final class CacheWarmer implements CacheWarmerInterface
 
     public function isOptional(): bool
     {
-        return false;
+        return true;
     }
 
     public function warmUp(string $cacheDir, ?string $buildDir = null): array
