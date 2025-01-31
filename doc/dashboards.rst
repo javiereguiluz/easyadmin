@@ -70,6 +70,7 @@ first in your application. To do so, create this file:
     easyadmin:
         resource: .
         type: easyadmin.routes
+        prefix: /admin
 
 .. note::
 
