@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by allan-simon at 2025-01-24T10:43:13Z
+
+it should fix part of #6723
+
+---------------------------------------------------------------------------
+
+by allan-simon at 2025-01-24T10:44:32Z
+
+the bug happens because even though it's in a "if pretty url is activated" you can still have ugly url for custom action
