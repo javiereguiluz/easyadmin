@@ -34,7 +34,7 @@ class AdminRouterSubscriberTest extends TestCase
             new RequestEvent(
                 $this->getMockForAbstractClass(HttpKernelInterface::class),
                 $request,
-                HttpKernelInterface::MASTER_REQUEST
+                HttpKernelInterface::MAIN_REQUEST
             )
         );
     }

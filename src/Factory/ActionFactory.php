@@ -205,8 +205,7 @@ final class ActionFactory
         }
 
         $requestParameters = [
-            // when using pretty URLs, the data is in the request attributes instead of the query string
-            EA::CRUD_CONTROLLER_FQCN => $request->attributes->get(EA::CRUD_CONTROLLER_FQCN) ?? $request->query->get(EA::CRUD_CONTROLLER_FQCN),
+            EA::CRUD_CONTROLLER_FQCN => $request->attributes->get(EA::CRUD_CONTROLLER_FQCN),
             EA::CRUD_ACTION => $actionDto->getCrudActionName(),
         ];
 

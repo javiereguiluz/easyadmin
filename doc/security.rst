@@ -67,8 +67,7 @@ Consider that in your application you have two dashboards (``DashboardController
 used by your employees and ``GuestDashboardController`` used by external collaborators).
 In the guest dashboard you only want to allow certain actions related to your blog.
 
-However, when using :ref:`pretty admin URLs <pretty-admin-urls>`, EasyAdmin will
-generate the routes for all CRUD controllers in all dashboards. This means that
+By default, EasyAdmin generates routes for all CRUD controllers in all dashboards. This means that
 there will be undesired routes like ``admin_guest_invoice``, ``admin_guest_user_detail``, etc.
 The best way to restrict which CRUD controllers are accessible via each dashboard
 is to use the ``#[AdminDashboard]`` attribute::

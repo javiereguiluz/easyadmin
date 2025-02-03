@@ -41,8 +41,7 @@ actions (e.g. ``delete`` and ``autocomplete``) which don't match any page.
 CRUD Routes
 ~~~~~~~~~~~
 
-When using :ref:`pretty admin URLs <pretty-admin-urls>`, each of the CRUD actions
-define an admin route following this name and path by default:
+Each of the CRUD actions define an admin route following this name and path by default:
 
 ==================  ======================
 CRUD route name     CRUD route path
@@ -530,18 +529,9 @@ saving the changes::
         $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'];
 
         if ('saveAndViewDetail' === $submitButtonName) {
-            // when using pretty admin URLs
             return $this->redirectToRoute('admin_product_detail', [
                 'entityId' => $context->getEntity()->getPrimaryKeyValue(),
             ]);
-
-            // when using legacy admin URLs
-            $url = $this->container->get(AdminUrlGenerator::class)
-                ->setAction(Action::DETAIL)
-                ->setEntityId($context->getEntity()->getPrimaryKeyValue())
-                ->generateUrl();
-
-            return $this->redirect($url);
         }
 
         return parent::getRedirectResponseAfterSave($context, $action);
@@ -733,9 +723,8 @@ associated to the given template name:
 Generating Admin URLs
 ---------------------
 
-When using :ref:`pretty admin URLs <pretty-admin-urls>`, EasyAdmin generates
-one route per each CRUD action of each :doc:`dashboard </dashboards>`. You can
-list them all with the following command:
+EasyAdmin generates one route per each CRUD action of each :doc:`dashboard </dashboards>`.
+You can list them all with the following command:
 
 .. code-block:: terminal
 
@@ -765,12 +754,12 @@ You can use any of these routes to generate the admin URLs thanks to the
 Building Admin URLs
 ~~~~~~~~~~~~~~~~~~~
 
-If you don't use :ref:`pretty admin URLs <pretty-admin-urls>` or if you need to
-build routes dynamically, you can use the ``AdminUrlGenerator`` provided by
-EasyAdmin to build the admin URLs.
+The ``AdminUrlGenerator`` helps you build backend URLs dynamically. This is needed
+e.g. when the controller/action parts of the URL are stored in variables and you
+can't know the route name beforehand.
 
 When generating a URL this way, you don't start from scratch. EasyAdmin reuses all
-the query parameters existing in the current request. This is done on purpose because
+the current request attributes and query parameters. This is done on purpose because
 generating new URLs based on the current URL is the most common scenario. Use
 the ``unsetAll()`` method to remove all existing query parameters::
 

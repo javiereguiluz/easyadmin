@@ -2,15 +2,15 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
+#[AdminDashboard(routePath: '/admin-error', routeName: 'admin_error')]
 class ErrorDashboardController extends AbstractDashboardController
 {
-    #[Route('/admin-error', name: 'admin_error')]
     public function index(): Response
     {
         return parent::index();

@@ -3,19 +3,20 @@
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Router;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Cache;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\DashboardControllerRegistryInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 class AdminUrlGeneratorTest extends WebTestCase
 {
@@ -27,13 +28,12 @@ class AdminUrlGeneratorTest extends WebTestCase
     {
         $adminUrlGenerator = $this->getAdminUrlGenerator();
 
-        // the foo=bar query params come from the current request (defined in the mock of the setUp() method)
-        $this->assertSame('http://localhost/admin?foo=bar', $adminUrlGenerator->generateUrl());
+        $this->assertSame('http://localhost/admin', $adminUrlGenerator->generateUrl());
     }
 
     public function testGetRouteParameters()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $this->assertSame('bar', $adminUrlGenerator->get('foo'));
         $this->assertNull($adminUrlGenerator->get('this_query_param_does_not_exist'));
@@ -41,7 +41,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testSetRouteParameters()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->set('foo', 'not_bar');
         $this->assertSame('http://localhost/admin?foo=not_bar', $adminUrlGenerator->generateUrl());
@@ -49,7 +49,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testNullParameters()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->set('param1', null);
         $adminUrlGenerator->set('param2', 'null');
@@ -58,7 +58,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testSetAll()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->setAll(['foo1' => 'bar1', 'foo2' => 'bar2']);
         $this->assertSame('http://localhost/admin?foo=bar&foo1=bar1&foo2=bar2', $adminUrlGenerator->generateUrl());
@@ -66,7 +66,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testUnsetAll()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->set('foo1', 'bar1');
         $adminUrlGenerator->unsetAll();
@@ -75,7 +75,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testUnsetAllExcept()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->setAll(['foo1' => 'bar1', 'foo2' => 'bar2', 'foo3' => 'bar3', 'foo4' => 'bar4']);
         $adminUrlGenerator->unsetAllExcept('foo3', 'foo2');
@@ -84,7 +84,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testParametersAreSorted()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->setAll(['1_foo' => 'bar', 'a_foo' => 'bar', '2_foo' => 'bar']);
         $this->assertSame('http://localhost/admin?1_foo=bar&2_foo=bar&a_foo=bar&foo=bar', $adminUrlGenerator->generateUrl());
@@ -98,7 +98,7 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testUrlParametersDontAffectOtherUrls()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator();
+        $adminUrlGenerator = $this->getAdminUrlGenerator(requestQueryParams: ['foo' => 'bar']);
 
         $adminUrlGenerator->set('page', '1');
         $adminUrlGenerator->set('sort', ['id' => 'ASC']);
@@ -115,14 +115,14 @@ class AdminUrlGeneratorTest extends WebTestCase
     {
         $adminUrlGenerator = $this->getAdminUrlGenerator();
 
-        $adminUrlGenerator->setDashboard('App\Controller\Admin\SecureDashboardController');
-        $this->assertSame('http://localhost/secure_admin?foo=bar', $adminUrlGenerator->generateUrl());
+        $adminUrlGenerator->setDashboard(AdminUrlGeneratorTestSecondDashboardController::class);
+        $this->assertSame('http://localhost/second/admin', $adminUrlGenerator->generateUrl());
     }
 
     public function testUnknownExplicitDashboardController()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The given "ThisDashboardControllerDoesNotExist" class is not a valid Dashboard controller. Make sure it extends from "EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController" or implements "EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface".');
+        $this->expectExceptionMessage('The given "ThisDashboardControllerDoesNotExist" class is not a valid Dashboard controller. Make sure it extends "EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController" or implements "EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface".');
 
         $adminUrlGenerator = $this->getAdminUrlGenerator();
 
@@ -135,11 +135,11 @@ class AdminUrlGeneratorTest extends WebTestCase
         $adminUrlGenerator = $this->getAdminUrlGenerator();
 
         $adminUrlGenerator->setController('FooController');
-        $this->assertSame('http://localhost/admin?crudAction=index&crudControllerFqcn=FooController&foo=bar', $adminUrlGenerator->generateUrl());
+        $this->assertSame('http://localhost/admin', $adminUrlGenerator->generateUrl());
 
         $adminUrlGenerator->setController('FooController');
         $adminUrlGenerator->setAction(Action::NEW);
-        $this->assertSame('http://localhost/admin?crudAction=new&crudControllerFqcn=FooController&foo=bar', $adminUrlGenerator->generateUrl());
+        $this->assertSame('http://localhost/admin', $adminUrlGenerator->generateUrl());
     }
 
     public function testControllerParameterRemovesRouteParameters()
@@ -177,12 +177,12 @@ class AdminUrlGeneratorTest extends WebTestCase
         $adminUrlGenerator->setRoute('some_route', ['key' => 'value']);
         $this->assertNull($adminUrlGenerator->get(EA::CRUD_CONTROLLER_FQCN));
 
-        $adminUrlGenerator->setController('App\Controller\Admin\SomeCrudController');
+        $adminUrlGenerator->setController(AdminUrlGeneratorTestBlogPostCrudController::class);
         $adminUrlGenerator->set('foo', 'bar');
         $adminUrlGenerator->setRoute('some_route', ['key' => 'value']);
 
         $this->assertNull($adminUrlGenerator->get(EA::CRUD_CONTROLLER_FQCN));
-        $this->assertNull($adminUrlGenerator->get('foo'));
+        $this->assertSame('bar', $adminUrlGenerator->get('foo'));
     }
 
     public function testGeneratedUrlsContainNoReferrerByDefault()
@@ -194,53 +194,103 @@ class AdminUrlGeneratorTest extends WebTestCase
 
     public function testRelativeUrls()
     {
-        $adminUrlGenerator = $this->getAdminUrlGenerator(true);
+        $adminUrlGenerator = $this->getAdminUrlGenerator(false);
 
-        $adminUrlGenerator->set('foo1', 'bar1');
-        $adminUrlGenerator->setController('App\Controller\Admin\SomeCrudController');
-        $this->assertSame('http://localhost/admin?crudAction=index&crudControllerFqcn=App%5CController%5CAdmin%5CSomeCrudController&foo=bar&foo1=bar1', $adminUrlGenerator->generateUrl());
+        $adminUrlGenerator->set('foo', 'bar');
+        $adminUrlGenerator->setController(AdminUrlGeneratorTestBlogPostCrudController::class);
+        $this->assertSame('/admin/post?foo=bar', $adminUrlGenerator->generateUrl());
 
-        $adminUrlGenerator = $this->getAdminUrlGenerator(true, true);
+        $adminUrlGenerator = $this->getAdminUrlGenerator();
 
-        $adminUrlGenerator->set('foo1', 'bar1');
-        $adminUrlGenerator->setController('App\Controller\Admin\SomeCrudController');
-        $this->assertSame('http://localhost/admin?crudAction=index&crudControllerFqcn=App%5CController%5CAdmin%5CSomeCrudController&foo=bar&foo1=bar1', $adminUrlGenerator->generateUrl());
+        $adminUrlGenerator->set('foo', 'bar');
+        $adminUrlGenerator->setController(AdminUrlGeneratorTestBlogPostCrudController::class);
+        $this->assertSame('http://localhost/admin/post?foo=bar', $adminUrlGenerator->generateUrl());
     }
 
-    private function getAdminUrlGenerator(bool $absoluteUrls = true): AdminUrlGeneratorInterface
+    private function getAdminUrlGenerator(bool $useAbsoluteUrls = true, array $requestQueryParams = [], array $requestAttributes = [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class]): AdminUrlGeneratorInterface
     {
         self::bootKernel();
 
+        $request = new Request(query: $requestQueryParams, attributes: $requestAttributes);
+
         $adminContext = $this->getMockBuilder(AdminContextInterface::class)->disableOriginalConstructor()->getMock();
         $adminContext->method('getDashboardRouteName')->willReturn('admin');
-        $adminContext->method('getAbsoluteUrls')->willReturn($absoluteUrls);
-        $adminContext->method('getRequest')->willReturn(new Request(['foo' => 'bar']));
+        $adminContext->method('getAbsoluteUrls')->willReturn($useAbsoluteUrls);
+        $adminContext->method('getRequest')->willReturn($request);
 
-        $request = new Request(query: ['foo' => 'bar'], attributes: [EA::CONTEXT_REQUEST_ATTRIBUTE => $adminContext]);
+        $adminContextProviderMock = $this->getMockBuilder(AdminContextProviderInterface::class)->disableOriginalConstructor()->getMock();
+        $adminContextProviderMock->method('getContext')->willReturn($adminContext);
 
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
+        $routerMock = $this->getMockBuilder(RouterInterface::class)->getMock();
+        $routerMock->method('generate')->willReturnCallback(function ($name, $parameters) use ($useAbsoluteUrls) {
+            $nameParts = explode('_', $name);
+            if ('index' === end($nameParts)) {
+                array_pop($nameParts);
+            }
+            if (\array_key_exists(EA::ENTITY_ID, $parameters)) {
+                array_splice($nameParts, -1, 0, $parameters[EA::ENTITY_ID]);
+            }
+            unset($parameters[EA::ENTITY_ID]);
 
-        $adminContextProvider = new AdminContextProvider($requestStack);
+            $queryString = '';
+            if ([] !== $parameters) {
+                $queryString = '?'.http_build_query($parameters);
+            }
 
-        $dashboardControllerRegistry = $this->getMockBuilder(DashboardControllerRegistryInterface::class)->disableOriginalConstructor()->getMock();
-        $dashboardControllerRegistry->method('getRouteByControllerFqcn')->willReturnMap([
-            ['App\Controller\Admin\SecureDashboardController', 'secure_admin'],
-        ]);
-        $dashboardControllerRegistry->method('getNumberOfDashboards')->willReturn(2);
-        $dashboardControllerRegistry->method('getFirstDashboardRoute')->willReturn('admin');
+            return ($useAbsoluteUrls ? 'http://localhost/' : '/').implode('/', $nameParts).$queryString;
+        });
 
-        $container = Kernel::MAJOR_VERSION >= 6 ? static::getContainer() : self::$container;
-        $router = $container->get('router');
+        $cacheMock = $this->getMockBuilder(CacheItemPoolInterface::class)->getMock();
+        $cacheMock->method('getItem')->willReturnCallback(function ($key) {
+            $item = new CacheItem();
+            $item->expiresAfter(3600);
 
-        $adminRouteGenerator = $this->getMockBuilder(AdminRouteGeneratorInterface::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['usesPrettyUrls'])
-            ->getMockForAbstractClass();
-        $adminRouteGenerator->method('generateAll')->willReturn(new RouteCollection());
-        $adminRouteGenerator->method('findRouteName')->willReturn(null);
-        $adminRouteGenerator->method('usesPrettyUrls')->willReturn(false);
+            if (Cache::ROUTE_ATTRIBUTES_TO_NAME === $key) {
+                $item->set([
+                    AdminUrlGeneratorTestDashboardController::class => [
+                        '' => [
+                            '' => 'admin',
+                        ],
+                        AdminUrlGeneratorTestBlogPostCrudController::class => [
+                            'index' => 'admin_post_index',
+                            'new' => 'admin_post_new',
+                            'edit' => 'admin_post_edit',
+                            'detail' => 'admin_post_detail',
+                        ],
+                    ],
+                    AdminUrlGeneratorTestSecondDashboardController::class => [
+                        '' => [
+                            '' => 'second_admin',
+                        ],
+                    ],
+                ]);
+            } elseif (Cache::DASHBOARD_FQCN_TO_ROUTE === $key) {
+                $item->set([
+                    AdminUrlGeneratorTestDashboardController::class => 'admin',
+                    AdminUrlGeneratorTestSecondDashboardController::class => 'second_admin',
+                ]);
+            }
 
-        return new AdminUrlGenerator($adminContextProvider, $router, $dashboardControllerRegistry, $adminRouteGenerator);
+            return $item;
+        });
+
+        $dashboardControllers = new RewindableGenerator(function () {
+            yield AdminUrlGeneratorTestDashboardController::class => new AdminUrlGeneratorTestDashboardController();
+            yield AdminUrlGeneratorTestSecondDashboardController::class => new AdminUrlGeneratorTestSecondDashboardController();
+        }, 2);
+
+        $adminRouteGenerator = new AdminRouteGenerator($dashboardControllers, [], $cacheMock, 'en');
+
+        return new AdminUrlGenerator($adminContextProviderMock, $routerMock, $adminRouteGenerator);
     }
+}
+
+class AdminUrlGeneratorTestDashboardController
+{
+}
+class AdminUrlGeneratorTestSecondDashboardController
+{
+}
+class AdminUrlGeneratorTestBlogPostCrudController
+{
 }

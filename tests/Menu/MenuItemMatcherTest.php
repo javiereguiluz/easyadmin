@@ -52,8 +52,7 @@ class MenuItemMatcherTest extends KernelTestCase
 
         self::bootKernel();
         $adminUrlGenerator = self::getContainer()->get(AdminUrlGenerator::class);
-        $adminRouteGenerator = self::getContainer()->get(AdminRouteGenerator::class);
-        $menuItemMatcher = new MenuItemMatcher($adminUrlGenerator, $adminRouteGenerator);
+        $menuItemMatcher = new MenuItemMatcher($adminUrlGenerator);
         $menuItemDto = $this->getMenuItemDto();
         $menuItemMatcher->markSelectedMenuItem([$menuItemDto], $request);
 

@@ -2,16 +2,12 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Router;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Cache;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\BlogPostCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\CategoryCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\DashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\SecondDashboardController;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
-use Symfony\Component\Filesystem\Filesystem;
 
 class AdminRouteGeneratorTest extends WebTestCase
 {
@@ -20,13 +16,12 @@ class AdminRouteGeneratorTest extends WebTestCase
      */
     public function testFindRoute(?string $dashboardControllerFqcn, ?string $crudControllerFqcn, ?string $action, ?string $expectedRouteName)
     {
-        $client = static::createClient();
         $cacheMock = $this->getMockBuilder(CacheItemPoolInterface::class)->getMock();
         $cacheMock->method('getItem')->willReturnCallback(function ($key) {
             $item = new CacheItem();
             $item->expiresAfter(3600);
 
-            if (AdminRouteGenerator::CACHE_KEY_FQCN_TO_ROUTE !== $key) {
+            if (Cache::ROUTE_ATTRIBUTES_TO_NAME !== $key) {
                 return $item;
             }
 
@@ -57,14 +52,7 @@ class AdminRouteGeneratorTest extends WebTestCase
             yield SecondDashboardController::class => new SecondDashboardController();
         }, 2);
 
-        $adminRouteGenerator = new AdminRouteGenerator(
-            $dashboardControllers,
-            [],
-            $cacheMock,
-            new Filesystem(),
-            $client->getKernel()->getBuildDir(),
-            'en',
-        );
+        $adminRouteGenerator = new AdminRouteGenerator($dashboardControllers, [], $cacheMock, 'en');
 
         $routeName = $adminRouteGenerator->findRouteName($dashboardControllerFqcn, $crudControllerFqcn, $action);
         $this->assertSame($expectedRouteName, $routeName);
@@ -85,4 +73,17 @@ class AdminRouteGeneratorTest extends WebTestCase
         yield [SecondDashboardController::class, BlogPostCrudController::class, 'index', null];
         yield [SecondDashboardController::class, BlogPostCrudController::class, 'detail', null];
     }
+}
+
+class DashboardController
+{
+}
+class SecondDashboardController
+{
+}
+class BlogPostCrudController
+{
+}
+class CategoryCrudController
+{
 }

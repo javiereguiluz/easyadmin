@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\LocaleDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MainMenuDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\UserMenuDto;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -19,8 +18,6 @@ interface AdminContextInterface
     public function getRequest(): Request;
 
     public function getI18n(): I18nDto;
-
-    public function getCrudControllers(): CrudControllerRegistry;
 
     public function getEntity(): EntityDto;
 
@@ -61,5 +58,6 @@ interface AdminContextInterface
 
     public function getTemplatePath(string $templateName): string;
 
+    /** @deprecated since easycorp/easyadmin-bundle 5.0.0 and will be removed in EasyAdmin 5.1.0. This method always returns true. */
     public function usePrettyUrls(): bool;
 }

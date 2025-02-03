@@ -1,16 +1,17 @@
 <?php
 
-namespace EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller;
+namespace EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[AdminDashboard(
+    routePath: '/second/dashboard',
+    routeName: 'second_dashboard',
     routes: [
         'new' => ['routePath' => '/add-new', 'routeName' => 'add'],
         'edit' => ['routePath' => '/edit/---{entityId}---', 'routeName' => 'change'],
@@ -19,9 +20,8 @@ use Symfony\Component\Routing\Attribute\Route;
     ],
     allowedControllers: [UserCrudController::class]
 )]
-class SecondDashboardController extends AbstractDashboardController
+class PrettyUrlsSecondDashboardController extends AbstractDashboardController
 {
-    #[Route('/second/dashboard', name: 'second_dashboard')]
     public function index(): Response
     {
         return parent::index();

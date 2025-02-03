@@ -1,6 +1,5 @@
 <?php
 
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Kernel as PrettyUrlsKernel;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -19,11 +18,7 @@ if (!file_exists($file)) {
 }
 $autoload = require $file;
 
-if ('1' === getenv('USE_PRETTY_URLS')) {
-    $kernel = new PrettyUrlsKernel();
-} else {
-    $kernel = new Kernel();
-}
+$kernel = new Kernel();
 
 // delete the existing cache directory to avoid issues
 (new Filesystem())->remove($kernel->getCacheDir());
@@ -41,6 +36,10 @@ $input = new ArrayInput(['command' => 'doctrine:schema:create']);
 $application->run($input, new ConsoleOutput());
 
 $input = new ArrayInput(['command' => 'doctrine:fixtures:load', '--no-interaction' => true, '--append' => false]);
+$application->run($input, new ConsoleOutput());
+
+// this is needed so the custom route loader triggers and generates the routes
+$input = new ArrayInput(['command' => 'debug:router']);
 $application->run($input, new ConsoleOutput());
 
 unset($input, $application);

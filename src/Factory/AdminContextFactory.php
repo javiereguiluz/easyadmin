@@ -2,7 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Factory;
 
-use EasyCorp\Bundle\EasyAdminBundle\Cache\CacheWarmer;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Cache;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextDirection;
@@ -18,9 +18,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterConfigDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\I18nDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\TemplateRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -33,21 +33,19 @@ use Symfony\Contracts\Translation\TranslatableInterface;
  */
 final class AdminContextFactory
 {
-    private string $buildDir;
     private ?TokenStorageInterface $tokenStorage;
     private MenuFactoryInterface $menuFactory;
-    private CrudControllerRegistry $crudControllers;
     private EntityFactory $entityFactory;
     private AdminRouteGenerator $adminRouteGenerator;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(string $buildDir, ?TokenStorageInterface $tokenStorage, MenuFactoryInterface $menuFactory, CrudControllerRegistry $crudControllers, EntityFactory $entityFactory, AdminRouteGenerator $adminRouteGenerator)
+    public function __construct(?TokenStorageInterface $tokenStorage, MenuFactoryInterface $menuFactory, EntityFactory $entityFactory, AdminRouteGenerator $adminRouteGenerator, CacheItemPoolInterface $cache)
     {
-        $this->buildDir = $buildDir;
         $this->tokenStorage = $tokenStorage;
         $this->menuFactory = $menuFactory;
-        $this->crudControllers = $crudControllers;
         $this->entityFactory = $entityFactory;
         $this->adminRouteGenerator = $adminRouteGenerator;
+        $this->cache = $cache;
     }
 
     public function create(Request $request, DashboardControllerInterface $dashboardController, ?CrudControllerInterface $crudController, ?string $actionName = null): AdminContext
@@ -61,37 +59,24 @@ final class AdminContextFactory
         $actionConfigDto = $this->getActionConfig($dashboardController, $crudController, $pageName);
         $filters = $this->getFilters($dashboardController, $crudController);
 
-        $crudDto = $this->getCrudDto($this->crudControllers, $dashboardController, $crudController, $actionConfigDto, $filters, $crudAction, $pageName);
+        $crudDto = $this->getCrudDto($dashboardController, $crudController, $actionConfigDto, $filters, $crudAction, $pageName);
         $entityDto = $this->getEntityDto($request, $crudDto);
         $searchDto = $this->getSearchDto($request, $crudDto);
         $i18nDto = $this->getI18nDto($request, $dashboardDto, $crudDto, $entityDto);
         $templateRegistry = $this->getTemplateRegistry($dashboardController, $crudDto);
         $user = $this->getUser($this->tokenStorage);
 
-        $usePrettyUrls = $this->adminRouteGenerator->usesPrettyUrls();
-
-        return new AdminContext($request, $user, $i18nDto, $this->crudControllers, $dashboardDto, $dashboardController, $assetDto, $crudDto, $entityDto, $searchDto, $this->menuFactory, $templateRegistry, $usePrettyUrls);
+        return new AdminContext($request, $user, $i18nDto, $dashboardDto, $dashboardController, $assetDto, $crudDto, $entityDto, $searchDto, $this->menuFactory, $templateRegistry);
     }
 
     private function getDashboardDto(Request $request, DashboardControllerInterface $dashboardControllerInstance): DashboardDto
     {
-        $dashboardRoutesCachePath = $this->buildDir.'/'.CacheWarmer::DASHBOARD_ROUTES_CACHE;
-        $dashboardControllerRoutes = !file_exists($dashboardRoutesCachePath) ? [] : require $dashboardRoutesCachePath;
-        $dashboardController = $dashboardControllerInstance::class.'::index';
-        $dashboardRouteName = null;
-
-        foreach ($dashboardControllerRoutes as $routeName => $controller) {
-            if ($controller === $dashboardController) {
-                // if present, remove the suffix of i18n route names (it's the content after the last dot
-                // in the route name; e.g. 'dashboard.en' -> remove '.en', 'admin.index.en_US' -> remove '.en_US')
-                $dashboardRouteName = preg_replace('~\.[a-z]{2}(_[A-Z]{2})?$~', '', $routeName);
-
-                break;
-            }
-        }
+        $dashboardRoutes = $this->adminRouteGenerator->getDashboardRoutes();
+        $dashboardFqcn = $dashboardControllerInstance::class;
+        $dashboardRouteName = $dashboardRoutes[$dashboardFqcn] ?? null;
 
         if (null === $dashboardRouteName) {
-            throw new \RuntimeException(sprintf('The name of the route associated to "%s" cannot be determined. Clear the application cache to run the EasyAdmin cache warmer, which generates the needed data to find this route.', $dashboardController));
+            throw new \RuntimeException(sprintf('The name of the route associated to "%s" cannot be determined. Clear the application cache to run the EasyAdmin custom route loader, which generates the needed data to find this route.', $dashboardControllerInstance::class));
         }
 
         $dashboardDto = $dashboardControllerInstance->configureDashboard()->getAsDto();
@@ -111,7 +96,7 @@ final class AdminContextFactory
         return $crudController->configureAssets($defaultAssets)->getAsDto()->loadedOn($pageName);
     }
 
-    private function getCrudDto(CrudControllerRegistry $crudControllers, DashboardControllerInterface $dashboardController, ?CrudControllerInterface $crudController, ActionConfigDto $actionConfigDto, FilterConfigDto $filters, ?string $crudAction, ?string $pageName): ?CrudDto
+    private function getCrudDto(DashboardControllerInterface $dashboardController, ?CrudControllerInterface $crudController, ActionConfigDto $actionConfigDto, FilterConfigDto $filters, ?string $crudAction, ?string $pageName): ?CrudDto
     {
         if (null === $crudController) {
             return null;
@@ -120,7 +105,11 @@ final class AdminContextFactory
         $defaultCrud = $dashboardController->configureCrud();
         $crudDto = $crudController->configureCrud($defaultCrud)->getAsDto();
 
-        $entityFqcn = $crudControllers->findEntityFqcnByCrudFqcn($crudController::class);
+        $crudFqcnToEntityFqcn = $this->cache->getItem(Cache::CRUD_FQCN_TO_ENTITY_FQCN)->get();
+        $entityFqcn = $crudFqcnToEntityFqcn[$crudController::class] ?? null;
+        if (null === $entityFqcn) {
+            throw new \RuntimeException(sprintf('The entity FQCN associated to the CRUD controller "%s" cannot be determined. Clear the application cache to force EasyAdmin to regenerate the needed data.', $crudController::class));
+        }
 
         $crudDto->setControllerFqcn($crudController::class);
         $crudDto->setActionsConfig($actionConfigDto);
@@ -183,9 +172,7 @@ final class AdminContextFactory
         if (null !== $crudDto) {
             $translationParameters['%entity_name%'] = $entityName = basename(str_replace('\\', '/', $crudDto->getEntityFqcn()));
             $translationParameters['%entity_as_string%'] = null === $entityDto ? '' : $entityDto->toString();
-            // when using pretty URLs, the entity ID is passed as a request attribute (it's part of the route path);
-            // in legacy URLs, the entity ID is passed as a regular query parameter
-            $translationParameters['%entity_id%'] = $entityId = $request->attributes->get(EA::ENTITY_ID) ?? $request->query->get(EA::ENTITY_ID);
+            $translationParameters['%entity_id%'] = $entityId = $request->attributes->get(EA::ENTITY_ID);
             $translationParameters['%entity_short_id%'] = null === $entityId ? null : u($entityId)->truncate(7)->toString();
 
             $entityInstance = null === $entityDto ? null : $entityDto->getInstance();
@@ -247,9 +234,7 @@ final class AdminContextFactory
             return null;
         }
 
-        // when using pretty URLs, the entity ID is passed as a request attribute (it's part of the route path);
-        // in legacy URLs, the entity ID is passed as a regular query parameter
-        $entityId = $request->attributes->get(EA::ENTITY_ID) ?? $request->query->get(EA::ENTITY_ID);
+        $entityId = $request->attributes->get(EA::ENTITY_ID);
 
         return $this->entityFactory->create($crudDto->getEntityFqcn(), $entityId, $crudDto->getEntityPermission());
     }

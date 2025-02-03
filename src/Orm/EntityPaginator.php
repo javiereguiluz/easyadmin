@@ -78,15 +78,17 @@ final class EntityPaginator implements EntityPaginatorInterface
 
     public function generateUrlForPage(int $page): string
     {
-        $pageUrl = $this->adminUrlGenerator->set(EA::PAGE, $page);
-
         $currentRequest = $this->requestStack->getCurrentRequest();
-        $usesPrettyUrls = null !== $crudControllerFqcn = $currentRequest->attributes->get(EA::CRUD_CONTROLLER_FQCN);
-        if ($usesPrettyUrls) {
-            $pageUrl->setController($crudControllerFqcn)->setAction($currentRequest->attributes->get(EA::CRUD_ACTION));
+        if (null === $currentRequest) {
+            throw new \RuntimeException('The URL for the paginator page cannot be generated because there is no current HTTP request.');
         }
 
-        return $pageUrl->generateUrl();
+        return $this->adminUrlGenerator
+            ->set(EA::PAGE, $page)
+            ->setController($currentRequest->attributes->get(EA::CRUD_CONTROLLER_FQCN))
+            ->setAction($currentRequest->attributes->get(EA::CRUD_ACTION))
+            ->generateUrl()
+        ;
     }
 
     public function getCurrentPage(): int
@@ -221,14 +223,18 @@ final class EntityPaginator implements EntityPaginatorInterface
             ];
         }
 
-        $nextPageUrl = !$this->hasNextPage() ? null : $this->adminUrlGenerator->set(EA::PAGE, $this->getNextPage());
         $currentRequest = $this->requestStack->getCurrentRequest();
-        $usesPrettyUrls = null !== $crudControllerFqcn = $currentRequest->attributes->get(EA::CRUD_CONTROLLER_FQCN);
-        if ($usesPrettyUrls && null !== $nextPageUrl) {
-            $nextPageUrl->setController($crudControllerFqcn)->setAction($currentRequest->attributes->get(EA::CRUD_ACTION));
+        if (null === $currentRequest) {
+            throw new \RuntimeException('The URL for the paginator next page cannot be generated because there is no current HTTP request.');
         }
+        $nextPageUrl = !$this->hasNextPage() ? null : $this->adminUrlGenerator
+            ->set(EA::PAGE, $this->getNextPage())
+            ->setController($currentRequest->attributes->get(EA::CRUD_CONTROLLER_FQCN))
+            ->setAction($currentRequest->attributes->get(EA::CRUD_ACTION))
+            ->generateUrl()
+        ;
 
-        $jsonResult['next_page'] = $nextPageUrl?->generateUrl();
+        $jsonResult['next_page'] = $nextPageUrl;
 
         return json_encode($jsonResult, \JSON_THROW_ON_ERROR);
     }

@@ -212,8 +212,8 @@ class CategoryCrudControllerTest extends AbstractCrudTestCase
         $firstFoundToggleUrl = $crawler->filter('td.field-boolean .form-switch input[type="checkbox"]')->first()->attr('data-toggle-url');
 
         // Get the category's active state from the DB
-        parse_str(parse_url($firstFoundToggleUrl, \PHP_URL_QUERY), $parameters);
-        $categoryId = $parameters['entityId'];
+        // extract the entity ID from the toggle URL (e.g. http://localhost/secure_admin/category/2/edit?csrfToken=...&fieldName=active)
+        $categoryId = preg_match('/\/(\d+)\/edit/', $firstFoundToggleUrl, $matches) ? $matches[1] : null;
         $active = $this->categories->find($categoryId)->isActive();
         static::assertIsBool($active);
 
@@ -286,7 +286,7 @@ class CategoryCrudControllerTest extends AbstractCrudTestCase
 
         // test pagination maintains all query parameters, including custom ones
         $queryParameters = http_build_query(['sort[name]' => 'DESC', 'CUSTOM_param' => 'foobar1234']);
-        $crawler = $this->client->request('GET', $this->generateIndexUrl().'&'.$queryParameters);
+        $crawler = $this->client->request('GET', $this->generateIndexUrl().'?'.$queryParameters);
 
         $firstPageUrl = $crawler->filter('.list-pagination-paginator .page-item:nth-child(2) .page-link')->attr('href');
         static::assertSame(['name' => 'DESC'], $this->getParameterFromUrlQueryString($firstPageUrl, 'sort'));

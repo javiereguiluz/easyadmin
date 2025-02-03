@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Factory;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Cache;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -15,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\UserMenuDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 use function Symfony\Component\Translation\t;
@@ -31,6 +33,7 @@ final class MenuFactory implements MenuFactoryInterface
         private readonly LogoutUrlGenerator $logoutUrlGenerator,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
         private readonly MenuItemMatcherInterface $menuItemMatcher,
+        private readonly CacheItemPoolInterface $cache,
     ) {
     }
 
@@ -134,8 +137,11 @@ final class MenuFactory implements MenuFactoryInterface
                 $this->adminUrlGenerator->setController($crudControllerFqcn);
             // 2. ...otherwise, find the CRUD controller from the entityFqcn
             } else {
-                $crudControllers = $this->adminContextProvider->getContext()?->getCrudControllers();
-                if (null === $controllerFqcn = $crudControllers->findCrudFqcnByEntityFqcn($entityFqcn)) {
+                $entityFqcnToCrudFqcn = $this->cache->getItem(Cache::ENTITY_FQCN_TO_CRUD_FQCN)->get();
+                $crudControllersAssociatedToEntity = $entityFqcnToCrudFqcn[$entityFqcn] ?? [];
+                $controllerFqcn = $crudControllersAssociatedToEntity[0] ?? null;
+
+                if (null === $controllerFqcn) {
                     throw new \RuntimeException(sprintf('Unable to find the controller related to the "%s" Entity; did you forget to extend "%s"?', $entityFqcn, AbstractCrudController::class));
                 }
 

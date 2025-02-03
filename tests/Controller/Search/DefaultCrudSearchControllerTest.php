@@ -33,9 +33,11 @@ class DefaultCrudSearchControllerTest extends AbstractCrudTestCase
         $this->assertSelectorNotExists('form.form-action-search .content-search-reset', 'The empty search form should not display the button to reset contents');
 
         $form = $crawler->filter('form.form-action-search');
-        $this->assertSame('index', $form->filter('input[type="hidden"][name="crudAction"]')->attr('value'));
-        $this->assertSame(DefaultCrudSearchController::class, $form->filter('input[type="hidden"][name="crudControllerFqcn"]')->attr('value'));
-        $this->assertSame('1', $form->filter('input[type="hidden"][name="page"]')->attr('value'));
+        $this->assertSelectorNotExists('input[type="hidden"][name="crudAction"]', 'This form field was used in EasyAdmin 4.x but shouldn\'t be present in EasyAdmin 5.x');
+        $this->assertSelectorNotExists('input[type="hidden"][name="crudControllerFqcn"]', 'This form field was used in EasyAdmin 4.x but shouldn\'t be present in EasyAdmin 5.x');
+        $this->assertSelectorNotExists('input[type="hidden"][name="page"]', 'This form field was used in EasyAdmin 4.x but shouldn\'t be present in EasyAdmin 5.x');
+
+        $this->assertSame('http://localhost/admin/default-crud-search?page=1', $form->attr('action'));
 
         $formSearchInput = $form->filter('input[name="query"]');
         $this->assertSame('', $formSearchInput->attr('value'));
@@ -49,9 +51,7 @@ class DefaultCrudSearchControllerTest extends AbstractCrudTestCase
         $crawler = $this->client->request('GET', $this->generateIndexUrl('blog post'));
 
         $form = $crawler->filter('form.form-action-search');
-        $this->assertSame('index', $form->filter('input[type="hidden"][name="crudAction"]')->attr('value'));
-        $this->assertSame(DefaultCrudSearchController::class, $form->filter('input[type="hidden"][name="crudControllerFqcn"]')->attr('value'));
-        $this->assertSame('1', $form->filter('input[type="hidden"][name="page"]')->attr('value'));
+        $this->assertSame('http://localhost/admin/default-crud-search?page=1&query=blog%20post', $form->attr('action'));
 
         $formSearchInput = $form->filter('input[name="query"]');
         $this->assertSame('blog post', $formSearchInput->attr('value'));
@@ -72,7 +72,7 @@ class DefaultCrudSearchControllerTest extends AbstractCrudTestCase
 
         // assert that the pagination is not displayed because there are not enough results
         $form = $crawler->filter('form.form-action-search');
-        $this->assertSame('1', $form->filter('input[type="hidden"][name="page"]')->attr('value'));
+        $this->assertSame('http://localhost/admin/default-crud-search?page=1&query=blog-post-0', $form->attr('action'));
         $this->assertSame('1', $crawler->filter('.list-pagination .list-pagination-counter strong')->text());
         $this->assertSelectorNotExists('.list-pagination nav.pager');
     }
@@ -90,7 +90,7 @@ class DefaultCrudSearchControllerTest extends AbstractCrudTestCase
 
         // assert that the pagination and sorting is reset
         $form = $crawler->filter('form.form-action-search');
-        $this->assertSame('1', $form->filter('input[type="hidden"][name="page"]')->attr('value'));
+        $this->assertSame('http://localhost/admin/default-crud-search?page=1&query=blog%20post&sort%5Btitle%5D=DESC', $form->attr('action'));
         $this->assertSame('1', $crawler->filter('.page-item.active .page-link')->text());
 
         $this->assertCount(0, $crawler->filter('th[data-column="title"] a.sorted'));

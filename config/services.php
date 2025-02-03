@@ -5,7 +5,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use EasyCorp\Bundle\EasyAdminBundle\ArgumentResolver\AdminContextResolver;
 use EasyCorp\Bundle\EasyAdminBundle\ArgumentResolver\BatchActionDtoResolver;
 use EasyCorp\Bundle\EasyAdminBundle\Asset\AssetPackage;
-use EasyCorp\Bundle\EasyAdminBundle\Cache\CacheWarmer;
 use EasyCorp\Bundle\EasyAdminBundle\Command\MakeAdminDashboardCommand;
 use EasyCorp\Bundle\EasyAdminBundle\Command\MakeCrudControllerCommand;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
@@ -74,8 +73,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityUpdater;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\FieldProvider;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\DashboardControllerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteLoader;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -112,10 +109,6 @@ return static function (ContainerConfigurator $container) {
         ->set(ClassMaker::class)
             ->arg(0, service(KernelInterface::class))
             ->arg(1, param('kernel.project_dir'))
-
-        ->set(CacheWarmer::class)
-            ->arg(0, service('router'))
-            ->tag('kernel.cache_warmer')
 
         ->set(DataCollector::class)
             ->arg(0, service(AdminContextProvider::class))
@@ -171,8 +164,6 @@ return static function (ContainerConfigurator $container) {
             ->arg(4, service('router'))
             ->arg(5, service('cache.easyadmin'))
             ->arg(6, service(AdminRouteGenerator::class))
-            ->arg(7, '%kernel.build_dir%')
-            ->arg(8, service(CrudControllerRegistry::class))
             ->tag('kernel.event_subscriber')
 
         ->set(ControllerFactory::class)
@@ -184,12 +175,11 @@ return static function (ContainerConfigurator $container) {
             ->tag('kernel.event_listener', ['event' => ViewEvent::class])
 
         ->set(AdminContextFactory::class)
-            ->arg(0, '%kernel.build_dir%')
-            ->arg(1, new Reference('security.token_storage', ContainerInterface::NULL_ON_INVALID_REFERENCE))
-            ->arg(2, new Reference(MenuFactory::class))
-            ->arg(3, new Reference(CrudControllerRegistry::class))
-            ->arg(4, new Reference(EntityFactory::class))
-            ->arg(5, service(AdminRouteGenerator::class))
+            ->arg(0, new Reference('security.token_storage', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->arg(1, new Reference(MenuFactory::class))
+            ->arg(2, new Reference(EntityFactory::class))
+            ->arg(3, service(AdminRouteGenerator::class))
+            ->arg(4, service('cache.easyadmin'))
 
         ->set(AdminUrlGenerator::class)
             // I don't know if we truly need the share() method to get a new instance of the
@@ -198,8 +188,7 @@ return static function (ContainerConfigurator $container) {
             ->share(false)
             ->arg(0, service(AdminContextProvider::class))
             ->arg(1, service('router'))
-            ->arg(2, service(DashboardControllerRegistry::class))
-            ->arg(3, service(AdminRouteGenerator::class))
+            ->arg(2, service(AdminRouteGenerator::class))
 
         ->set('service_locator_'.AdminUrlGenerator::class, ServiceLocator::class)
             ->args([[AdminUrlGenerator::class => service(AdminUrlGenerator::class)]])
@@ -213,14 +202,10 @@ return static function (ContainerConfigurator $container) {
             ->arg(0, tagged_iterator(EasyAdminExtension::TAG_DASHBOARD_CONTROLLER))
             ->arg(1, tagged_iterator(EasyAdminExtension::TAG_CRUD_CONTROLLER))
             ->arg(2, service('cache.easyadmin'))
-            ->arg(3, service('filesystem'))
-            ->arg(4, '%kernel.build_dir%')
-            ->arg(5, '%kernel.default_locale%')
+            ->arg(3, '%kernel.default_locale%')
 
         ->set(AdminRouteLoader::class)
             ->arg(0, service(AdminRouteGenerator::class))
-            ->arg(1, service('filesystem'))
-            ->arg(2, '%kernel.build_dir%')
             ->tag('routing.loader', ['type' => AdminRouteLoader::ROUTE_LOADER_TYPE])
 
         ->set(MenuFactory::class)
@@ -229,6 +214,7 @@ return static function (ContainerConfigurator $container) {
             ->arg(2, service('security.logout_url_generator'))
             ->arg(3, service(AdminUrlGenerator::class))
             ->arg(4, service(MenuItemMatcherInterface::class))
+            ->arg(5, service('cache.easyadmin'))
 
         ->set(MenuItemMatcher::class)
             ->arg(0, service(AdminUrlGenerator::class))
@@ -330,6 +316,7 @@ return static function (ContainerConfigurator $container) {
             ->arg(1, new Reference(AdminUrlGenerator::class))
             ->arg(2, service('request_stack'))
             ->arg(3, service(ControllerFactory::class))
+            ->arg(4, service('cache.easyadmin'))
 
         ->set(AvatarConfigurator::class)
 
@@ -388,6 +375,7 @@ return static function (ContainerConfigurator $container) {
             ->arg(0, service('request_stack'))
             ->arg(1, service(EntityFactory::class))
             ->arg(2, service(ControllerFactory::class))
+            ->arg(3, service('cache.easyadmin'))
 
         ->set(SlugConfigurator::class)
 
