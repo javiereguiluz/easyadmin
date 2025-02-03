@@ -21,24 +21,6 @@ final class DateTimeField implements FieldInterface
 
     public const VALID_DATE_FORMATS = [self::FORMAT_NONE, self::FORMAT_SHORT, self::FORMAT_MEDIUM, self::FORMAT_LONG, self::FORMAT_FULL];
 
-    /** @deprecated since EasyAdmin 4.11.1. We no longer transform the format names (e.g. 'short') into its pattern (e.g. 'M/d/yy'). We now pass the original format/pattern as is to the IntlFormatter to properly format it according to the current locale */
-    public const INTL_DATE_PATTERNS = [
-        self::FORMAT_FULL => 'EEEE, MMMM d, y',
-        self::FORMAT_LONG => 'MMMM d, y',
-        self::FORMAT_MEDIUM => 'MMM d, y',
-        self::FORMAT_SHORT => 'M/d/yy',
-        self::FORMAT_NONE => '',
-    ];
-
-    /** @deprecated since EasyAdmin 4.11.1. We no longer transform the format names (e.g. 'short') into its pattern (e.g. 'h:mm a'). We now pass the original format/pattern as is to the IntlFormatter to properly format it according to the current locale */
-    public const INTL_TIME_PATTERNS = [
-        self::FORMAT_FULL => 'h:mm:ss a zzzz',
-        self::FORMAT_LONG => 'h:mm:ss a z',
-        self::FORMAT_MEDIUM => 'h:mm:ss a',
-        self::FORMAT_SHORT => 'h:mm a',
-        self::FORMAT_NONE => '',
-    ];
-
     public const WIDGET_NATIVE = 'native';
     public const WIDGET_CHOICE = 'choice';
     public const WIDGET_TEXT = 'text';

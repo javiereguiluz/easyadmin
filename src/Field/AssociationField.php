@@ -15,8 +15,6 @@ final class AssociationField implements FieldInterface
 
     public const OPTION_AUTOCOMPLETE = 'autocomplete';
     public const OPTION_EMBEDDED_CRUD_FORM_CONTROLLER = 'crudControllerFqcn';
-    /** @deprecated since easycorp/easyadmin-bundle 4.4.3 use AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER */
-    public const OPTION_CRUD_CONTROLLER = self::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER;
     public const OPTION_WIDGET = 'widget';
     public const OPTION_QUERY_BUILDER_CALLABLE = 'queryBuilderCallable';
     /** @internal this option is intended for internal use only */
