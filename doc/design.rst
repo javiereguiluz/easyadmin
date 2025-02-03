@@ -38,10 +38,12 @@ If you prefer to use other icons, call the ``useCustomIconSet()`` in your dashbo
 
     namespace App\Controller\Admin;
 
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Option\IconSet;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
     class DashboardController extends AbstractDashboardController
     {
         public function configureAssets(): Assets
@@ -139,9 +141,11 @@ This option allows you to render certain parts of the backend with your own Twig
 templates. First, you can replace some templates globally in the
 :doc:`dashboard </dashboards>`::
 
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
     class DashboardController extends AbstractDashboardController
     {
         // ...
@@ -390,9 +394,11 @@ To override any of them, create a CSS file and redefine the variable values:
 
 Then, load this CSS file in your dashboard and/or resource admin::
 
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
     class DashboardController extends AbstractDashboardController
     {
         // ...

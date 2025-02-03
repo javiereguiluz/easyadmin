@@ -41,10 +41,12 @@ cumbersome because you must apply it to all dashboard controllers and to all the
 :doc:`CRUD controllers </crud>`::
 
     // app/Controller/Admin/DashboardController.php
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
     use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
     #[IsGranted('ROLE_ADMIN')]
     class DashboardController extends AbstractDashboardController
     {
@@ -75,7 +77,10 @@ is to use the ``#[AdminDashboard]`` attribute::
     use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
-    #[AdminDashboard(allowedControllers: [BlogPostCrudController::class, BlogCategoryCrudController::class])]
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin', allowedControllers: [
+        BlogPostCrudController::class,
+        BlogCategoryCrudController::class,
+    ])]
     class DashboardController extends AbstractDashboardController
     {
         // ...

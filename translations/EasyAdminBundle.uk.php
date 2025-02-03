@@ -111,6 +111,16 @@ return [
         'exit_impersonation' => 'Вийти з-під користувача',
     ],
 
+    'settings' => [
+        'appearance' => [
+            'label' => 'Оформлення',
+            'light' => 'Світле',
+            'dark' => 'Темне',
+            'auto' => 'Автоматично',
+        ],
+        'locale' => 'Мова',
+    ],
+
     'login_page' => [
         'username' => 'Логін',
         'password' => 'Пароль',

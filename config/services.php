@@ -215,6 +215,7 @@ return static function (ContainerConfigurator $container) {
             ->arg(2, service('cache.easyadmin'))
             ->arg(3, service('filesystem'))
             ->arg(4, '%kernel.build_dir%')
+            ->arg(5, '%kernel.default_locale%')
 
         ->set(AdminRouteLoader::class)
             ->arg(0, service(AdminRouteGenerator::class))

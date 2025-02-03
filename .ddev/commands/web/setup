@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Installing Symfony Framework
-composer create-project symfony/skeleton:"7.1.*" -n
+composer create-project symfony/skeleton:"7.2.*" -n
 mv -f ./skeleton/* ./
 mv -f ./skeleton/.env ./
+mv -f ./skeleton/.env.dev ./
 mv -f ./skeleton/.gitignore ./
 rmdir ./skeleton
 
@@ -13,12 +14,22 @@ composer config extra.symfony.allow-contrib true
 composer require "easycorp/easyadmin-bundle": "*@dev" symfony/apache-pack -n
 composer require debug -n --dev
 
-# Copy example entities, form and controllers
+# Create symlinks for example entities, form, controllers and config
+mkdir src/Controller/Admin
+ln -s ../../../../easyadminbundle/.ddev/example/Controller/Admin/BlogArticleCrudController.php src/Controller/Admin/BlogArticleCrudController.php
+ln -s ../../../../easyadminbundle/.ddev/example/Controller/Admin/CategoryCrudController.php src/Controller/Admin/CategoryCrudController.php
+ln -s ../../../../easyadminbundle/.ddev/example/Controller/Admin/DashboardController.php src/Controller/Admin/DashboardController.php
+ln -s ../../../easyadminbundle/.ddev/example/Entity/BlogArticle.php src/Entity/BlogArticle.php
+ln -s ../../../easyadminbundle/.ddev/example/Entity/Category.php src/Entity/Category.php
+ln -s ../../../easyadminbundle/.ddev/example/Entity/ContentBlock.php src/Entity/ContentBlock.php
 mkdir src/Form/
-cp -r ../easyadminbundle/.ddev/example/Entity/* src/Entity/
-cp -r ../easyadminbundle/.ddev/example/Controller/* src/Controller/
-cp -r ../easyadminbundle/.ddev/example/Form/* src/Form/
+ln -s ../../../easyadminbundle/.ddev/example/Form/ContentBlockType.php src/Form/ContentBlockType.php
+ln -s ../../../easyadminbundle/.ddev/example/config/routes/easyadmin.yaml config/routes/easyadmin.yaml
 
 # Initialize DB
-echo 'DATABASE_URL="mysql://db:db@db:3306/db?serverVersion=10.4.0-MariaDB&charset=utf8mb4"' >> .env.local
+echo 'DATABASE_URL="mysql://db:db@db:3306/db?serverVersion=10.11.0-MariaDB&charset=utf8mb4"' >> .env.local
 ./bin/console doc:sch:up --force
+
+# Clear Cache
+sleep 2
+./bin/console c:c

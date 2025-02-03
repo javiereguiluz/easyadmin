@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd ../easyadminbundle
-composer install
+composer update
 vendor/bin/simple-phpunit -v

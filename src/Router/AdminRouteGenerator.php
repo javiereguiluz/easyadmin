@@ -68,6 +68,7 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         private CacheItemPoolInterface $cache,
         private Filesystem $filesystem,
         private string $buildDir,
+        private string $defaultLocale,
     ) {
     }
 
@@ -122,6 +123,13 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
             $defaultRoutesConfig = $this->getDefaultRoutesConfig($dashboardFqcn);
             $dashboardRouteConfig = $this->getDashboardsRouteConfig()[$dashboardFqcn];
 
+            // first, create the routes of the dashboards if they are defined with the #[AdminDashboard] attribute instead of the Symfony #[Route] attribute
+            if (null !== $adminRouteData = $this->createDashboardRoute($dashboardFqcn)) {
+                $adminRoutes[$adminRouteData['routeName']] = $adminRouteData['route'];
+                $addedRouteNames[] = $adminRouteData['routeName'];
+            }
+
+            // then, create the routes of the CRUD controllers associated with the dashboard
             foreach ($this->crudControllers as $crudController) {
                 $crudControllerFqcn = $crudController::class;
 
@@ -158,6 +166,7 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
                     }
 
                     $defaults = [
+                        '_locale' => $this->defaultLocale,
                         '_controller' => $crudControllerFqcn.'::'.$actionName,
                         EA::ROUTE_CREATED_BY_EASYADMIN => true,
                         EA::DASHBOARD_CONTROLLER_FQCN => $dashboardFqcn,
@@ -224,21 +233,59 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
 
         foreach ($this->dashboardControllers as $dashboardController) {
             $reflectionClass = new \ReflectionClass($dashboardController);
-            $indexMethod = $reflectionClass->getMethod('index');
 
+            // first, check if the dashboard uses the #[AdminDashboard] attribute to define its route configuration;
+            // this is the recommended way for modern EasyAdmin applications
+            $attributes = $reflectionClass->getAttributes(AdminDashboard::class);
+            $usesAdminDashboardAttribute = [] !== $attributes;
+            if ($usesAdminDashboardAttribute) {
+                $adminDashboardAttribute = $attributes[0]->newInstance();
+                $routeName = $adminDashboardAttribute->routeName;
+                $routePath = $adminDashboardAttribute->routePath;
+                if (null !== $routePath) {
+                    $routePath = rtrim($adminDashboardAttribute->routePath, '/');
+                }
+
+                if (null !== $routeName && null !== $routePath) {
+                    $config[$reflectionClass->getName()] = [
+                        'routeName' => $routeName,
+                        'routePath' => $routePath,
+                    ];
+
+                    continue;
+                } else {
+                    @trigger_deprecation(
+                        'easycorp/easyadmin-bundle',
+                        '4.24.0',
+                        'The "%s" dashboard controller applies the #[AdminDashboard] attribute, but it doesn\'t use it to define the route path and route name of the dashboard. Using the default #[Route] attribute from Symfony on the "index()" method of the dashboard instead of the #[AdminDashboard] attribute (e.g. #[AdminDashboard(routePath: \'/admin\', routeName: \'admin\')]) is deprecated and it will no longer work in EasyAdmin 5.0.0.',
+                        $reflectionClass->getName()
+                    );
+                }
+            } else {
+                @trigger_deprecation(
+                    'easycorp/easyadmin-bundle',
+                    '4.24.0',
+                    'The "%s" dashboard controller does not apply the #[AdminDashboard] attribute. Applying this attribute is the recommended way to define the route path and route name of the dashboard, instead of using the default #[Route] attribute from Symfony (e.g. #[AdminDashboard(routePath: \'/admin\', routeName: \'admin\')]). Not applying the #[AdminDashboard] attribute is deprecated because it will be mandatory in EasyAdmin 5.0.0.',
+                    $reflectionClass->getName()
+                );
+            }
+
+            // this is the legacy way to define the route configuration of the dashboard: using the Symfony #[Route]
+            // attribute on the "index()" method of the dashboard controller;
             // for BC reasons, the Symfony Route attribute is available under two different namespaces;
             // true first the recommended namespace and then fall back to the legacy namespace
+            $indexMethod = $reflectionClass->getMethod('index');
             $attributes = $indexMethod->getAttributes('Symfony\Component\Routing\Attribute\Route');
             if ([] === $attributes) {
                 $attributes = $indexMethod->getAttributes('Symfony\Component\Routing\Annotation\Route');
             }
 
             if ([] === $attributes) {
-                throw new \RuntimeException(sprintf('When using pretty URLs, the "%s" EasyAdmin dashboard controller must define its route configuration (route name and path) using Symfony\'s #[Route] attribute applied to its "index()" method.', $reflectionClass->getName()));
+                throw new \RuntimeException(sprintf('When using pretty URLs, it\'s recommended to define the dashboard route name and path using the #[AdminDashboard] attribute on the dashboard class. Alternatively, you can apply Symfony\'s #[Route] attribute to the "index()" method of the "%s" controller. However, this alternative will no longer work in EasyAdmin 5.0.', $reflectionClass->getName()));
             }
 
             if (\count($attributes) > 1) {
-                throw new \RuntimeException(sprintf('When using pretty URLs, the "%s" EasyAdmin dashboard controller must define only one #[Route] attribute applied on its "index()" method.', $reflectionClass->getName()));
+                throw new \RuntimeException(sprintf('When using pretty URLs, it\'s recommended to define the dashboard route name and path using the #[AdminDashboard] attribute on the dashboard class. Alternatively, you can apply Symfony\'s #[Route] attribute to the "index()" method of the "%s" controller. In that case, you cannot apply more than one #[Route] attribute to the "index()" method. Also, this alternative will no longer work in EasyAdmin 5.0.', $reflectionClass->getName()));
             }
 
             $routeAttribute = $attributes[0]->newInstance();
@@ -349,6 +396,71 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         return $customActionsConfig;
     }
 
+    /**
+     * @return array{routeName: string, route: Route}|null
+     */
+    private function createDashboardRoute(string $dashboardFqcn): ?array
+    {
+        /** @var AdminDashboard|null $attribute */
+        $attribute = $this->getPhpAttributeInstance($dashboardFqcn, AdminDashboard::class);
+        if (null === $attribute) {
+            return null;
+        }
+
+        if (null === $attribute->routeName || null === $attribute->routePath) {
+            // TODO: in EasyAdmin 5.0, this should throw an exception instead of returning an empty array
+            return null;
+        }
+
+        $routeName = $attribute->routeName;
+        $routePath = $attribute->routePath;
+        $routeOptions = $attribute->routeOptions;
+
+        $route = new Route($routePath);
+
+        if (isset($routeOptions['requirements'])) {
+            $route->setRequirements($routeOptions['requirements']);
+        }
+        if (isset($routeOptions['host'])) {
+            $route->setHost($routeOptions['host']);
+        }
+        if (isset($routeOptions['methods'])) {
+            $route->setMethods($routeOptions['methods']);
+        }
+        if (isset($routeOptions['schemes'])) {
+            $route->setSchemes($routeOptions['schemes']);
+        }
+        if (isset($routeOptions['condition'])) {
+            $route->setCondition($routeOptions['condition']);
+        }
+
+        $defaults = $routeOptions['defaults'] ?? [];
+        if (isset($routeOptions['locale'])) {
+            $defaults['_locale'] = $routeOptions['locale'];
+        }
+        if (isset($routeOptions['format'])) {
+            $defaults['_format'] = $routeOptions['format'];
+        }
+        if (isset($routeOptions['stateless'])) {
+            $defaults['_stateless'] = $routeOptions['stateless'];
+        }
+        $defaults['_controller'] = $dashboardFqcn.'::index';
+        $defaults[EA::ROUTE_CREATED_BY_EASYADMIN] = true;
+        $defaults[EA::DASHBOARD_CONTROLLER_FQCN] = $dashboardFqcn;
+        $defaults[EA::CRUD_CONTROLLER_FQCN] = null;
+        $defaults[EA::CRUD_ACTION] = null;
+        $route->setDefaults($defaults);
+
+        if (isset($routeOptions['utf8'])) {
+            $routeOptions['options']['utf8'] = $routeOptions['utf8'];
+        }
+        if (isset($routeOptions['options'])) {
+            $route->setOptions($routeOptions['options']);
+        }
+
+        return ['routeName' => $routeName, 'route' => $route];
+    }
+
     private function getPhpAttributeInstance(string $classFqcn, string $attributeFqcn): ?object
     {
         $reflectionClass = new \ReflectionClass($classFqcn);
@@ -391,6 +503,9 @@ final class AdminRouteGenerator implements AdminRouteGeneratorInterface
         // first, add the routes of all the application dashboards; this is needed because in
         // applications with multiple dashboards, EasyAdmin must be able to find the route data associated
         // to each dashboard; otherwise, the URLs of the menu items when visiting the dashboard route will be wrong
+        // TODO: remove this in EasyAdmin 5.0.0, when all the dashboard routes are created using the #[AdminDashboard] attribute;
+        // there's no need to remove it now, because when using the #[AdminDashboard] attribute, the admin route created here
+        // will be immediately overwritten below by the one created using the attribute
         foreach ($this->getDashboardsRouteConfig() as $dashboardFqcn => $dashboardRouteConfig) {
             $routeNameToFqcn[$dashboardRouteConfig['routeName']] = [
                 EA::DASHBOARD_CONTROLLER_FQCN => $dashboardFqcn,

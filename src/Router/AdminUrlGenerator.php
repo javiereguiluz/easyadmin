@@ -201,7 +201,7 @@ final class AdminUrlGenerator implements AdminUrlGeneratorInterface
         }
 
         if ($usePrettyUrls) {
-            $dashboardControllerFqcn = $this->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $context?->getRequest()->attributes->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $this->dashboardControllerRegistry->getFirstDashboardFqcn();
+            $dashboardControllerFqcn = $this->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $context?->getRequest()->attributes->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $context?->getDashboardControllerFqcn() ?? $this->dashboardControllerRegistry->getFirstDashboardFqcn();
             $crudControllerFqcn = $this->get(EA::CRUD_CONTROLLER_FQCN) ?? $context?->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN);
             $actionName = $this->get(EA::CRUD_ACTION) ?? $context?->getRequest()->attributes->get(EA::CRUD_ACTION);
 

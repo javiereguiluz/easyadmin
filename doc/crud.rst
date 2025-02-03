@@ -79,12 +79,12 @@ Admin route name                Admin route path
     on each dahboard to not generate all these routes.
 
 You can customize the route names and/or paths of the actions of all the CRUD controllers
-served by some dashboard using the ``#[AdminDashboard]`` attribute::
+served by some dashboard using the ``routes`` option of the ``#[AdminDashboard]`` attribute::
 
     use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     // ...
 
-    #[AdminDashboard(routes: [
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin', routes: [
         'index' => ['routePath' => '/all'],
         'new' => ['routePath' => '/create', 'routeName' => 'create'],
         'edit' => ['routePath' => '/editing-{entityId}', 'routeName' => 'editing'],
@@ -554,10 +554,12 @@ If you want to do the same config in all CRUD controllers, there's no need to
 repeat the config in each controller. Instead, add the ``configureCrud()`` method
 in your dashboard and all controllers will inherit that configuration::
 
+    use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
     use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
     use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
+    #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
     class DashboardController extends AbstractDashboardController
     {
         // ...

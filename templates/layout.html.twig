@@ -303,7 +303,7 @@
                                                         {% if app.request.get('query') %}
                                                             {% set search_reset_url = ea_url().unset('query') %}
                                                             {% if ea.usePrettyUrls %}
-                                                                {% set search_reset_url = ea_url().unset('query').setController(ea.request.attributes.get('crudControllerFqcn')).setAction('index').set('page', 1) %}
+                                                                {% set search_reset_url = ea_url().unset('query').setController(crudController).setAction('index').set('page', 1) %}
                                                             {% endif %}
                                                             <a href="{{ search_reset_url }}" class="content-search-reset">
                                                                 <twig:ea:Icon name="internal:xmark" />

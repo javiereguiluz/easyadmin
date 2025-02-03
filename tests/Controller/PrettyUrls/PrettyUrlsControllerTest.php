@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\S
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\Category;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Kernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Routing\Router;
 
 /**
  * @group pretty_urls
@@ -73,9 +74,21 @@ class PrettyUrlsControllerTest extends WebTestCase
         $expectedRoutes['second_dashboard_external_user_editor_detail'] = '/second/dashboard/user-editor/custom/path-for-detail/{entityId}';
         $expectedRoutes['second_dashboard_external_user_editor_foobar'] = '/second/dashboard/user-editor/bar/foo';
         $expectedRoutes['second_dashboard_external_user_editor_foofoo'] = '/second/dashboard/user-editor/bar/bar';
+        $expectedRoutes['admin3'] = '/backend/three/';
+        $expectedRoutes['admin3_external_user_editor_custom_route_for_index'] = '/backend/three/user-editor/custom/path-for-index';
+        $expectedRoutes['admin3_external_user_editor_custom_route_for_new'] = '/backend/three/user-editor/new';
+        $expectedRoutes['admin3_external_user_editor_batch_delete'] = '/backend/three/user-editor/batch-delete';
+        $expectedRoutes['admin3_external_user_editor_autocomplete'] = '/backend/three/user-editor/autocomplete';
+        $expectedRoutes['admin3_external_user_editor_render_filters'] = '/backend/three/user-editor/render-filters';
+        $expectedRoutes['admin3_external_user_editor_edit'] = '/backend/three/user-editor/{entityId}/edit';
+        $expectedRoutes['admin3_external_user_editor_delete'] = '/backend/three/user-editor/{entityId}/delete';
+        $expectedRoutes['admin3_external_user_editor_detail'] = '/backend/three/user-editor/custom/path-for-detail/{entityId}';
+        $expectedRoutes['admin3_external_user_editor_foobar'] = '/backend/three/user-editor/bar/foo';
+        $expectedRoutes['admin3_external_user_editor_foofoo'] = '/backend/three/user-editor/bar/bar';
 
         self::bootKernel();
         $container = static::getContainer();
+        /** @var Router $router */
         $router = $container->get('router');
         $generatedRoutes = [];
         foreach ($router->getRouteCollection() as $name => $route) {
@@ -352,6 +365,34 @@ class PrettyUrlsControllerTest extends WebTestCase
         $client->request('GET', $uglyUrl);
 
         $this->assertSame($expectedPrettyUrlRedirect, $client->getResponse()->headers->get('Location'));
+    }
+
+    public function testPrettyAdminUrlCreatedWithAdminDashboardAttribute(): void
+    {
+        $container = static::getContainer();
+        /** @var Router $router */
+        $router = $container->get('router');
+        $route = $router->getRouteCollection()->get('admin3');
+
+        $this->assertSame('/backend/three/', $route->getPath());
+        $this->assertSame('example.com', $route->getHost());
+        $this->assertSame(['https'], $route->getSchemes());
+        $this->assertSame(['GET', 'HEAD'], $route->getMethods());
+        $this->assertSame(['foo' => '.*'], $route->getRequirements());
+        $this->assertSame('Symfony\Component\Routing\RouteCompiler', $route->getOption('compiler_class'));
+        $this->assertTrue($route->getOption('utf8'));
+        $this->assertSame('context.getMethod() in ["GET", "HEAD"]', $route->getCondition());
+        $this->assertSame([
+            'foo' => 'bar',
+            '_locale' => 'es',
+            '_format' => 'html',
+            '_stateless' => true,
+            '_controller' => 'EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\ThirdDashboardController::index',
+            'routeCreatedByEasyAdmin' => true,
+            'dashboardControllerFqcn' => 'EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\ThirdDashboardController',
+            'crudControllerFqcn' => null,
+            'crudAction' => null,
+        ], $route->getDefaults());
     }
 
     public static function provideActiveMenuUrls(): iterable
