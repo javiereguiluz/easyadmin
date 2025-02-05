@@ -158,8 +158,7 @@ final class AssociationConfigurator implements FieldConfiguratorInterface
                     ->setController($targetCrudControllerFqcn)
                     ->setAction('autocomplete')
                     ->set(AssociationField::PARAM_AUTOCOMPLETE_CONTEXT, [
-                        // when using pretty URLs, the data is in the request attributes instead of the autocomplete context
-                        EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN) ?? $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
+                        EA::CRUD_CONTROLLER_FQCN => $context->getCrudControllers()->findCrudFqcnByEntityFqcn($entityDto->getFqcn()),
                         'propertyName' => $propertyName,
                         'originatingPage' => $context->getCrud()->getCurrentPage(),
                     ])
