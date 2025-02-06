@@ -25,21 +25,21 @@ final class Actions
         return new self($dto);
     }
 
-    public function add(string $pageName, Action|string $actionNameOrObject): self
+    public function add(string $pageName, Action|string $actionNameOrObject, bool $isAppend = false): self
     {
-        return $this->doAddAction($pageName, $actionNameOrObject);
+        return $this->doAddAction($pageName, $actionNameOrObject, false, $isAppend);
     }
 
-    public function addBatchAction(Action|string $actionNameOrObject): self
+    public function addBatchAction(Action|string $actionNameOrObject, bool $isAppend = false): self
     {
-        return $this->doAddAction(Crud::PAGE_INDEX, $actionNameOrObject, true);
+        return $this->doAddAction(Crud::PAGE_INDEX, $actionNameOrObject, true, $isAppend);
     }
 
     public function set(string $pageName, Action|string $actionNameOrObject): self
     {
         $action = \is_string($actionNameOrObject) ? $this->createBuiltInAction($pageName, $actionNameOrObject) : $actionNameOrObject;
 
-        $this->dto->appendAction($pageName, $action->getAsDto());
+        $this->dto->prependAction($pageName, $action->getAsDto());
 
         return $this;
     }
@@ -220,7 +220,7 @@ final class Actions
         throw new \InvalidArgumentException(sprintf('The "%s" action is not a built-in action, so you can\'t add or configure it via its name. Either refer to one of the built-in actions or create a custom action called "%s".', $actionName, $actionName));
     }
 
-    private function doAddAction(string $pageName, Action|string $actionNameOrObject, bool $isBatchAction = false): self
+    private function doAddAction(string $pageName, Action|string $actionNameOrObject, bool $isBatchAction = false, bool $isAppend = false): self
     {
         $actionName = \is_string($actionNameOrObject) ? $actionNameOrObject : (string) $actionNameOrObject;
         $action = \is_string($actionNameOrObject) ? $this->createBuiltInAction($pageName, $actionNameOrObject) : $actionNameOrObject;
@@ -234,10 +234,10 @@ final class Actions
             $actionDto->setType(Action::TYPE_BATCH);
         }
 
-        if (Crud::PAGE_INDEX === $pageName && Action::DELETE === $actionName) {
-            $this->dto->prependAction($pageName, $actionDto);
-        } else {
+        if ((Crud::PAGE_INDEX === $pageName && Action::DELETE === $actionName) || $isAppend) {
             $this->dto->appendAction($pageName, $actionDto);
+        } else {
+            $this->dto->prependAction($pageName, $actionDto);
         }
 
         return $this;
