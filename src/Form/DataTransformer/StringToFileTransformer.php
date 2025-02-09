@@ -97,7 +97,7 @@ class StringToFileTransformer implements DataTransformerInterface
         }
 
         if ($value instanceof File) {
-            return $value->getFilename();
+            return str_replace($this->uploadDir, '', $value->getPathname());
         }
 
         throw new TransformationFailedException('Expected an instance of File or null.');
