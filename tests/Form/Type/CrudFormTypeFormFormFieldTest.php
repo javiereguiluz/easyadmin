@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Tests\Form\Type;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -26,7 +27,7 @@ class CrudFormTypeFormFormFieldTest extends TypeTestCase
         }
     }
 
-    public function formFieldFixedProvider(): \Generator
+    public function formFieldFixedProvider(): iterable
     {
         yield [FormField::addFieldset(propertySuffix: 'foobar'), ['ea_form_fieldset_foobar', 'ea_form_fieldset_close_foobar']];
         yield [FormField::addRow(propertySuffix: 'foobar'), ['ea_form_row_foobar']];
@@ -35,7 +36,7 @@ class CrudFormTypeFormFormFieldTest extends TypeTestCase
     }
 
     /** @dataProvider formFieldUlidProvider */
-    public function testFormFieldUlid(FormField $field, array $expectedPrefixKeys, string $expectedSuffix)
+    public function testFormFieldUlid(FormField $field, array $expectedPrefixKeys, string $expectedSuffix): void
     {
         $form = $this->factory->create(CrudFormType::class, null, [
             'entityDto' => $this->getEntityDto([$field]),
@@ -46,7 +47,7 @@ class CrudFormTypeFormFormFieldTest extends TypeTestCase
         }
     }
 
-    public function formFieldUlidProvider(): \Generator
+    public function formFieldUlidProvider(): iterable
     {
         yield [$field = FormField::addFieldset(), ['ea_form_fieldset_', 'ea_form_fieldset_close_'], $field->getAsDto()->getPropertyNameSuffix()];
         yield [$field = FormField::addRow(), ['ea_form_row_'], $field->getAsDto()->getPropertyNameSuffix()];
@@ -72,21 +73,15 @@ class CrudFormTypeFormFormFieldTest extends TypeTestCase
 
     private function getEntityDto(array $fields): EntityDto
     {
-        $mock = $this->getMockBuilder(EntityDto::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $classMetadataMock = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
+        $classMetadataMock->method('getIdentifierFieldNames')->willReturn(['id']);
 
-        $mock
-            ->method('getFqcn')
-            ->willReturn(_TestEntity::class);
+        $entityDto = new EntityDto(_TestEntity::class, $classMetadataMock);
+        $reflected = new \ReflectionClass($entityDto);
+        $fieldsProperty = $reflected->getProperty('fields');
+        $fieldsProperty->setValue($entityDto, (new FormLayoutFactory())->createLayout(FieldCollection::new($fields), Crud::PAGE_NEW));
 
-        $mock
-            ->method('getFields')
-            ->willReturn((new FormLayoutFactory())
-                ->createLayout(FieldCollection::new($fields), Crud::PAGE_NEW)
-            );
-
-        return $mock;
+        return $entityDto;
     }
 }
 
