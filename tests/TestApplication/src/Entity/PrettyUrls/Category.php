@@ -1,6 +1,6 @@
 <?php
 
-namespace EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity;
+namespace EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Entity\PrettyUrls;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

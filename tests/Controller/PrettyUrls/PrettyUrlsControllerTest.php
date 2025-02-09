@@ -10,7 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\C
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\DashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Controller\SecondDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity\Category;
-use EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Kernel;
+use EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Kernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Router;
 
@@ -26,6 +26,8 @@ class PrettyUrlsControllerTest extends WebTestCase
 
     public function testGeneratedRoutes()
     {
+        $this->markTestSkipped('This test ws used in EasyAdmin 4.x to test the generation of pretty URLs. Rethink or remove the test for EasyAdmin 5.x.');
+
         // the generated routes are:
         //   * `admin_pretty_*`: the default routes of DashboardController (which doesn't customize anything about them)
         //   * `admin_pretty_external_user_editor_*`: these are the routes related to the User entity; this is not used by DashboardController, but they are created

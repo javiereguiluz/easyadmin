@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\I18nDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MainMenuDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\UserMenuDto;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -56,11 +55,6 @@ final class AdminContextProvider implements AdminContextProviderInterface
     public function getI18n(): I18nDto
     {
         return $this->getContext(true)->getI18n();
-    }
-
-    public function getCrudControllers(): CrudControllerRegistry
-    {
-        return $this->getContext(true)->getCrudControllers();
     }
 
     public function getEntity(): EntityDto
@@ -155,6 +149,8 @@ final class AdminContextProvider implements AdminContextProviderInterface
 
     public function usePrettyUrls(): bool
     {
+        @trigger_deprecation('easycorp/easyadmin-bundle', '5.0.0', 'The "%s()" method is deprecated and will be removed in EasyAdmin 5.1.0. This method always returns true.', __METHOD__);
+
         return $this->getContext(true)->usePrettyUrls();
     }
 }

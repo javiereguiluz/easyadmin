@@ -15,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\LocaleDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MainMenuDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\UserMenuDto;
-use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\TemplateRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -32,7 +31,6 @@ final class AdminContext implements AdminContextInterface
     private Request $request;
     private ?UserInterface $user;
     private I18nDto $i18nDto;
-    private CrudControllerRegistry $crudControllers;
     private ?EntityDto $entityDto;
     private DashboardDto $dashboardDto;
     private DashboardControllerInterface $dashboardControllerInstance;
@@ -43,14 +41,12 @@ final class AdminContext implements AdminContextInterface
     private TemplateRegistry $templateRegistry;
     private ?MainMenuDto $mainMenuDto = null;
     private ?UserMenuDto $userMenuDto = null;
-    private bool $usePrettyUrls;
 
-    public function __construct(Request $request, ?UserInterface $user, I18nDto $i18nDto, CrudControllerRegistry $crudControllers, DashboardDto $dashboardDto, DashboardControllerInterface $dashboardController, AssetsDto $assetDto, ?CrudDto $crudDto, ?EntityDto $entityDto, ?SearchDto $searchDto, MenuFactoryInterface $menuFactory, TemplateRegistry $templateRegistry, bool $usePrettyUrls = false)
+    public function __construct(Request $request, ?UserInterface $user, I18nDto $i18nDto, DashboardDto $dashboardDto, DashboardControllerInterface $dashboardController, AssetsDto $assetDto, ?CrudDto $crudDto, ?EntityDto $entityDto, ?SearchDto $searchDto, MenuFactoryInterface $menuFactory, TemplateRegistry $templateRegistry)
     {
         $this->request = $request;
         $this->user = $user;
         $this->i18nDto = $i18nDto;
-        $this->crudControllers = $crudControllers;
         $this->dashboardDto = $dashboardDto;
         $this->dashboardControllerInstance = $dashboardController;
         $this->crudDto = $crudDto;
@@ -59,7 +55,6 @@ final class AdminContext implements AdminContextInterface
         $this->searchDto = $searchDto;
         $this->menuFactory = $menuFactory;
         $this->templateRegistry = $templateRegistry;
-        $this->usePrettyUrls = $usePrettyUrls;
     }
 
     public function getRequest(): Request
@@ -70,11 +65,6 @@ final class AdminContext implements AdminContextInterface
     public function getI18n(): I18nDto
     {
         return $this->i18nDto;
-    }
-
-    public function getCrudControllers(): CrudControllerRegistry
-    {
-        return $this->crudControllers;
     }
 
     public function getEntity(): EntityDto
@@ -99,7 +89,9 @@ final class AdminContext implements AdminContextInterface
 
     public function usePrettyUrls(): bool
     {
-        return $this->usePrettyUrls;
+        @trigger_deprecation('easycorp/easyadmin-bundle', '5.0.0', 'The "%s()" method is deprecated and will be removed in EasyAdmin 5.1.0. This method always returns true.', __METHOD__);
+
+        return true;
     }
 
     public function getDashboardTitle(): string

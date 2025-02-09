@@ -5,6 +5,7 @@ namespace EasyCorp\Bundle\EasyAdminBundle\Field\Configurator;
 use Doctrine\ORM\PersistentCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Cache;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
@@ -14,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\ControllerFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudFormType;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
@@ -31,12 +33,14 @@ final class CollectionConfigurator implements FieldConfiguratorInterface
     private RequestStack $requestStack;
     private EntityFactory $entityFactory;
     private ControllerFactory $controllerFactory;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(RequestStack $requestStack, EntityFactory $entityFactory, ControllerFactory $controllerFactory)
+    public function __construct(RequestStack $requestStack, EntityFactory $entityFactory, ControllerFactory $controllerFactory, CacheItemPoolInterface $cache)
     {
         $this->requestStack = $requestStack;
         $this->entityFactory = $entityFactory;
         $this->controllerFactory = $controllerFactory;
+        $this->cache = $cache;
     }
 
     public function supports(FieldDto $field, EntityDto $entityDto): bool
@@ -93,8 +97,12 @@ final class CollectionConfigurator implements FieldConfiguratorInterface
             $field->setFormTypeOption('entry_type', CrudFormType::class);
 
             $targetEntityFqcn = $field->getDoctrineMetadata()->get('targetEntity');
-            $targetCrudControllerFqcn = $field->getCustomOption(CollectionField::OPTION_ENTRY_CRUD_CONTROLLER_FQCN)
-                ?? $context->getCrudControllers()->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+            $targetCrudControllerFqcn = $field->getCustomOption(CollectionField::OPTION_ENTRY_CRUD_CONTROLLER_FQCN);
+            if (null === $targetCrudControllerFqcn) {
+                $entityFqcnToCrudFqcn = $this->cache->getItem(Cache::ENTITY_FQCN_TO_CRUD_FQCN)->get();
+                $crudControllersAssociatedToEntity = $entityFqcnToCrudFqcn[$targetEntityFqcn] ?? [];
+                $targetCrudControllerFqcn = $crudControllersAssociatedToEntity[0] ?? null;
+            }
 
             if (null === $targetCrudControllerFqcn) {
                 throw new \RuntimeException(sprintf('The "%s" collection field of "%s" wants to render its entries using an EasyAdmin CRUD form. However, no CRUD form was found related to this field. You can either create a CRUD controller for the entity "%s" or pass the CRUD controller to use as the first argument of the "useEntryCrudForm()" method.', $field->getProperty(), $context->getCrud()?->getControllerFqcn(), $targetEntityFqcn));

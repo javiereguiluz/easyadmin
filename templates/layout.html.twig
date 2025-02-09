@@ -141,11 +141,7 @@
                             {% endif %}
 
                             {% for localeDto in ea.dashboardLocales %}
-                                {% if ea.usePrettyUrls %}
-                                    {% set url = ea_url().set('_locale', localeDto.locale).set('entityId', app.request.attributes.get('entityId')) %}
-                                {% else %}
-                                    {% set url = ea_url().set('_locale', localeDto.locale) %}
-                                {% endif %}
+                                {% set url = ea_url().set('_locale', localeDto.locale).set('entityId', app.request.attributes.get('entityId')) %}
                                 <twig:ea:ActionMenu:ActionList:Item
                                     class="{{ app.request.locale == localeDto.locale ? 'active' }}"
                                     url="{{ url.generateUrl() }}"
@@ -253,11 +249,8 @@
                                 {% if has_search %}
                                     {% block search %}
                                         {% set formActionUrl = null %}
-                                        {% if ea.usePrettyUrls %}
-                                            {# even if the app uses pretty URLs, the user might be using an ugly URL, so the controller might be defined in the query string #}
-                                            {% set crudController = ea.request.attributes.get('crudControllerFqcn') ?? ea.request.query.get('crudControllerFqcn') %}
-                                            {% set formActionUrl = ea_url().setController(crudController).setAction('index').set('page', 1) %}
-                                        {% endif %}
+                                        {% set crudController = ea.request.attributes.get('crudControllerFqcn') %}
+                                        {% set formActionUrl = ea_url().setController(crudController).setAction('index').set('page', 1) %}
                                         <form class="form-action-search" method="get" {% if formActionUrl %}action="{{ formActionUrl }}"{% endif %}>
                                             {% block search_form %}
                                                 {% block search_form_filters %}
@@ -286,12 +279,6 @@
                                                     {% endfor %}
                                                 {% endblock %}
 
-                                                {% if not ea.usePrettyUrls %}
-                                                    <input type="hidden" name="crudAction" value="index">
-                                                    <input type="hidden" name="crudControllerFqcn" value="{{ ea.request.query.get('crudControllerFqcn') }}">
-                                                    <input type="hidden" name="page" value="1">
-                                                {% endif %}
-
                                                 <div class="form-group">
                                                     <div class="form-widget">
                                                         <twig:ea:Icon name="internal:search" class="content-search-icon" />
@@ -301,10 +288,7 @@
                                                         </label>
 
                                                         {% if app.request.get('query') %}
-                                                            {% set search_reset_url = ea_url().unset('query') %}
-                                                            {% if ea.usePrettyUrls %}
-                                                                {% set search_reset_url = ea_url().unset('query').setController(crudController).setAction('index').set('page', 1) %}
-                                                            {% endif %}
+                                                            {% set search_reset_url = ea_url().unset('query').unset('page').setController(crudController).setAction('index') %}
                                                             <a href="{{ search_reset_url }}" class="content-search-reset">
                                                                 <twig:ea:Icon name="internal:xmark" />
                                                             </a>

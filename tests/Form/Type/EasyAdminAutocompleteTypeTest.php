@@ -22,7 +22,7 @@ class EasyAdminAutocompleteTypeTest extends TypeTestCase
     private $repository;
     private $configManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()

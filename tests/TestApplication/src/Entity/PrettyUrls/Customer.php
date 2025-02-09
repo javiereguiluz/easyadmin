@@ -1,14 +1,14 @@
 <?php
 
-namespace EasyCorp\Bundle\EasyAdminBundle\Tests\PrettyUrlsTestApplication\Entity;
+namespace EasyCorp\Bundle\EasyAdminBundle\Tests\TestApplication\Entity\PrettyUrls;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: '`bill`')]
-class Bill
+#[ORM\Table(name: '`customer`')]
+class Customer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,12 +18,12 @@ class Bill
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
-    #[ORM\ManyToMany(targetEntity: Customer::class, inversedBy: 'bills')]
-    private $customers;
+    #[ORM\ManyToMany(targetEntity: Bill::class, mappedBy: 'customers')]
+    private $bills;
 
     public function __construct()
     {
-        $this->customers = new ArrayCollection();
+        $this->bills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -44,25 +44,28 @@ class Bill
     }
 
     /**
-     * @return Collection|Customer[]
+     * @return Collection|Bill[]
      */
-    public function getCustomers(): Collection
+    public function getBills(): Collection
     {
-        return $this->customers;
+        return $this->bills;
     }
 
-    public function addCustomer(Customer $customer): self
+    public function addBill(Bill $bill): self
     {
-        if (!$this->customers->contains($customer)) {
-            $this->customers[] = $customer;
+        if (!$this->bills->contains($bill)) {
+            $this->bills[] = $bill;
+            $bill->addCustomer($this);
         }
 
         return $this;
     }
 
-    public function removeCustomer(Customer $customer): self
+    public function removeBill(Bill $bill): self
     {
-        $this->customers->removeElement($customer);
+        if ($this->bills->removeElement($bill)) {
+            $bill->addCustomer($this);
+        }
 
         return $this;
     }

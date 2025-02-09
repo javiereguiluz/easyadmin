@@ -24,10 +24,10 @@ interface AdminRouteGeneratorInterface
      */
     public function generateAll(): RouteCollection;
 
-    public function findRouteName(string $dashboardFqcn, string $crudControllerFqcn, string $actionName): ?string;
+    public function findRouteName(?string $dashboardFqcn = null, ?string $crudControllerFqcn = null, ?string $actionName = null): ?string;
 
     /**
-     * This will removed in EasyAdmin 5.0, which will only use pretty URLs.
+     * @return array<class-string, string>
      */
-    // public function usesPrettyUrls(): bool;
+    public function getDashboardRoutes(): array;
 }

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\PersistentCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Cache;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextAlign;
@@ -19,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudAutocompleteType;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudFormType;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -34,13 +36,20 @@ final class AssociationConfigurator implements FieldConfiguratorInterface
     private AdminUrlGeneratorInterface $adminUrlGenerator;
     private RequestStack $requestStack;
     private ControllerFactory $controllerFactory;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(EntityFactory $entityFactory, AdminUrlGeneratorInterface $adminUrlGenerator, RequestStack $requestStack, ControllerFactory $controllerFactory)
-    {
+    public function __construct(
+        EntityFactory $entityFactory,
+        AdminUrlGeneratorInterface $adminUrlGenerator,
+        RequestStack $requestStack,
+        ControllerFactory $controllerFactory,
+        CacheItemPoolInterface $cache,
+    ) {
         $this->entityFactory = $entityFactory;
         $this->adminUrlGenerator = $adminUrlGenerator;
         $this->requestStack = $requestStack;
         $this->controllerFactory = $controllerFactory;
+        $this->cache = $cache;
     }
 
     public function supports(FieldDto $field, EntityDto $entityDto): bool
@@ -57,8 +66,12 @@ final class AssociationConfigurator implements FieldConfiguratorInterface
 
         $targetEntityFqcn = $field->getDoctrineMetadata()->get('targetEntity');
         // the target CRUD controller can be NULL; in that case, field value doesn't link to the related entity
-        $targetCrudControllerFqcn = $field->getCustomOption(AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER)
-            ?? $context->getCrudControllers()->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+        $targetCrudControllerFqcn = $field->getCustomOption(AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER);
+        if (null === $targetCrudControllerFqcn) {
+            $entityFqcnToCrudFqcn = $this->cache->getItem(Cache::ENTITY_FQCN_TO_CRUD_FQCN)->get();
+            $crudControllersAssociatedToEntity = $entityFqcnToCrudFqcn[$targetEntityFqcn] ?? [];
+            $targetCrudControllerFqcn = $crudControllersAssociatedToEntity[0] ?? null;
+        }
 
         if (true === $field->getCustomOption(AssociationField::OPTION_RENDER_AS_EMBEDDED_FORM)) {
             if (false === $entityDto->isToOneAssociation($propertyName)) {
@@ -158,8 +171,7 @@ final class AssociationConfigurator implements FieldConfiguratorInterface
                     ->setController($targetCrudControllerFqcn)
                     ->setAction('autocomplete')
                     ->set(AssociationField::PARAM_AUTOCOMPLETE_CONTEXT, [
-                        // when using pretty URLs, the data is in the request attributes instead of the autocomplete context
-                        EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN) ?? $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
+                        EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN),
                         'propertyName' => $propertyName,
                         'originatingPage' => $context->getCrud()->getCurrentPage(),
                     ])
