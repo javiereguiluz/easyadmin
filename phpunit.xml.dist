@@ -21,7 +21,6 @@
             <exclude>tests/Controller/PrettyUrls/</exclude>
             <exclude>tests/DataCollector/</exclude>
             <exclude>tests/EventListener/</exclude>
-            <exclude>tests/Form/</exclude>
         </testsuite>
     </testsuites>
 
