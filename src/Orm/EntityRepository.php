@@ -82,7 +82,7 @@ final class EntityRepository implements EntityRepositoryInterface
             $lowercaseQueryTerm = mb_strtolower($queryTerm);
             $isNumericQueryTerm = is_numeric($queryTerm);
             $isSmallIntegerQueryTerm = ctype_digit($queryTerm) && $queryTerm >= -32768 && $queryTerm <= 32767;
-            $isIntegerQueryTerm = ctype_digit($queryTerm) && $queryTerm >= -2147483648 && $queryTerm <= 2147483647;
+            $isIntegerQueryTerm = ctype_digit($queryTerm) && $queryTerm >= -9223372036854775808 && $queryTerm <= 18446744073709551617;
             $isUuidQueryTerm = Uuid::isValid($queryTerm);
             $isUlidQueryTerm = Ulid::isValid($queryTerm);
 
