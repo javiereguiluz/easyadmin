@@ -283,11 +283,11 @@
                                                     <div class="form-widget">
                                                         <twig:ea:Icon name="internal:search" class="content-search-icon" />
 
-                                                        <label class="content-search-label" data-value="{{ app.request.get('query') }}">
-                                                            <input class="form-control {{ app.request.get('query') is null ? 'is-blank' }}" type="search" name="query" value="{{ app.request.get('query') ?? '' }}" placeholder="{{ t('action.search', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}" spellcheck="false" autocorrect="off" onInput="this.parentNode.dataset.value=this.value"{% if ea.crud.currentAction == 'index' and ea.crud.autofocusSearch == true %} autofocus="autofocus"{% endif %}>
+                                                        <label class="content-search-label" data-value="{{ app.request.query.get('query') }}">
+                                                            <input class="form-control {{ app.request.query.get('query') is null ? 'is-blank' }}" type="search" name="query" value="{{ app.request.query.get('query') ?? '' }}" placeholder="{{ t('action.search', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}" spellcheck="false" autocorrect="off" onInput="this.parentNode.dataset.value=this.value"{% if ea.crud.currentAction == 'index' and ea.crud.autofocusSearch == true %} autofocus="autofocus"{% endif %}>
                                                         </label>
 
-                                                        {% if app.request.get('query') %}
+                                                        {% if app.request.query.get('query') %}
                                                             {% set search_reset_url = ea_url().unset('query').unset('page').setController(crudController).setAction('index') %}
                                                             <a href="{{ search_reset_url }}" class="content-search-reset">
                                                                 <twig:ea:Icon name="internal:xmark" />

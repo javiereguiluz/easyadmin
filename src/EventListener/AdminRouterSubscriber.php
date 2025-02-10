@@ -142,7 +142,10 @@ class AdminRouterSubscriber implements EventSubscriberInterface
     {
         $routeName = $request->query->get(EA::ROUTE_NAME);
         $routeParams = $request->query->all()[EA::ROUTE_PARAMS] ?? [];
-        $url = $this->urlGenerator->generate($routeName, $routeParams);
+        // the "relative path" URL type is needed to be compatible with applications
+        // running behind a proxy under a permanent subpath prefix (AKA sub-folder,
+        // sub-url or sub-path - using the HTTP header x-forwarded-prefix)
+        $url = $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::RELATIVE_PATH);
 
         $newRequest = $request->duplicate();
         $newRequest->attributes->remove('_controller');

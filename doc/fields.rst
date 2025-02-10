@@ -298,7 +298,7 @@ The arguments of the ``addTab()`` method are:
   ``null`` or an empty string, no text will be displayed (make sure to show an
   icon for the tab or users won't be able to click on it); You can also pass
   ``string`` and ``TranslatableInterface`` variables. In both cases, if they
-  contain HTML tags they will be rendered in stead of escaped;
+  contain HTML tags they will be rendered instead of escaped;
 * ``$icon``: (type: ``?string``) the full CSS class of a `FontAwesome icon`_
   (e.g. ``far fa-folder-open``); if you don't display a text label for the tab,
   make sure to display an icon or users won't be able to click on the tab.
@@ -392,7 +392,7 @@ The arguments of the ``addColumn()`` method are:
   transformed to ``col-8``);
 * ``$label``: (type: ``TranslatableInterface|string|false|null``) an optional title
   that is displayed at the top of the column. If you pass ``false``, ``null``
-  or an empy string, no title is displayed. You can also pass ``string`` and
+  or an empty string, no title is displayed. You can also pass ``string`` and
   ``TranslatableInterface`` variables. In both cases, if they contain HTML tags
   they will be rendered in stead of escaped;
 * ``$icon``: (type: ``?string``) the full CSS class of a `FontAwesome icon`_
@@ -538,7 +538,7 @@ The arguments of the ``addFieldset()`` method are:
 
 * ``$label``: (type: ``TranslatableInterface|string|false|null``) an optional title
   that is displayed at the top of the fieldset. If you pass ``false``, ``null``
-  or an empy string, no title is displayed. You can also pass ``string`` and
+  or an empty string, no title is displayed. You can also pass ``string`` and
   ``TranslatableInterface`` variables. In both cases, if they contain HTML tags
   they will be rendered in stead of escaped;
 * ``$icon``: (type: ``?string``) the full CSS class of a `FontAwesome icon`_
@@ -821,7 +821,7 @@ take many different values:
   automatically based on the field name (e.g. 'firstName' -> 'First Name');
 * **null**: EasyAdmin generates the label automatically based on the field name
   (e.g. 'firstName' -> 'First Name');
-* **An empty string**: the field doesn't display any label, but and empty
+* **An empty string**: the field doesn't display any label, but an empty
   ``<label>`` element is rendered to not mess with the form layout;
 * **false**: the field doesn't display any label and no ``<label>`` element is
   rendered either. This is useful to display special full-width fields such as
