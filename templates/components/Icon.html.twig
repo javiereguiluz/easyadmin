@@ -6,7 +6,8 @@
     {% elseif icon.svgContents %}
         {{ icon.svgContents|raw }}
     {% else %}
-        {# TODO: replace this by a call to ux_icon() function directly when Twig 3.15 is released and we can use the 'guard' tag #}
-        {{ ea_ux_icon(icon.name, attributes.all) }}
+        {% guard function ux_icon %}
+            {{ ux_icon(icon.name, attributes.all) }}
+        {% endguard %}
     {% endif %}
 </span>

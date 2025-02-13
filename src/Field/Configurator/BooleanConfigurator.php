@@ -9,6 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
@@ -16,13 +18,11 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  */
 final class BooleanConfigurator implements FieldConfiguratorInterface
 {
-    private AdminUrlGeneratorInterface $adminUrlGenerator;
-    private ?CsrfTokenManagerInterface $csrfTokenManager;
-
-    public function __construct(AdminUrlGeneratorInterface $adminUrlGenerator, ?CsrfTokenManagerInterface $csrfTokenManager = null)
-    {
-        $this->adminUrlGenerator = $adminUrlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
+    public function __construct(
+        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly AuthorizationCheckerInterface $authChecker,
+        private readonly ?CsrfTokenManagerInterface $csrfTokenManager = null,
+    ) {
     }
 
     public function supports(FieldDto $field, EntityDto $entityDto): bool
@@ -37,7 +37,9 @@ final class BooleanConfigurator implements FieldConfiguratorInterface
         if ($isRenderedAsSwitch) {
             $crudDto = $context->getCrud();
 
-            if (null !== $crudDto && null !== $entityDto->getPrimaryKeyValue()) {
+            $hasEditPermission = $this->authChecker->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::EDIT, 'entity' => $entityDto]);
+
+            if ($hasEditPermission && null !== $crudDto && null !== $entityDto->getPrimaryKeyValue()) {
                 $toggleUrl = $this->adminUrlGenerator
                     ->setController($crudDto->getControllerFqcn())
                     ->setAction(Action::EDIT)
@@ -46,6 +48,10 @@ final class BooleanConfigurator implements FieldConfiguratorInterface
                     ->set('csrfToken', $this->csrfTokenManager?->getToken(BooleanField::CSRF_TOKEN_NAME))
                     ->generateUrl();
                 $field->setCustomOption(BooleanField::OPTION_TOGGLE_URL, $toggleUrl);
+            }
+
+            if (!$hasEditPermission && Action::INDEX === $crudDto->getCurrentAction()) {
+                $field->setFormTypeOptionIfNotSet('disabled', true);
             }
 
             $field->setFormTypeOptionIfNotSet('label_attr.class', 'checkbox-switch');

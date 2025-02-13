@@ -40,7 +40,7 @@
         "symfony/validator": "^6.4|^7.0|^8.0",
         "twig/extra-bundle": "^3.17",
         "twig/html-extra": "^3.17",
-        "twig/twig": "^3.18"
+        "twig/twig": "^3.20"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4|3.5.x-dev",

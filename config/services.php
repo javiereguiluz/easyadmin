@@ -126,10 +126,7 @@ return static function (ContainerConfigurator $container) {
             // initialization done after generating each URL
             ->arg(0, service('service_locator_'.AdminUrlGenerator::class))
             ->arg(1, service(AdminContextProvider::class))
-            ->arg(2, new Reference('security.csrf.token_manager', ContainerInterface::NULL_ON_INVALID_REFERENCE))
-            ->arg(3, new Reference('asset_mapper.importmap.renderer', ContainerInterface::NULL_ON_INVALID_REFERENCE))
             ->arg(4, service('translator'))
-            ->arg(5, new Reference('.ux_icons.twig_icon_runtime', ContainerInterface::NULL_ON_INVALID_REFERENCE))
             ->tag('twig.extension')
 
         ->set(EaCrudFormTypeExtension::class)
@@ -322,7 +319,8 @@ return static function (ContainerConfigurator $container) {
 
         ->set(BooleanConfigurator::class)
             ->arg(0, service(AdminUrlGenerator::class))
-            ->arg(1, new Reference('security.csrf.token_manager', ContainerInterface::NULL_ON_INVALID_REFERENCE))
+            ->arg(1, new Reference(AuthorizationChecker::class))
+            ->arg(2, new Reference('security.csrf.token_manager', ContainerInterface::NULL_ON_INVALID_REFERENCE))
 
         ->set(CollectionConfigurator::class)
 
