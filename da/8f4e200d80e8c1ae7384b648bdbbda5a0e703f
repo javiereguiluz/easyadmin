@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2024-12-20T18:32:25Z
+
+The test issues will be fixed when https://github.com/twigphp/Twig/pull/4511 is released.
+
+---------------------------------------------------------------------------
+
+by stof at 2025-02-09T17:13:26Z
+
+@javiereguiluz the dev version of Twig 3.x should be working now thanks to https://github.com/twigphp/Twig/pull/4575
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2025-02-13T19:09:49Z
+
+@stof I just updated this and I can confirm that your fix worked perfectly! 🙇  Thanks so much!
