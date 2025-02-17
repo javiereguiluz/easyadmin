@@ -13,6 +13,7 @@ final class FilterDataDto
     private $comparison;
     private mixed $value;
     private mixed $value2;
+    private array $formData;
 
     private function __construct()
     {
@@ -27,6 +28,7 @@ final class FilterDataDto
         $filterData->comparison = $formData['comparison'];
         $filterData->value = $formData['value'];
         $filterData->value2 = $formData['value2'] ?? null;
+        $filterData->formData = $formData;
 
         return $filterData;
     }
@@ -69,5 +71,10 @@ final class FilterDataDto
     public function getParameter2Name(): string
     {
         return sprintf('%s_%d', str_replace('.', '_', $this->getProperty()), $this->index + 1);
+    }
+
+    public function getFormData(): array
+    {
+        return $this->formData;
     }
 }
