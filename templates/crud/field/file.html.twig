@@ -8,11 +8,5 @@
 
 {% for image in images %}
     {% set html_id = 'ea-lightbox-' ~ field.uniqueId ~ '-' ~ loop.index %}
-    <a href="#" class="ea-lightbox-thumbnail" data-ea-lightbox-content-selector="#{{ html_id }}">
-        <img aria-label="{{ image }}" alt="{{ image }}" src="{{ asset(image) }}" class="img-fluid" />
-    </a>
-
-    <div id="{{ html_id }}" class="ea-lightbox">
-        <img aria-label="{{ image }}" alt="{{ image }}" src="{{ asset(image) }}" />
-    </div>
+    <a href="{{ asset(image) }}" title="{{ image }}" target="_blank">{{ image }}</a>
 {% endfor %}
