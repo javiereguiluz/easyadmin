@@ -510,6 +510,20 @@ they can link to a CRUD controller method, to a Symfony route or to some URL.
 If there's at least one batch action, the backend interface is updated to add some
 "checkboxes" that allow selecting more than one row of the index listing.
 
+By default, batch processes open a confirmation modal before proceeding with the action.
+This is useful for batch deletions.
+However, if you do not want the confirmation modal, use the ``displayBatchConfirmationModal()`` method::
+
+    // ...
+
+    return $actions
+        ->addBatchAction(Action::new('approve', 'Approve Users')
+        ->linkToCrudAction('approveUsers')
+        ->addCssClass('btn btn-primary')
+        ->setIcon('fa fa-user-check')
+        ->displayBatchConfirmationModal(false) // <- here
+    ;
+
 When the user clicks on the batch action link/button, a form is submitted using
 the ``POST`` method to the action or route configured in the action. The easiest
 way to get the submitted data is to type-hint some argument of your batch action

@@ -338,16 +338,24 @@ class App {
                     .replace('%action_name%', actionName)
                     .replace('%num_items%', selectedItems.length.toString());
 
+                if (actionElement.getAttribute('data-display-batch-modal-confirmation') === 'false') {
+                    batchFormSubmit(actionElement, selectedItems);
+                }
+
                 document.querySelector('#modal-batch-action-button').addEventListener('click', () => {
                     // prevent double submission of the batch action form
                     actionElement.setAttribute('disabled', 'disabled');
+                    batchFormSubmit(actionElement, selectedItems);
+                });
 
+                function batchFormSubmit(actionElement, selectedItems) {
                     const batchFormFields = {
                         'batchActionName': actionElement.getAttribute('data-action-name'),
                         'entityFqcn': actionElement.getAttribute('data-entity-fqcn'),
                         'batchActionUrl': actionElement.getAttribute('data-action-url'),
                         'batchActionCsrfToken': actionElement.getAttribute('data-action-csrf-token'),
                     };
+
                     selectedItems.forEach((item, i) => {
                         batchFormFields[`batchActionEntityIds[${i}]`] = item.value;
                     });
@@ -365,7 +373,7 @@ class App {
 
                     document.body.appendChild(batchForm);
                     batchForm.submit();
-                });
+                }
             });
         });
     }
