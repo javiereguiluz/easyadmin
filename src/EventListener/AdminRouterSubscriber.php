@@ -312,7 +312,7 @@ class AdminRouterSubscriber implements EventSubscriberInterface
         // Now, concatenate prefix and path
         // prefix: /en, url: anotherRoute --> url: /en/anotherRoute
         // This should now match a route
-        $url = $prefix . '/' . $url;
+        $url = $prefix.'/'.$url;
 
         $newRequest = $request->duplicate();
         $newRequest->attributes->remove('_controller');
