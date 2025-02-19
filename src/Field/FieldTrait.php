@@ -445,6 +445,14 @@ trait FieldTrait
         return $this;
     }
 
+    public function addDisplayOnPage(string $pageName): self
+    {
+        $displayedOn = $this->dto->getDisplayedOn();
+        $displayedOn->set($pageName , $pageName);
+        $this->dto->setDisplayedOn($displayedOn);
+        return $this;
+    }
+
     /**
      * @param int|string $cols An integer with the number of columns that this field takes (e.g. 6),
      *                         or a string with responsive col CSS classes (e.g. 'col-6 col-sm-4 col-lg-3')
