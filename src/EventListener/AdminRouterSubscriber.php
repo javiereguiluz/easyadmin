@@ -291,6 +291,26 @@ class AdminRouterSubscriber implements EventSubscriberInterface
         $routeParams = $request->query->all()[EA::ROUTE_PARAMS] ?? [];
         $url = $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_PATH);
 
+        // Now, forge the "absolute" path so that it can be matched to a route.
+        // To do this, we concatenate the relative path to the current request path, and do a basic normalization (only
+        // considering ../).
+        // See issue #6817.
+        $prefix = $request->getPathInfo(); // Our current absolute path, without any subpath prefix
+
+        // Get rid of the page name (/en/route/page --> /en/route)
+        $prefix = substr($prefix, 0, strrpos($prefix, '/'));
+
+        while (str_starts_with($url, '../')) {
+            // Remove the last part of the prefix and the '../' from the path
+            // prefix: /en/route, url: ../anotherRoute --> prefix: /en, url: anotherRoute
+            $prefix = substr($prefix, 0, strrpos($prefix, '/'));
+            $url = substr($url, 3);
+        }
+        // Now, concatenate prefix and path
+        // prefix: /en, url: anotherRoute --> url: /en/anotherRoute
+        // This should now match a route
+        $url = $prefix.'/'.$url;
+
         $newRequest = $request->duplicate();
         $newRequest->attributes->remove('_controller');
         $newRequest->attributes->set('_route', $routeName);
