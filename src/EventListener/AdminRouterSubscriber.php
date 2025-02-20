@@ -253,7 +253,7 @@ class AdminRouterSubscriber implements EventSubscriberInterface
      */
     private function getDashboardControllerFqcn(Request $request): ?string
     {
-        $controller = $request->attributes->get('_controller');
+        $controller = $request->attributes->get(EA::DASHBOARD_CONTROLLER_FQCN) ?? $request->attributes->get('_controller');
         $controllerFqcn = null;
 
         if (\is_string($controller)) {
