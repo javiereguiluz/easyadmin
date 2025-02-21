@@ -445,6 +445,13 @@ trait FieldTrait
         return $this;
     }
 
+    public function displayIf(callable $callable): self
+    {
+        $this->dto->setDisplayCallable($callable);
+
+        return $this;
+    }
+
     /**
      * @param int|string $cols An integer with the number of columns that this field takes (e.g. 6),
      *                         or a string with responsive col CSS classes (e.g. 'col-6 col-sm-4 col-lg-3')
