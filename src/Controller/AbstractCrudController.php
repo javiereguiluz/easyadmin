@@ -456,14 +456,30 @@ abstract class AbstractCrudController extends AbstractController implements Crud
 
     public function autocomplete(AdminContext $context): JsonResponse
     {
-        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), FieldCollection::new([]), FilterCollection::new());
+        $queryBuilder = $this->createIndexQueryBuilder(
+            $context->getSearch(),
+            $context->getEntity(),
+            FieldCollection::new([]),
+            FilterCollection::new()
+        );
 
         $autocompleteContext = $context->getRequest()->get(AssociationField::PARAM_AUTOCOMPLETE_CONTEXT);
 
         /** @var CrudControllerInterface $controller */
-        $controller = $this->container->get(ControllerFactory::class)->getCrudControllerInstance($autocompleteContext[EA::CRUD_CONTROLLER_FQCN], Action::INDEX, $context->getRequest());
+        $controller = $this->container->get(ControllerFactory::class)->getCrudControllerInstance(
+            $autocompleteContext[EA::CRUD_CONTROLLER_FQCN],
+            Action::INDEX,
+            $context->getRequest()
+        );
+        $entityFqcn = $controller::getEntityFqcn();
+        $entityDto = new EntityDto(
+            $entityFqcn,
+            $this->container->get(EntityFactory::class)->getEntityMetadata($entityFqcn)
+        );
+        $fields = FieldCollection::new($controller->configureFields($autocompleteContext['originatingPage']));
+        $this->container->get(EntityFactory::class)->processFields($entityDto, $fields);
         /** @var FieldDto|null $field */
-        $field = FieldCollection::new($controller->configureFields($autocompleteContext['originatingPage']))->getByProperty($autocompleteContext['propertyName']);
+        $field = $fields->getByProperty($autocompleteContext['propertyName']);
         /** @var \Closure|null $queryBuilderCallable */
         $queryBuilderCallable = $field?->getCustomOption(AssociationField::OPTION_QUERY_BUILDER_CALLABLE);
 
