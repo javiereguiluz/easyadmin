@@ -1,4 +1,5 @@
 {% props
+    type = 'a', # possible values: 'a', 'form'
     label = null,
     renderLabelRaw = false,
     icon = null,
@@ -7,8 +8,19 @@
 %}
 
 <li>
-    <a {{ attributes.defaults({class: 'dropdown-item', href: url}|merge(htmlAttributes)) }}>
-        {%- if icon %}<twig:ea:Icon {{ ...attributes.nested('icon').defaults({name: icon}) }} /> {% endif -%}
-        {%- if label is not empty -%}<span {{ attributes.nested('label') }}>{{ renderLabelRaw ? label|raw : label }}</span>{%- endif -%}
-    </a>
+    {% if 'a' == type %}
+        <a {{ attributes.defaults({class: 'dropdown-item', href: url}|merge(htmlAttributes)) }}>
+            {%- if icon %}<twig:ea:Icon {{ ...attributes.nested('icon').defaults({name: icon}) }} /> {% endif -%}
+            {%- if label is not empty -%}<span {{ attributes.nested('label') }}>{{ renderLabelRaw ? label|raw : label }}</span>{%- endif -%}
+        </a>
+    {% elseif 'form' == type %}
+        {% set form_id = 'form-' ~ random() %}
+        <form id="{{ form_id }}" action="{{ url }}" method="POST">
+            {% set css_class = 'dropdown-item ' ~ (htmlAttributes.class ?? '') %}
+            <button {{ attributes.defaults(htmlAttributes|merge({class: css_class, form: form_id})) }}>
+                {%- if icon %}<twig:ea:Icon {{ ...attributes.nested('icon').defaults({name: icon}) }} /> {% endif -%}
+                {%- if label is not empty -%}<span {{ attributes.nested('label') }}>{{ renderLabelRaw ? label|raw : label }}</span>{%- endif -%}
+            </button>
+        </form>
+    {% endif %}
 </li>

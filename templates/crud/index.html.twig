@@ -169,6 +169,7 @@
                                                 <twig:ea:ActionMenu:ActionList>
                                                     {% for action in entity.actions %}
                                                         <twig:ea:ActionMenu:ActionList:Item
+                                                            type="{{ 'form' == action.htmlElement ? 'form' : 'a' }}"
                                                             class="{{ action.cssClass }}" url="{{ action.linkUrl }}"
                                                             icon="{{ action.icon }}" icon:class="action-icon"
                                                             htmlAttributes="{{ action.htmlAttributes }}"
