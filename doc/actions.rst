@@ -344,10 +344,6 @@ Then you can configure the basic HTML/CSS attributes of the button/element
 that will represent the action::
 
     $viewInvoice = Action::new('viewInvoice', 'Invoice', 'fa fa-file-invoice')
-        // renders the action as a <a> HTML element
-        ->displayAsLink()
-        // renders the action as a <button> HTML element
-        ->displayAsButton()
         // a key-value array of attributes to add to the HTML element
         ->setHtmlAttributes(['data-foo' => 'bar', 'target' => '_blank'])
         // removes all existing CSS classes of the action and sets
@@ -357,12 +353,39 @@ that will represent the action::
         // useful when customizing a built-in action, which already has CSS classes)
         ->addCssClass('some-custom-css-class text-danger')
 
+By default, actions are rendered as ``<a>`` elements that make a ``GET`` request
+to the corresponding URL.
+
+    $viewInvoice = Action::new('viewInvoice', 'Invoice', 'fa fa-file-invoice')
+        // ...
+        // (default) renders the action as a <a> HTML element
+        ->displayAsLink()
+
+        // renders the action as a <button> HTML element; this is ignored in the
+        // index page, where entity actions are displayeds as <a> elements;
+        // this button sumits the edit/new form which is being rendered
+        ->displayAsButton()
+
+        // renders the action as a <button> element inside a <form> element different
+        // from the edit/new form being rendered; this is useful to call custom
+        // actions using the POST method
+        ->displayAsForm()
+    ;
+
+.. versionadded:: 4.25
+
+    The ``displayAsForm()`` method was introduced in EasyAdmin 4.25.0.
+
 .. note::
 
     When using ``setCssClass()`` or ``addCssClass()`` methods, the action loses
     the default CSS classes applied by EasyAdmin (``.btn`` and
     ``.action-<the-action-name>``). You might want to add those CSS classes
     manually to make your actions look as expected.
+
+.. tip::
+
+    Custom actions are
 
 Once you've configured the basics, use one of the following methods to define
 which method is executed when clicking on the action:

@@ -575,7 +575,7 @@ a.user-menu-wrapper .user-details:hover {
 }
 .content-header .page-actions:empty { display: none; }
 
-.content-header .page-actions :is(.btn,form:has(.btn)) + :is(.btn,form:has(.btn)) {
+.content-header .page-actions :is(.btn, form:has(.btn)) + :is(.btn, form:has(.btn)) {
     margin-inline-start: 10px;
 }
 
