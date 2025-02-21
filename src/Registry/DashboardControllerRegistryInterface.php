@@ -2,6 +2,9 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Registry;
 
+/**
+ * @deprecated since 4.25.0, will be removed in EasyAdmin 5.0.0. This registry is generally not needed by developers in newer versions of EasyAdmin.
+ */
 interface DashboardControllerRegistryInterface
 {
     public function getControllerFqcnByContextId(string $contextId): ?string;
