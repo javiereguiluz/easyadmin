@@ -2,6 +2,7 @@
 
 namespace EasyCorp\Bundle\EasyAdminBundle\Dto;
 
+use EasyCorp\Bundle\EasyAdminBundle\Collection\ActionCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\EaFormFieldsetType;
@@ -56,6 +57,7 @@ final class FieldDto
     private $uniqueId;
     private KeyValueStore $displayedOn;
     private array $htmlAttributes = [];
+    private ?ActionCollection $actions = null;
 
     public function __construct()
     {
@@ -516,5 +518,15 @@ final class FieldDto
         $this->htmlAttributes[$attribute] = $value;
 
         return $this;
+    }
+
+    public function getActions(): ?ActionCollection
+    {
+        return $this->actions;
+    }
+
+    public function setActions(?ActionCollection $actions): void
+    {
+        $this->actions = $actions;
     }
 }

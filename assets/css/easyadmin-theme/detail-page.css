@@ -52,6 +52,11 @@
   min-inline-size: 66%;
 }
 
+.ea-detail .field-group .field-actions {
+  flex: 1;
+  min-inline-size: 66%;
+}
+
 .ea-detail .field-group.field-textarea .field-value,
 .ea-detail .field-group.field-text_editor .field-value {
   max-block-size: 350px;
