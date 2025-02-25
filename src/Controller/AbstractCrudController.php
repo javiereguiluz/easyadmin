@@ -387,10 +387,6 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (null !== $referrer = $context->getRequest()->headers->get('referer')) {
-            return $this->redirect($referrer);
-        }
-
         return $this->redirect($this->container->get(AdminUrlGenerator::class)->setController($context->getCrud()->getControllerFqcn())->setAction(Action::INDEX)->unset(EA::ENTITY_ID)->generateUrl());
     }
 
